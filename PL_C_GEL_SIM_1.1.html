@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Πληροφορική Γ΄ Λυκείου - 1η Εβδομάδα: Πρόβλημα & Αλγόριθμος</title>
+    
+    <!-- Βιβλιοθήκη html2pdf για παραγωγή PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; color: #333; margin: 20px; }
+        .container { max-width: 850px; background: #fff; margin: auto; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1, h2, h3 { color: #2c3e50; text-align: center; }
+        .card { background: #eef2f5; border-left: 5px solid #3498db; padding: 15px; margin: 15px 0; border-radius: 6px; }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+        button { background-color: #3498db; color: white; border: none; padding: 10px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; transition: 0.2s; font-weight: bold; }
+        button:hover { background-color: #2980b9; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; opacity: 0.6; }
+        .btn-reset { background-color: #e74c3c; }
+        .btn-reset:hover { background-color: #c0392b; }
+        .btn-next { background-color: #27ae60; }
+        .btn-next:hover { background-color: #219150; }
+        .btn-pdf { background-color: #d35400; }
+        .btn-pdf:hover { background-color: #a04000; }
+        .btn-print { background-color: #8e44ad; }
+        .btn-print:hover { background-color: #71368a; }
+        .feedback { margin-top: 10px; font-weight: bold; padding: 10px; border-radius: 6px; display: none; }
+        .correct { background-color: #d4edda; color: #155724; display: block; }
+        .wrong { background-color: #f8d7da; color: #721c24; display: block; }
+        .header-info { display: flex; justify-content: space-between; align-items: center; font-weight: bold; margin-bottom: 10px; }
+        .q-counter { color: #8e44ad; font-size: 15px; }
+        .score { color: #27ae60; font-size: 16px; }
+        .tab-buttons { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { background: #95a5a6; }
+        .tab-btn.active { background: #2c3e50; }
+        .controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
+        
+        .start-form { text-align: center; margin: 30px 0; }
+        .start-form input { padding: 12px; font-size: 16px; width: 70%; max-width: 400px; border: 2px solid #3498db; border-radius: 6px; margin-bottom: 15px; }
+
+        .report-card { padding: 12px; margin: 10px 0; border-radius: 6px; border-left: 5px solid #ccc; background: #fafafa; }
+        .report-card.is-correct { border-left-color: #27ae60; background: #f0fff4; }
+        .report-card.is-wrong { border-left-color: #e74c3c; background: #fff5f5; }
+        .report-actions { display: flex; justify-content: center; gap: 15px; margin-top: 25px; flex-wrap: wrap; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; color: white; }
+        .badge-correct { background-color: #27ae60; }
+        .badge-wrong { background-color: #e74c3c; }
+
+        @media print {
+            body { background: white; margin: 0; padding: 0; }
+            .container { box-shadow: none; max-width: 100%; width: 100%; padding: 0; }
+            .tab-buttons, .controls, .btn-group, .no-print { display: none !important; }
+            #start-screen, #quiz-screen { display: none !important; }
+            #report-screen { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Προσομοιωτής & Παιχνίδι - 1η Εβδομάδα</h1>
+    <p style="text-align: center;"><i>1.1-1.4 (Έννοια Προβλήματος) & 2.1-2.3 (Έννοια & Κριτήρια Αλγορίθμου)</i></p>
+
+    <!-- ΟΘΟΝΗ 1: ΕΙΣΑΓΩΓΗ ΟΝΟΜΑΤΟΣ -->
+    <div id="start-screen" class="start-form">
+        <h2>Καλώς ήρθατε!</h2>
+        <p>Εισάγετε το ονοματεπώνυμό σας (προαιρετικό) για να ξεκινήσετε:</p>
+        <input type="text" id="student-name-input" placeholder="Ονοματεπώνυμο Μαθητή/τριας (προαιρετικό)"><br>
+        <button onclick="startQuiz()" style="font-size: 16px; padding: 12px 25px; background-color: #27ae60;">Έναρξη Quiz &raquo;</button>
+    </div>
+
+    <!-- ΟΘΟΝΗ 2: ΚΥΡΙΩΣ QUIZ -->
+    <div id="quiz-screen" style="display:none;">
+        <div style="background: #e1f5fe; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-weight: bold; color: #0277bd;">
+            Μαθητής/τρια: <span id="display-student-name"></span>
+        </div>
+
+        <div class="tab-buttons">
+            <button class="tab-btn active" id="tab-btn1" onclick="switchTab('tab1')">1. Κατηγορίες Προβλημάτων</button>
+            <button class="tab-btn" id="tab-btn2" onclick="switchTab('tab2')">2. Κριτήρια Αλγορίθμου</button>
+        </div>
+
+        <!-- TAB 1: ΚΑΤΗΓΟΡΙΕΣ ΠΡΟΒΛΗΜΑΤΩΝ -->
+        <div id="tab1" class="tab-content">
+            <h2>Ταξινόμηση Προβλήματος</h2>
+            <div class="header-info">
+                <span class="q-counter" id="q-count1">Ερώτηση 1 από 10</span>
+                <span class="score">Σκορ: <span id="score1">0</span> / 100</span>
+            </div>
+            <div class="card">
+                <p><strong>Πρόβλημα:</strong> <span id="prob-text">...</span></p>
+                <div class="btn-group" id="btn-group1">
+                    <button onclick="checkProblem('Αποφασιστικό')">Αποφασιστικό</button>
+                    <button onclick="checkProblem('Υπολογιστικό')">Υπολογιστικό</button>
+                    <button onclick="checkProblem('Βελτιστοποίησης')">Βελτιστοποίησης</button>
+                </div>
+                <div id="feedback1" class="feedback"></div>
+            </div>
+            <div class="controls">
+                <button class="btn-reset" onclick="resetTab1()">↻ Επαναφορά Ενότητας</button>
+                <button class="btn-next" id="next-btn1" onclick="nextProblem()" disabled>Επόμενη Ερώτηση &raquo;</button>
+            </div>
+        </div>
+
+        <!-- TAB 2: ΚΡΙΤΗΡΙΑ ΑΛΓΟΡΙΘΜΟΥ -->
+        <div id="tab2" class="tab-content" style="display:none;">
+            <h2>Εντοπισμός Παραβίασης Κριτήριου</h2>
+            <div class="header-info">
+                <span class="q-counter" id="q-count2">Ερώτηση 1 από 10</span>
+                <span class="score">Σκορ: <span id="score2">0</span> / 100</span>
+            </div>
+            <div class="card">
+                <p><strong>Σενάριο Αλγορίθμου:</strong></p>
+                <p id="alg-text" style="font-style: italic; background: #fff; padding: 10px; border-radius: 4px;">...</p>
+                <p>Ποιο κριτήριο αλγορίθμου παραβιάζεται;</p>
+                <div class="btn-group" id="btn-group2">
+                    <button onclick="checkCriteria('Είσοδος')">Είσοδος</button>
+                    <button onclick="checkCriteria('Έξοδος')">Έξοδος</button>
+                    <button onclick="checkCriteria('Καθοριστικότητα')">Καθοριστικότητα</button>
+                    <button onclick="checkCriteria('Πεπαιραστικότητα')">Πεπαιραστικότητα</button>
+                    <button onclick="checkCriteria('Αποτελεσματικότητα')">Αποτελεσματικότητα</button>
+                </div>
+                <div id="feedback2" class="feedback"></div>
+            </div>
+            <div class="controls">
+                <button class="btn-reset" onclick="resetTab2()">↻ Επαναφορά Ενότητας</button>
+                <button class="btn-next" id="next-btn2" onclick="nextCriteria()" disabled>Επόμενη Ερώτηση &raquo;</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <button onclick="finishQuiz()" style="background-color: #2c3e50; font-size: 16px; padding: 12px 20px;">🏁 Ολοκλήρωση & Προβολή Αναφοράς</button>
+        </div>
+    </div>
+
+    <!-- ΟΘΟΝΗ 3: ΑΝΑΦΟΡΑ / REPORT -->
+    <div id="report-screen" style="display:none;">
+        <div id="pdf-content">
+            <h2>Αναφορά Αποτελεσμάτων Quiz</h2>
+            <div style="background: #eef2f5; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <p><strong>Μαθητής/τρια:</strong> <span id="report-student-name"></span></p>
+                <p><strong>Ημερομηνία:</strong> <span id="report-date"></span></p>
+                <p><strong>Συνολικό Σκορ:</strong> <span id="report-total-score" style="font-weight: bold; color: #27ae60; font-size: 18px;"></span></p>
+            </div>
+
+            <h3>1. Κατηγορίες Προβλημάτων (<span id="report-score1"></span>)</h3>
+            <div id="report-list1"></div>
+
+            <h3 style="margin-top: 25px;">2. Κριτήρια Αλγορίθμου (<span id="report-score2"></span>)</h3>
+            <div id="report-list2"></div>
+        </div>
+
+        <div class="report-actions no-print">
+            <button class="btn-pdf" onclick="downloadPDF()">📄 Λήψη PDF</button>
+            <button class="btn-print" onclick="window.print()">🖨️ Εκτύπωση</button>
+            <button class="btn-reset" onclick="restartAll()">↻ Νέα Προσπάθεια</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    const problems = [
+        { text: "Έλεγχος αν ο ακέραιος αριθμός Χ είναι πρώτος ή σύνθετος.", type: "Αποφασιστικό", exp: "Η απάντηση είναι λογικού τύπου (Ναι/Όχι ή Αληθής/Ψευδής)." },
+        { text: "Υπολογισμός του μέσου όρου βαθμολογίας ενός μαθητή.", type: "Υπολογιστικό", exp: "Επιδιώκεται ο υπολογισμός μιας συγκεκριμένης τιμής/αποτελέσματος." },
+        { text: "Εύρεση της συντομότερης διαδρομής από την Αθήνα στη Θεσσαλονίκη με τη λιγότερη κατανάλωση καυσίμου.", type: "Βελτιστοποίησης", exp: "Αναζητείται η βέλτιστη λύση ανάμεσα σε πολλές δυνατές επιλογές." },
+        { text: "Διαπίστωση αν ένα έτος είναι δίσεκτο ή όχι.", type: "Αποφασιστικό", exp: "Απάντηση με ΝΑΙ/ΟΧΙ." },
+        { text: "Εύρεση του μέγιστου στοιχείου σε έναν πίνακα αριθμών.", type: "Υπολογιστικό", exp: "Στόχος είναι η εξαγωγή μιας συγκεκριμένης τιμής ως αποτέλεσμα." },
+        { text: "Επιλογή του καταλληλότερου συνδυασμού δρομολογίων για την ταχύτερη παράδοση δεμάτων με το ελάχιστο κόστος.", type: "Βελτιστοποίησης", exp: "Αναζητούμε την οικονομικότερη/ταχύτερη λύση (βελτιστοποίηση)." },
+        { text: "Έλεγχος αν ένας αλφαριθμητικός κωδικός πρόσβασης περιέχει τουλάχιστον ένα ειδικό σύμβολο.", type: "Αποφασιστικό", exp: "Επιστρέφει Ναι/Όχι (έγκυρος ή μη έγκυρος κωδικός)." },
+        { text: "Υπολογισμός του τελικού φόρου εισοδήματος βάσει της φορολογικής κλίμακας.", type: "Υπολογιστικό", exp: "Παράγει μια αριθμητική τιμή ως αποτέλεσμα." },
+        { text: "Κατανομή φορτίου σταθμών ηλεκτροπαραγωγής για την κάλυψη της ζήτησης με τις ελάχιστες εκπομπές ρύπων.", type: "Βελτιστοποίησης", exp: "Στοχεύει στην ελαχιστοποίηση των ρύπων (βέλτιστη λύση)." },
+        { text: "Διαπίστωση αν ένας τετραγωνικός πίνακας είναι συμμετρικός ως προς την κύρια διαγώνιο.", type: "Αποφασιστικό", exp: "Απάντηση λογικού χαρακτήρα (Ναι/Όχι)." }
+    ];
+
+    const criteria = [
+        { text: "Ένας αλγόριθμος εκτελεί τη διαίρεση x = A / (B - C), όταν οι τιμές B και C είναι ίσες.", answer: "Καθοριστικότητα", exp: "Προκύπτει διαίρεση με το μηδέν, η οποία δεν είναι ορισμένη πράξη." },
+        { text: "Ένας αλγόριθμος αυξάνει μια μεταβλητή i κατά 1, χωρίς να περιλαμβάνει συνθήκη τερματισμού.", answer: "Πεπαιραστικότητα", exp: "Ο αλγόριθμος εκτελείται ατέρμονα και δεν τερματίζει ποτέ." },
+        { text: "Ένας αλγόριθμος υπολογίζει τις ρίζες εξίσωσης, αλλά δεν τις εμφανίζει στην οθόνη ούτε τις επιστρέφει.", answer: "Έξοδος", exp: "Πρέπει να παράγεται τουλάχιστον μία τιμή εξόδου προς τον χρήστη." },
+        { text: "Ένας αλγόριθμος περιλαμβάνει την εντολή 'Σκεφτείτε έναν τυχαίο αριθμό και προσθέστε τον στο X'.", answer: "Καθοριστικότητα", exp: "Η εντολή είναι ασαφής και εξαρτάται από υποκειμενική κρίση." },
+        { text: "Ένας αλγόριθμος ταξινόμησης περιλαμβάνει την εντολή 'Διαίρεσε κάθε στοιχείο δια του απείρου'.", answer: "Αποτελεσματικότητα", exp: "Η εντολή δεν είναι μηχανικά/πρακτικά εκτελέσιμη." },
+        { text: "Ένας αλγόριθμος υπολογισμού εμβαδού κύκλου δεν λαμβάνει καμία τιμή για την ακτίνα R.", answer: "Είσοδος", exp: "Λείπουν τα απαραίτητα δεδομένα εισόδου από το περιβάλλον." },
+        { text: "Ένας αλγόριθμος περιλαμβάνει την εντολή 'Εκτύπωσε όλους τους πρώτους αριθμούς μέχρι το άπειρο'.", answer: "Πεπαιραστικότητα", exp: "Δεν ολοκληρώνεται μετά από πεπερασμένα βήματα." },
+        { text: "Ένας αλγόριθμος περιλαμβάνει την εντολή 'Σχεδίασε κύκλο με ακτίνα -5 cm'.", answer: "Αποτελεσματικότητα", exp: "Η εντολή είναι γεωμετρικά/λογικά μη εκτελέσιμη." },
+        { text: "Ένας αλγόριθμος επεξεργάζεται 100 μαθητές, αλλά οι εντολές διαβάζουν μόνο 1 τιμή από το πληκτρολόγιο.", answer: "Είσοδος", exp: "Τα δεδομένα εισόδου είναι ανεπαρκή για την εκτέλεση του αλγορίθμου." },
+        { text: "Ένας αλγόριθμος εκτελεί σειρά υπολογισμών, αλλά διαγράφει όλες τις μεταβλητές χωρίς να παρέχει κανένα αποτέλεσμα.", answer: "Έξοδος", exp: "Δεν παρέχεται καμία πληροφορία εξόδου στον χρήστη." }
+    ];
+
+    let studentName = "Ανώνυμος/η Μαθητής/τρια";
+    let pIdx = 0, cIdx = 0;
+    let s1 = 0, s2 = 0;
+    let answered1 = false, answered2 = false;
+
+    let userAnswers1 = [];
+    let userAnswers2 = [];
+
+    function startQuiz() {
+        const input = document.getElementById('student-name-input');
+        if (input.value && input.value.trim() !== "") {
+            studentName = input.value.trim();
+        } else {
+            studentName = "Ανώνυμος/η Μαθητής/τρια";
+        }
+        document.getElementById('display-student-name').innerText = studentName;
+        document.getElementById('start-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'block';
+        
+        loadProblem();
+        loadCriteria();
+    }
+
+    function loadProblem() {
+        document.getElementById('prob-text').innerText = problems[pIdx].text;
+        document.getElementById('q-count1').innerText = `Ερώτηση ${pIdx + 1} από ${problems.length}`;
+        document.getElementById('feedback1').className = 'feedback';
+        document.getElementById('next-btn1').disabled = true;
+        setButtonsState('btn-group1', false);
+        answered1 = false;
+    }
+
+    function loadCriteria() {
+        document.getElementById('alg-text').innerText = criteria[cIdx].text;
+        document.getElementById('q-count2').innerText = `Ερώτηση ${cIdx + 1} από ${criteria.length}`;
+        document.getElementById('feedback2').className = 'feedback';
+        document.getElementById('next-btn2').disabled = true;
+        setButtonsState('btn-group2', false);
+        answered2 = false;
+    }
+
+    function setButtonsState(groupId, disabled) {
+        const buttons = document.getElementById(groupId).querySelectorAll('button');
+        buttons.forEach(btn => btn.disabled = disabled);
+    }
+
+    function checkProblem(choice) {
+        if (answered1) return;
+        answered1 = true;
+        setButtonsState('btn-group1', true);
+        document.getElementById('next-btn1').disabled = false;
+        
+        const isCorrect = (choice === problems[pIdx].type);
+        userAnswers1[pIdx] = {
+            qText: problems[pIdx].text,
+            userChoice: choice,
+            correctChoice: problems[pIdx].type,
+            isCorrect: isCorrect,
+            exp: problems[pIdx].exp
+        };
+
+        let fb = document.getElementById('feedback1');
+        if (isCorrect) {
+            fb.innerText = "Σωστά! " + problems[pIdx].exp;
+            fb.className = "feedback correct";
+            s1 += 10;
+            document.getElementById('score1').innerText = s1;
+        } else {
+            fb.innerText = "Λάθος. Το πρόβλημα είναι " + problems[pIdx].type + ". " + problems[pIdx].exp;
+            fb.className = "feedback wrong";
+        }
+    }
+
+    function checkCriteria(choice) {
+        if (answered2) return;
+        answered2 = true;
+        setButtonsState('btn-group2', true);
+        document.getElementById('next-btn2').disabled = false;
+
+        const isCorrect = (choice === criteria[cIdx].answer);
+        userAnswers2[cIdx] = {
+            qText: criteria[cIdx].text,
+            userChoice: choice,
+            correctChoice: criteria[cIdx].answer,
+            isCorrect: isCorrect,
+            exp: criteria[cIdx].exp
+        };
+
+        let fb = document.getElementById('feedback2');
+        if (isCorrect) {
+            fb.innerText = "Σωστά! " + criteria[cIdx].exp;
+            fb.className = "feedback correct";
+            s2 += 10;
+            document.getElementById('score2').innerText = s2;
+        } else {
+            fb.innerText = "Λάθος. Παραβιάζεται το κριτήριο: " + criteria[cIdx].answer + ". " + criteria[cIdx].exp;
+            fb.className = "feedback wrong";
+        }
+    }
+
+    function nextProblem() {
+        if (!answered1) return;
+        if (pIdx < problems.length - 1) {
+            pIdx++;
+            loadProblem();
+        } else {
+            alert("Ολοκληρώσατε τις ερωτήσεις της 1ης Ενότητας!");
+        }
+    }
+
+    function nextCriteria() {
+        if (!answered2) return;
+        if (cIdx < criteria.length - 1) {
+            cIdx++;
+            loadCriteria();
+        } else {
+            alert("Ολοκληρώσατε τις ερωτήσεις της 2ης Ενότητας!");
+        }
+    }
+
+    function resetTab1() {
+        pIdx = 0;
+        s1 = 0;
+        userAnswers1 = [];
+        document.getElementById('score1').innerText = s1;
+        loadProblem();
+    }
+
+    function resetTab2() {
+        cIdx = 0;
+        s2 = 0;
+        userAnswers2 = [];
+        document.getElementById('score2').innerText = s2;
+        loadCriteria();
+    }
+
+    function finishQuiz() {
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('report-screen').style.display = 'block';
+
+        document.getElementById('report-student-name').innerText = studentName;
+        document.getElementById('report-date').innerText = new Date().toLocaleDateString('el-GR') + ' ' + new Date().toLocaleTimeString('el-GR', {hour: '2-digit', minute:'2-digit'});
+        document.getElementById('report-score1').innerText = `${s1} / 100`;
+        document.getElementById('report-score2').innerText = `${s2} / 100`;
+        document.getElementById('report-total-score').innerText = `${s1 + s2} / 200`;
+
+        renderReportList('report-list1', problems, userAnswers1);
+        renderReportList('report-list2', criteria, userAnswers2);
+    }
+
+    function renderReportList(containerId, questionsArr, answersArr) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+
+        questionsArr.forEach((q, i) => {
+            const ans = answersArr[i];
+            const div = document.createElement('div');
+            
+            if (!ans) {
+                div.className = "report-card";
+                div.innerHTML = `<p><strong>${i+1}. ${q.text}</strong></p><p style="color: #7f8c8d;"><i>Δεν απαντήθηκε.</i> (Σωστή απάντηση: <strong>${q.type || q.answer}</strong>)</p>`;
+            } else if (ans.isCorrect) {
+                div.className = "report-card is-correct";
+                div.innerHTML = `
+                    <p><strong>${i+1}. ${q.text}</strong> <span class="badge badge-correct">✓ Σωστό</span></p>
+                    <p>Απάντηση: <strong>${ans.userChoice}</strong></p>
+                    <p style="color: #27ae60; font-size: 13px;"><i>Τεκμηρίωση: ${ans.exp}</i></p>
+                `;
+            } else {
+                div.className = "report-card is-wrong";
+                div.innerHTML = `
+                    <p><strong>${i+1}. ${q.text}</strong> <span class="badge badge-wrong">✗ Λάθος</span></p>
+                    <p>Η απάντησή σας: <span style="text-decoration: line-through; color: #c0392b;">${ans.userChoice}</span> | Σωστή Απάντηση: <strong style="color: #27ae60;">${ans.correctChoice}</strong></p>
+                    <p style="color: #c0392b; font-size: 13px;"><strong>Τεκμηρίωση:</strong> ${ans.exp}</p>
+                `;
+            }
+            container.appendChild(div);
+        });
+    }
+
+    // Κατέβασμα της Αναφοράς σε PDF
+    function downloadPDF() {
+        const element = document.getElementById('pdf-content');
+        const opt = {
+            margin:       10,
+            filename:     `Quiz_Report_${studentName.replace(/\s+/g, '_')}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+
+    function restartAll() {
+        pIdx = 0; cIdx = 0;
+        s1 = 0; s2 = 0;
+        userAnswers1 = []; userAnswers2 = [];
+        studentName = "Ανώνυμος/η Μαθητής/τρια";
+        
+        document.getElementById('student-name-input').value = "";
+        document.getElementById('score1').innerText = 0;
+        document.getElementById('score2').innerText = 0;
+
+        document.getElementById('report-screen').style.display = 'none';
+        document.getElementById('quiz-screen').style.display = 'none';
+        document.getElementById('start-screen').style.display = 'block';
+    }
+
+    function switchTab(tabId) {
+        document.getElementById('tab1').style.display = tabId === 'tab1' ? 'block' : 'none';
+        document.getElementById('tab2').style.display = tabId === 'tab2' ? 'block' : 'none';
+        document.getElementById('tab-btn1').classList.toggle('active', tabId === 'tab1');
+        document.getElementById('tab-btn2').classList.toggle('active', tabId === 'tab2');
+    }
+</script>
+
+</body>
+</html>

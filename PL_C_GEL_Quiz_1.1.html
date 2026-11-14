@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Διαδραστικό Quiz ΑΕΠΠ - 1η Εβδομάδα</title>
+  <style>
+    :root {
+      --bg-color: #f7f4ef;
+      --text-color: #3a322b;
+      --primary: #7a4b29;
+      --primary-hover: #61391f;
+      --secondary: #4e6e52;
+      --secondary-hover: #3b543e;
+      --accent-sand: #d4b886;
+      --card-bg: #ffffff;
+      --card-subtle: #fdfbf7;
+      --border: #e2d9c8;
+      --code-bg: #24201c;
+      --code-text: #f5eedf;
+      --correct: #2e7d32;
+      --correct-bg: #e8f5e9;
+      --wrong: #c62828;
+      --wrong-bg: #ffebee;
+      --hint-bg: #fff8e1;
+      --hint-border: #ffe082;
+      --shadow: 0 4px 12px rgba(58, 50, 43, 0.08);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 860px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      margin: auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    header h1 {
+      color: var(--primary);
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: #665a50;
+      font-size: 0.95rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent-sand);
+      color: var(--text-color);
+      font-weight: bold;
+      font-size: 0.8rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 6px;
+    }
+
+    /* Screen Management */
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* Form & Input Elements */
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-subtle);
+      font-size: 1rem;
+      color: var(--text-color);
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Mode Card Selection */
+    .mode-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .mode-options {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-card {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      background: var(--card-subtle);
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .mode-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .mode-card.selected {
+      border-color: var(--primary);
+      background: #f4ede4;
+      box-shadow: 0 2px 8px rgba(122, 75, 41, 0.15);
+    }
+
+    .mode-card h3 {
+      color: var(--primary);
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mode-card p {
+      font-size: 0.88rem;
+      color: #554a40;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: #ffffff;
+    }
+
+    .btn-secondary:hover {
+      background: var(--secondary-hover);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: #f4ede4;
+    }
+
+    .btn-hint {
+      background: #fff3e0;
+      border: 1px solid #ffe0b2;
+      color: #e65100;
+      font-size: 0.88rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    .btn-hint:hover {
+      background: #ffe0b2;
+    }
+
+    .actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Quiz Elements */
+    .quiz-progress-bar {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .quiz-progress-fill {
+      height: 100%;
+      background: var(--secondary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .quiz-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #665a50;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .question-card {
+      background: var(--card-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .question-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 16px;
+    }
+
+    /* Code Snippet Box */
+    pre.code-block {
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-family: "Fira Code", "Courier New", Courier, monospace;
+      font-size: 0.93rem;
+      overflow-x: auto;
+      margin: 12px 0 18px 0;
+      border-left: 4px solid var(--accent-sand);
+      line-height: 1.45;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-item:hover {
+      border-color: var(--primary);
+      background: #faf4ed;
+    }
+
+    .option-item.selected {
+      border-color: var(--primary);
+      background: #f4ede4;
+      font-weight: 600;
+    }
+
+    .option-item.correct {
+      border-color: var(--correct) !important;
+      background: var(--correct-bg) !important;
+      color: var(--correct);
+      font-weight: 600;
+    }
+
+    .option-item.wrong {
+      border-color: var(--wrong) !important;
+      background: var(--wrong-bg) !important;
+      color: var(--wrong);
+    }
+
+    .option-prefix {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #ede6d8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--text-color);
+      flex-shrink: 0;
+    }
+
+    .option-item.selected .option-prefix {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Hint & Explanation Boxes */
+    .hint-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: var(--hint-bg);
+      border: 1px solid var(--hint-border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #795548;
+    }
+
+    .explanation-box {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 18px;
+      background: #eef4ef;
+      border-left: 4px solid var(--secondary);
+      border-radius: 6px;
+      font-size: 0.92rem;
+      color: #2e4d34;
+    }
+
+    /* Results Screen */
+    .results-summary {
+      background: var(--card-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 16px auto;
+      box-shadow: 0 4px 10px rgba(122, 75, 41, 0.25);
+    }
+
+    .score-circle .score-num {
+      font-size: 2rem;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .score-circle .score-label {
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    .pedagogical-comment {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-top: 12px;
+    }
+
+    .report-meta {
+      font-size: 0.85rem;
+      color: #776b60;
+      margin-top: 6px;
+    }
+
+    .review-section-title {
+      color: var(--primary);
+      font-size: 1.3rem;
+      margin: 28px 0 16px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .review-item {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .review-item.is-correct {
+      border-left: 5px solid var(--correct);
+    }
+
+    .review-item.is-wrong {
+      border-left: 5px solid var(--wrong);
+    }
+
+    .review-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+
+    .review-status.correct {
+      background: var(--correct-bg);
+      color: var(--correct);
+    }
+
+    .review-status.wrong {
+      background: var(--wrong-bg);
+      color: var(--wrong);
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .app-container {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+      .actions-bar, .btn-hint, .quiz-progress-bar {
+        display: none !important;
+      }
+      .review-item {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <header>
+      <h1>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ)</h1>
+      <p>Διαδραστικό Quiz Αξιολόγησης — 1η Εβδομάδα: Εισαγωγικές Έννοιες & Δομή Ακολουθίας</p>
+      <span class="badge">16 Ερωτήσεις Διαβαθμισμένης Δυσκολίας</span>
+    </header>
+
+    <!-- 1. ΑΡΧΙΚΗ ΟΘΟΝΗ -->
+    <section id="screen-start" class="screen active">
+      <div class="form-group">
+        <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+        <input type="text" id="student-name" placeholder="π.χ. Μαρία Παπαδοπούλου (Προαιρετικό)">
+      </div>
+
+      <div class="form-group">
+        <label>Επιλέξτε Λειτουργία Quiz:</label>
+        <div class="mode-options">
+          <div class="mode-card selected" onclick="selectMode('learning')" id="mode-learning">
+            <h3>🎮 Εκμάθηση & Εξάσκησις</h3>
+            <p>Βήμα-βήμα προβολή ερωτήσεων με άμεσο feedback, εμφάνιση υποδείξεων και αναλυτική αιτιολογία σε κάθε απάντηση.</p>
+          </div>
+          <div class="mode-card" onclick="selectMode('simulation')" id="mode-simulation">
+            <h3>📝 Προσομοίωση & Τεστ</h3>
+            <p>Συγκεντρωτική εμφάνιση όλων των ερωτήσεων. Υποχρεωτική απάντηση σε όλα τα θέματα και αναλυτικό Report στο τέλος.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-bar" style="justify-content: center; margin-top: 36px;">
+        <button class="btn btn-primary" style="width: 100%; max-width: 320px;" onclick="startQuiz()">🚀 Έναρξη Quiz</button>
+      </div>
+    </section>
+
+    <!-- 2. ΟΘΟΝΗ ΔΙΕΞΑΓΩΓΗΣ (QUIZ SCREEN) -->
+    <section id="screen-quiz" class="screen">
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="quiz-meta">
+        <span id="quiz-mode-indicator">Λειτουργία: Εκμάθηση</span>
+        <span id="quiz-counter">Ερώτηση 1 από 16</span>
+      </div>
+
+      <div id="questions-container">
+        <!-- Ερωτήσεις προβάλλονται δυναμικά εδώ -->
+      </div>
+
+      <div class="actions-bar">
+        <button class="btn btn-outline" id="btn-prev" onclick="prevQuestion()" style="display:none;">⬅ Προηγούμενη</button>
+        <button class="btn btn-hint" id="btn-global-hint" onclick="toggleCurrentHint()">💡 Υπόδειξη</button>
+        <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Επόμενη ➡</button>
+        <button class="btn btn-secondary" id="btn-submit" onclick="submitQuiz()" style="display:none;">📥 Υποβολή Τεστ</button>
+      </div>
+    </section>
+
+    <!-- 3. ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ (RESULTS / REPORT SCREEN) -->
+    <section id="screen-results" class="screen">
+      <div class="results-summary">
+        <h2>Αναφορά Αποτελεσμάτων</h2>
+        <p class="report-meta" id="report-user-date">Μαθητής: - | Ημερομηνία: -</p>
+
+        <div class="score-circle">
+          <span class="score-num" id="report-score-text">0/16</span>
+          <span class="score-label" id="report-percent-text">0%</span>
+        </div>
+
+        <div class="pedagogical-comment" id="report-comment">
+          Σχόλιο Αξιολόγησης...
+        </div>
+      </div>
+
+      <h3 class="review-section-title">🔍 Αναλυτική Επισκόπηση Απαντήσεων</h3>
+      <div id="review-container">
+        <!-- Αναλυτικά αποτελέσματα -->
+      </div>
+
+      <div class="actions-bar" style="justify-content: center; margin-top: 32px;">
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+        <button class="btn btn-primary" onclick="restartQuiz()">↻ Έναρξη από την αρχή</button>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // --- ΔΕΔΟΜΕΝΑ ΕΡΩΤΗΣΕΩΝ (16 ΕΡΩΤΗΣΕΙΣ ΥΛΗΣ 1ΗΣ ΕΒΔΟΜΑΔΑΣ ΑΕΠΠ) ---
+    const quizData = [
+      {
+        id: 1,
+        question: "Ποιο από τα παρακάτω ΔΕΝ αποτελεί ένα από τα 5 απαραίτητα κριτήρια που πρέπει να ικανοποιεί ένας Αλγόριθμος;",
+        options: [
+          "Πεπαιρασμότητα (Finiteness)",
+          "Καθοριστικότητα (Definiteness)",
+          "Πολυπλοκότητα (Complexity)",
+          "Αποτελεσματικότητα (Effectiveness)"
+        ],
+        correct: 2,
+        hint: "Τα 5 κριτήρια αλγορίθμου είναι: Είσοδος, Έξοδος, Καθοριστικότητα, Πεπαιρασμότητα και Αποτελεσματικότητα.",
+        explanation: "Η Πολυπλοκότητα είναι μέτρο μέτρησης της αποδοτικότητας ενός αλγορίθμου, αλλά ΔΕΝ αποτελεί κριτήριο ορισμού αλγορίθμου."
+      },
+      {
+        id: 2,
+        question: "Τι ορίζεται ως κριτήριο Καθοριστικότητας (Definiteness) σε έναν αλγόριθμο;",
+        options: [
+          "Ο αλγόριθμος πρέπει να τερματίζει μετά από πεπερασμένο αριθμό βημάτων.",
+          "Κάθε εντολή πρέπει να καθορίζεται χωρίς καμία αμφιβολία για τον τρόπο εκτέλεσής της.",
+          "Ο αλγόριθμος πρέπει να δέχεται τουλάχιστον μία τιμή εισόδου.",
+          "Κάθε εντολή πρέπει να είναι απλή και υλοποιήσιμη."
+        ],
+        correct: 1,
+        hint: "Εστιάστε στη σαφήνεια των εντολών ώστε να μην επιδέχονται διπλές ερμηνείες.",
+        explanation: "Καθοριστικότητα σημαίνει ότι οι εντολές είναι σαφείς, ακριβείς και απαλλαγμένες από αμφισβητήσεις ως προς την εκτέλεσή τους."
+      },
+      {
+        id: 3,
+        question: "Ποια από τις παρακάτω λογικές εκφράσεις είναι πάντα ΑΛΗΘΗΣ για οποιαδήποτε λογική τιμή της μεταβλητής Χ;",
+        options: [
+          "Χ ΚΑΙ (ΟΧΙ Χ)",
+          "Χ Ή (ΟΧΙ Χ)",
+          "ΟΧΙ (Χ Ή Χ)",
+          "Χ ΚΑΙ Χ"
+        ],
+        correct: 1,
+        hint: "Εξετάστε τις δύο πιθανές τιμές της μεταβλητής Χ (ΑΛΗΘΗΣ ή ΨΕΥΔΗΣ) στον τελεστή Ή.",
+        explanation: "Η έκφραση Χ Ή (ΟΧΙ Χ) είναι πάντα ΑΛΗΘΗΣ (ταυτολογία): αν Χ=ΑΛΗΘΗΣ τότε ΑΛΗΘΗΣ Ή ΨΕΥΔΗΣ = ΑΛΗΘΗΣ, ενώ αν Χ=ΨΕΥΔΗΣ τότε ΨΕΥΔΗΣ Ή ΑΛΗΘΗΣ = ΑΛΗΘΗΣ."
+      },
+      {
+        id: 4,
+        question: "Ποιο από τα παρακάτω ονόματα μεταβλητών ΔΕΝ είναι αποδεκτό στη ΓΛΩΣΣΑ;",
+        options: [
+          "Σύνολο_1",
+          "2ος_Μαθητής",
+          "X10_A",
+          "Τιμή_ΦΠΑ"
+        ],
+        correct: 1,
+        hint: "Θυμηθείτε με ποιον τύπο χαρακτήρα πρέπει υποχρεωτικά να ξεκινά ένα έγκυρο όνομα μεταβλητής.",
+        explanation: "Τα ονόματα μεταβλητών στη ΓΛΩΣΣΑ πρέπει υποχρεωτικά να αρχίζουν από γράμμα (ελληνικό ή λατινικό) και όχι από αριθμητικό ψηφίο."
+      },
+      {
+        id: 5,
+        question: "Ποιο θα είναι το αποτέλεσμα της αριθμητικής έκφρασης `17 MOD 5 + 18 DIV 4` στη ΓΛΩΣΣΑ;",
+        code: "Αποτέλεσμα ← 17 MOD 5 + 18 DIV 4",
+        options: [
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        correct: 1,
+        hint: "Το MOD δίνει το ακέραιο υπόλοιπο της διαίρεσης (17 mod 5 = 2) και το DIV το ακέραιο πηλίκο (18 div 4 = 4).",
+        explanation: "17 MOD 5 = 2 (αφού 17 = 3*5 + 2). 18 DIV 4 = 4 (αφού 18 = 4*4 + 2). Συνεπώς: 2 + 4 = 6."
+      },
+      {
+        id: 6,
+        question: "Μετά την εκτέλεση του παρακάτω τμήματος αλγορίθμου, ποιες θα είναι οι τελικές τιμές των μεταβλητών Α και Β;",
+        code: "Α ← 5\nΒ ← 12\nΑ ← Α + Β\nΒ ← Α - Β\nΑ ← Α - Β",
+        options: [
+          "Α = 5, Β = 12",
+          "Α = 12, Β = 5",
+          "Α = 17, Β = 12",
+          "Α = 17, Β = 7"
+        ],
+        correct: 1,
+        hint: "Εκτελέστε τις εντολές διαδοχικά (πρόκειται για τον αλγόριθμο ανταλλαγής τιμών χωρίς 3η μεταβλητή).",
+        explanation: "1) Α←5, Β←12. 2) Α←5+12=17. 3) Β←17-12=5. 4) Α←17-5=12. Άρα Α=12 και Β=5 (επιτεύχθηκε αντιμετάθεση τιμών)."
+      },
+      {
+        id: 7,
+        question: "Ποιος τύπος δεδομένων στη ΓΛΩΣΣΑ είναι ο κατάλληλος για την αποθήκευση του μέσου όρου βαθμολογίας ενός μαθητή;",
+        options: [
+          "ΑΚΕΡΑΙΕΣ",
+          "ΠΡΑΓΜΑΤΙΚΕΣ",
+          "ΧΑΡΑΚΤΗΡΕΣ",
+          "ΛΟΓΙΚΕΣ"
+        ],
+        correct: 1,
+        hint: "Ο μέσος όρος προκύπτει από διαίρεση και μπορεί να έχει δεκαδικό μέρος.",
+        explanation: "Εφόσον ο μέσος όρος εμπεριέχει δεκαδικά ψηφία (π.χ. 18.75), απαιτείται μεταβλητή τύπου ΠΡΑΓΜΑΤΙΚΕΣ."
+      },
+      {
+        id: 8,
+        question: "Ποια είναι η λογική τιμή της έκφρασης `(5 + 3 * 2 > 10) ΚΑΙ (15 DIV 3 = 5)`;",
+        options: [
+          "ΑΛΗΘΗΣ",
+          "ΨΕΥΔΗΣ",
+          "11",
+          "5"
+        ],
+        correct: 0,
+        hint: "Υπολογίστε πρώτα τις αριθμητικές πράξεις, μετά τις συγκρίσεις και στο τέλος τη σύνδεση με ΚΑΙ.",
+        explanation: "1) 5 + (3*2) = 11 > 10 → ΑΛΗΘΗΣ. 2) 15 DIV 3 = 5 → 5 = 5 → ΑΛΗΘΗΣ. 3) ΑΛΗΘΗΣ ΚΑΙ ΑΛΗΘΗΣ = ΑΛΗΘΗΣ."
+      },
+      {
+        id: 9,
+        question: "Ποια πρόταση είναι ΣΩΣΤΗ για την εντολή εκχώρησης τιμής `Χ ← Υ`;",
+        options: [
+          "Η τιμή της μεταβλητής Χ μεταφέρεται στη Υ και η Χ μηδενίζεται.",
+          "Η τιμή της δεξιάς μεταβλητής Υ αντιγράφεται στη μεταβλητή Χ, ενώ η Υ διατηρεί την τιμή της.",
+          "Συγκρίνονται οι τιμές των μεταβλητών Χ και Υ.",
+          "Η τιμή της Χ εκχωρείται στη Υ."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε την εκχώρηση ως αντιγραφή της τιμής της εκφρασης του δεξιού μέλους στη μεταβλητή του αριστερού μέλους.",
+        explanation: "Στην εκχώρηση, υπολογίζεται η τιμή του δεξιού μέλους και αποθηκεύεται στη μεταβλητή του αριστερού μέλους χωρίς να επηρεάζεται η δεξιά μεταβλητή."
+      },
+      {
+        id: 10,
+        question: "Ποια θα είναι η τελική τιμή της μεταβλητής Z μετά την εκτέλεση του παρακάτω υπολογισμού;",
+        code: "Χ ← 10\nΥ ← 3\nZ ← Χ MOD Υ * 4 + (Χ DIV Υ)",
+        options: [
+          "7",
+          "12",
+          "16",
+          "19"
+        ],
+        correct: 0,
+        hint: "Προτεραιότητα: Παρενθέσεις, μετά MOD / DIV / Πολλαπλασιασμός από αριστερά προς τα δεξιά.",
+        explanation: "1) Χ MOD Υ = 10 MOD 3 = 1. 2) Χ DIV Υ = 10 DIV 3 = 3. 3) 1 * 4 = 4. 4) 4 + 3 = 7."
+      },
+      {
+        id: 11,
+        question: "Ποιος τρόπος αναπαράστασης αλγορίθμου χρησιμοποιεί standardized γεωμετρικά σχήματα συνδεδεμένα με βέλη;",
+        options: [
+          "Φυσική Γλώσσα κατά βήματα",
+          "Ψευδογλώσσα",
+          "Διάγραμμα Ροής (Flowchart)",
+          "Γλώσσα Μηχανής"
+        ],
+        correct: 2,
+        hint: "Πρόκειται για διαγραμματική/γραφική αναπαράσταση της ροής των εντολών.",
+        explanation: "Το Διάγραμμα Ροής είναι ο διαγραμματικός τρόπος αναπαράστασης αλγορίθμου με χρήση γεωμετρικών σχημάτων (π.χ. έλλειψη, ορθογώνιο, ρόμβος)."
+      },
+      {
+        id: 12,
+        question: "Τι απαιτεί το κριτήριο της Εξόδου (Output) σε έναν αλγόριθμο;",
+        options: [
+          "Ο αλγόριθμος πρέπει να δέχεται τιμές από το πληκτρολόγιο.",
+          "Ο αλγόριθμος πρέπει να παράγει τουλάχιστον μία τιμή/αποτέλεσμα προς το χρήστη ή το περιβάλλον.",
+          "Ο αλγόριθμος πρέπει να τερματίζει πάντα σε 5 λεπτά.",
+          "Ο αλγόριθμος πρέπει να περιέχει εντολές επιλογής."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε τον σκοπό ύπαρξης ενός αλγορίθμου: να δίνει αποτελέσματα.",
+        explanation: "Το κριτήριο εξόδου επιβάλλει ο αλγόριθμος να δημιουργεί τουλάχιστον ένα αποτέλεσμα/τιμή εξόδου."
+      },
+      {
+        id: 13,
+        question: "Ποιες τιμές θα έχουν οι μεταβλητές Β και Γ μετά την εκτέλεση του παρακάτω τμήματος;",
+        code: "Α ← 4\nΒ ← 2 * Α + 1\nΓ ← (Β > 8) ΚΑΙ (Α MOD 2 = 0)",
+        options: [
+          "Β = 9, Γ = ΑΛΗΘΗΣ",
+          "Β = 9, Γ = ΨΕΥΔΗΣ",
+          "Β = 8, Γ = ΑΛΗΘΗΣ",
+          "Β = 9, Γ = 0"
+        ],
+        correct: 0,
+        hint: "Υπολογίστε το Β (2*4 + 1 = 9) και εξετάστε αν 9 > 8 και 4 MOD 2 = 0.",
+        explanation: "1) Β = 2*4 + 1 = 9. 2) Β > 8 → 9 > 8 (ΑΛΗΘΗΣ). 3) Α MOD 2 = 0 → 4 MOD 2 = 0 (ΑΛΗΘΗΣ). 4) Γ ← ΑΛΗΘΗΣ ΚΑΙ ΑΛΗΘΗΣ = ΑΛΗΘΗΣ."
+      },
+      {
+        id: 14,
+        question: "Ποιο είναι το συντακτικό λάθος στο παρακάτω πρόγραμμα σε ΓΛΩΣΣΑ;",
+        code: "ΠΡΟΓΡΑΜΜΑ Δοκιμή\nΜΕΤΑΒΛΗΤΕΣ\n  ΑΚΕΡΑΙΕΣ: X, Y\nΑΡΧΗ\n  ΔΙΑΒΑΣΕ X\n  Y ← X / 2\n  ΓΡΑΨΕ Y\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ",
+        options: [
+          "Η εντολή ΔΙΑΒΑΣΕ πρέπει να έχει εισαγωγικά.",
+          "Ο τελεστής διαίρεσης `/` παράγει πάντα ΠΡΑΓΜΑΤΙΚΟ αποτέλεσμα, ενώ η Υ έχει δηλωθεί ΑΚΕΡΑΙΑ.",
+          "Η εντολή ΓΡΑΨΕ πρέπει να μπει πριν την εκχώρηση.",
+          "Δεν υπάρχει κανένα λάθος στο πρόγραμμα."
+        ],
+        correct: 1,
+        hint: "Εξετάστε τον τύπο αποτελέσματος της απλής διαίρεσης `/` στη ΓΛΩΣΣΑ.",
+        explanation: "Στη ΓΛΩΣΣΑ ο τελεστής `/` επιστρέφει πάντα τιμή τύπου ΠΡΑΓΜΑΤΙΚΕΣ. Η εκχώρησή του σε ακέραια μεταβλητή Υ προκαλεί ασυμβατότητα τύπων."
+      },
+      {
+        id: 15,
+        question: "Ποιο από τα παρακάτω αποτελεί έγκυρη σταθερά τύπου ΧΑΡΑΚΤΗΡΕΣ στη ΓΛΩΣΣΑ;",
+        options: [
+          "123.45",
+          "\"Αποτελέσματα 2026\"",
+          "ΑΛΗΘΗΣ",
+          "X_VALUE"
+        ],
+        correct: 1,
+        hint: "Οι σταθερές αλφαριθμητικών/χαρακτήρων περιλείονται πάντα σε εισαγωγικά.",
+        explanation: "Στη ΓΛΩΣΣΑ, οι τιμές χαρακτήρων/συμβολοσειρών περικλείονται υποχρεωτικά σε διπλά (ή μονά) εισαγωγικά (π.χ. \"Αποτελέσματα 2026\")."
+      },
+      {
+        id: 16,
+        question: "Ποια είναι η τελική τιμή της μεταβλητής Γ στο παρακάτω ίχνος εκτέλεσης;",
+        code: "Α ← 20\nΒ ← 6\nΑ ← Α MOD Β\nΒ ← Β DIV Α\nΓ ← Α + Β",
+        options: [
+          "5",
+          "7",
+          "8",
+          "10"
+        ],
+        correct: 0,
+        hint: "20 MOD 6 = 2. Στη συνέχεια 6 DIV 2 = 3.",
+        explanation: "1) Α ← 20 MOD 6 = 2. 2) Β ← 6 DIV 2 = 3. 3) Γ ← 2 + 3 = 5."
+      }
+    ];
+
+    // --- ΚΑΤΑΣΤΑΣΗ ΕΦΑΡΜΟΓΗΣ (APP STATE) ---
+    let state = {
+      studentName: "Ανώνυμος/η Μαθητής/τρια",
+      mode: "learning", // 'learning' ή 'simulation'
+      currentIndex: 0,
+      userAnswers: new Array(quizData.length).fill(null),
+      hintsOpened: new Array(quizData.length).fill(false)
+    };
+
+    // --- ΕΠΙΛΟΓΗ MODE ---
+    function selectMode(selectedMode) {
+      state.mode = selectedMode;
+      document.getElementById('mode-learning').classList.toggle('selected', selectedMode === 'learning');
+      document.getElementById('mode-simulation').classList.toggle('selected', selectedMode === 'simulation');
+    }
+
+    // --- ΕΝΑΡΞΗ QUIZ ---
+    function startQuiz() {
+      const nameInput = document.getElementById('student-name').value.trim();
+      if (nameInput !== "") {
+        state.studentName = nameInput;
+      }
+
+      state.currentIndex = 0;
+      state.userAnswers.fill(null);
+      state.hintsOpened.fill(false);
+
+      switchScreen('screen-quiz');
+      setupQuizUI();
+      renderQuiz();
+    }
+
+    function switchScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function setupQuizUI() {
+      const modeText = state.mode === 'learning' ? '🎮 Λειτουργία: Εκμάθηση & Εξάσκηση' : '📝 Λειτουργία: Προσομοίωση & Τεστ';
+      document.getElementById('quiz-mode-indicator').innerText = modeText;
+    }
+
+    // --- RENDER QUIZ ---
+    function renderQuiz() {
+      const container = document.getElementById('questions-container');
+      container.innerHTML = "";
+
+      const total = quizData.length;
+      const progressPercent = ((state.currentIndex + 1) / total) * 100;
+      document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+
+      if (state.mode === 'learning') {
+        // Εμφάνιση ΜΙΑΣ ερώτησης στη Λειτουργία Εκμάθησης
+        document.getElementById('quiz-counter').innerText = `Ερώτηση ${state.currentIndex + 1} από ${total}`;
+        
+        const q = quizData[state.currentIndex];
+        container.appendChild(createQuestionCard(q, state.currentIndex));
+
+        document.getElementById('btn-prev').style.display = state.currentIndex > 0 ? 'inline-flex' : 'none';
+        document.getElementById('btn-next').style.display = state.currentIndex < total - 1 ? 'inline-flex' : 'none';
+        document.getElementById('btn-submit').style.display = state.currentIndex === total - 1 ? 'inline-flex' : 'none';
+        document.getElementById('btn-global-hint').style.display = 'inline-flex';
+
+      } else {
+        // Εμφάνιση ΟΛΩΝ των ερωτήσεων στη Λειτουργία Προσομοίωσης
+        document.getElementById('quiz-counter').innerText = `Όλες οι Ερωτήσεις (1-${total})`;
+        document.getElementById('progress-fill').style.width = '100%';
+
+        quizData.forEach((q, idx) => {
+          container.appendChild(createQuestionCard(q, idx));
+        });
+
+        document.getElementById('btn-prev').style.display = 'none';
+        document.getElementById('btn-next').style.display = 'none';
+        document.getElementById('btn-global-hint').style.display = 'none';
+        document.getElementById('btn-submit').style.display = 'inline-flex';
+      }
+    }
+
+    // --- ΔΗΜΙΟΥΡΓΙΑ CARD ΕΡΩΤΗΣΗΣ ---
+    function createQuestionCard(q, qIndex) {
+      const card = document.createElement('div');
+      card.className = 'question-card';
+      card.id = `q-card-${qIndex}`;
+
+      let codeHTML = q.code ? `<pre class="code-block"><code>${escapeHTML(q.code)}</code></pre>` : '';
+      const prefixes = ['Α', 'Β', 'Γ', 'Δ'];
+
+      let optionsHTML = q.options.map((opt, optIdx) => {
+        let selectedClass = state.userAnswers[qIndex] === optIdx ? 'selected' : '';
+        
+        // Σε εκμάθηση, αν έχει απαντηθεί, δείχνουμε σωστό/λάθος
+        if (state.mode === 'learning' && state.userAnswers[qIndex] !== null) {
+          if (optIdx === q.correct) selectedClass += ' correct';
+          else if (optIdx === state.userAnswers[qIndex]) selectedClass += ' wrong';
+        }
+
+        return `
+          <div class="option-item ${selectedClass}" onclick="selectOption(${qIndex}, ${optIdx})">
+            <span class="option-prefix">${prefixes[optIdx]}</span>
+            <span>${escapeHTML(opt)}</span>
+          </div>
+        `;
+      }).join('');
+
+      let isHintVisible = state.hintsOpened[qIndex] ? 'display:block;' : 'display:none;';
+      let isExplVisible = (state.mode === 'learning' && state.userAnswers[qIndex] !== null) ? 'display:block;' : 'display:none;';
+
+      card.innerHTML = `
+        <div class="question-title">${qIndex + 1}. ${escapeHTML(q.question)}</div>
+        ${codeHTML}
+        <div class="options-list">${optionsHTML}</div>
+        
+        <div class="hint-box" id="hint-box-${qIndex}" style="${isHintVisible}">
+          💡 <strong>Υπόδειξη:</strong> ${escapeHTML(q.hint)}
+        </div>
+
+        <div class="explanation-box" id="expl-box-${qIndex}" style="${isExplVisible}">
+          📖 <strong>Πλήρης Αιτιολογία:</strong> ${escapeHTML(q.explanation)}
+        </div>
+      `;
+
+      return card;
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // --- ΕΠΙΛΟΓΗ ΑΠΑΝΤΗΣΗΣ ---
+    function selectOption(qIndex, optIndex) {
+      state.userAnswers[qIndex] = optIndex;
+
+      if (state.mode === 'learning') {
+        // Ενημέρωση κάρτας με άμεσο feedback
+        const card = document.getElementById(`q-card-${qIndex}`);
+        const newCard = createQuestionCard(quizData[qIndex], qIndex);
+        card.replaceWith(newCard);
+      } else {
+        // Στην προσομοίωση απλά ενημερώνουμε το UI επιλογής
+        const card = document.getElementById(`q-card-${qIndex}`);
+        const items = card.querySelectorAll('.option-item');
+        items.forEach((item, idx) => {
+          item.classList.toggle('selected', idx === optIndex);
+        });
+      }
+    }
+
+    // --- TOGGLE HINT ---
+    function toggleCurrentHint() {
+      const qIndex = state.currentIndex;
+      state.hintsOpened[qIndex] = !state.hintsOpened[qIndex];
+      const hintBox = document.getElementById(`hint-box-${qIndex}`);
+      if (hintBox) {
+        hintBox.style.display = state.hintsOpened[qIndex] ? 'block' : 'none';
+      }
+    }
+
+    // --- ΠΛΟΗΓΗΣΗ (LEARNING MODE) ---
+    function nextQuestion() {
+      if (state.currentIndex < quizData.length - 1) {
+        state.currentIndex++;
+        renderQuiz();
+        window.scrollTo(0, 0);
+      }
+    }
+
+    function prevQuestion() {
+      if (state.currentIndex > 0) {
+        state.currentIndex--;
+        renderQuiz();
+        window.scrollTo(0, 0);
+      }
+    }
+
+    // --- ΥΠΟΒΟΛΗ & ΕΛΕΓΧΟΣ ΠΛΗΡΟΤΗΤΑΣ ---
+    function submitQuiz() {
+      // Έλεγχος αν υπάρχουν αναπάντητες ερωτήσεις
+      const unanswered = [];
+      state.userAnswers.forEach((ans, idx) => {
+        if (ans === null) unanswered.push(idx + 1);
+      });
+
+      if (unanswered.length > 0) {
+        alert(`⚠️ Παρακαλούμε απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή!\n\nΑναπάντητες ερωτήσεις: ${unanswered.join(', ')}`);
+        
+        // Σε προσομοίωση, εστιάζουμε στην πρώτη αναπάντητη
+        const firstUnansweredCard = document.getElementById(`q-card-${unanswered[0] - 1}`);
+        if (firstUnansweredCard) {
+          firstUnansweredCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      generateReport();
+      switchScreen('screen-results');
+    }
+
+    // --- ΔΗΜΙΟΥΡΓΙΑ ΑΝΑΦΟΡΑΣ (REPORT GENERATION) ---
+    function generateReport() {
+      let score = 0;
+      quizData.forEach((q, idx) => {
+        if (state.userAnswers[idx] === q.correct) {
+          score++;
+        }
+      });
+
+      const total = quizData.length;
+      const percentage = Math.round((score / total) * 100);
+
+      document.getElementById('report-user-date').innerText = 
+        `Μαθητής/τρια: ${state.studentName} | Ημερομηνία & Ώρα: ${new Date().toLocaleString('el-GR')}`;
+      
+      document.getElementById('report-score-text').innerText = `${score}/${total}`;
+      document.getElementById('report-percent-text').innerText = `${percentage}%`;
+
+      // Παιδαγωγικό σχόλιο
+      let comment = "";
+      if (percentage >= 90) {
+        comment = "🌟 Άριστα! Έχετε κατανοήσει πλήρως τις βασικές έννοιες της 1ης εβδομάδας!";
+      } else if (percentage >= 75) {
+        comment = "👏 Πολύ Καλά! Έχετε πολύ καλή βάση. Μερικές λεπτομέρειες χρειάζονται λίγη προσοχή.";
+      } else if (percentage >= 50) {
+        comment = "👍 Καλή προσπάθεια! Με λίγη επιπλέον μελέτη στις εκφράσεις και το ίχνος θα τα πάτε περίφημα.";
+      } else {
+        comment = "📚 Χρειάζεται επανάληψη. Μελετήστε ξανά τα κριτήρια αλγορίθμων, τους τελεστές και τις εντολές εκχώρησης!";
+      }
+      document.getElementById('report-comment').innerText = comment;
+
+      // Αναλυτική λίστα επανεξέτασης ερωτήσεων
+      const reviewContainer = document.getElementById('review-container');
+      reviewContainer.innerHTML = "";
+
+      const prefixes = ['Α', 'Β', 'Γ', 'Δ'];
+
+      quizData.forEach((q, idx) => {
+        const isCorrect = state.userAnswers[idx] === q.correct;
+        const userChoiceText = state.userAnswers[idx] !== null ? `${prefixes[state.userAnswers[idx]]}) ${q.options[state.userAnswers[idx]]}` : 'Καμία';
+        const correctChoiceText = `${prefixes[q.correct]}) ${q.options[q.correct]}`;
+
+        const item = document.createElement('div');
+        item.className = `review-item ${isCorrect ? 'is-correct' : 'is-wrong'}`;
+
+        let codeHTML = q.code ? `<pre class="code-block"><code>${escapeHTML(q.code)}</code></pre>` : '';
+
+        item.innerHTML = `
+          <div class="review-status ${isCorrect ? 'correct' : 'wrong'}">
+            ${isCorrect ? '✔ Σωστό' : '✖ Λάθος'}
+          </div>
+          <div class="question-title">${idx + 1}. ${escapeHTML(q.question)}</div>
+          ${codeHTML}
+          <div style="margin: 10px 0; font-size: 0.93rem;">
+            <p><strong>Η Επιλογή σας:</strong> <span style="color: ${isCorrect ? 'var(--correct)' : 'var(--wrong)'};">${escapeHTML(userChoiceText)}</span></p>
+            ${!isCorrect ? `<p><strong>Σωστή Απάντηση:</strong> <span style="color: var(--correct); font-weight:600;">${escapeHTML(correctChoiceText)}</span></p>` : ''}
+          </div>
+          <div class="explanation-box" style="display:block; margin-top:12px;">
+            📖 <strong>Αιτιολογία:</strong> ${escapeHTML(q.explanation)}
+          </div>
+        `;
+
+        reviewContainer.appendChild(item);
+      });
+    }
+
+    // --- ΕΠΑΝΕΚΚΙΝΗΣΗ QUIZ ---
+    function restartQuiz() {
+      switchScreen('screen-start');
+    }
+  </script>
+</body>
+</html>

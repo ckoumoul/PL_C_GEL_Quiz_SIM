@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Διαδραστικό Quiz ΑΕΠΠ - 4η Εβδομάδα</title>
+  <style>
+    :root {
+      --bg-color: #f7f4ef;
+      --text-color: #3a322b;
+      --primary: #7a4b29;
+      --primary-hover: #61391f;
+      --secondary: #4e6e52;
+      --secondary-hover: #3b543e;
+      --accent-sand: #d4b886;
+      --card-bg: #ffffff;
+      --card-subtle: #fdfbf7;
+      --border: #e2d9c8;
+      --code-bg: #24201c;
+      --code-text: #f5eedf;
+      --correct: #2e7d32;
+      --correct-bg: #e8f5e9;
+      --wrong: #c62828;
+      --wrong-bg: #ffebee;
+      --hint-bg: #fff8e1;
+      --hint-border: #ffe082;
+      --shadow: 0 4px 12px rgba(58, 50, 43, 0.08);
+      --radius: 12px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 860px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      margin: auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    header h1 {
+      color: var(--primary);
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: #665a50;
+      font-size: 0.95rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: var(--accent-sand);
+      color: var(--text-color);
+      font-weight: bold;
+      font-size: 0.8rem;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-top: 6px;
+    }
+
+    /* Screen Management */
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* Form & Input Elements */
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-subtle);
+      font-size: 1rem;
+      color: var(--text-color);
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    /* Mode Card Selection */
+    .mode-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .mode-options {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .mode-card {
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      background: var(--card-subtle);
+      transition: all 0.2s ease;
+      text-align: left;
+    }
+
+    .mode-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .mode-card.selected {
+      border-color: var(--primary);
+      background: #f4ede4;
+      box-shadow: 0 2px 8px rgba(122, 75, 41, 0.15);
+    }
+
+    .mode-card h3 {
+      color: var(--primary);
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mode-card p {
+      font-size: 0.88rem;
+      color: #554a40;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--secondary);
+      color: #ffffff;
+    }
+
+    .btn-secondary:hover {
+      background: var(--secondary-hover);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: #f4ede4;
+    }
+
+    .btn-hint {
+      background: #fff3e0;
+      border: 1px solid #ffe0b2;
+      color: #e65100;
+      font-size: 0.88rem;
+      padding: 6px 14px;
+      border-radius: 20px;
+    }
+
+    .btn-hint:hover {
+      background: #ffe0b2;
+    }
+
+    .actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 28px;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Quiz Elements */
+    .quiz-progress-bar {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .quiz-progress-fill {
+      height: 100%;
+      background: var(--secondary);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .quiz-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #665a50;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .question-card {
+      background: var(--card-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+
+    .question-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 16px;
+    }
+
+    /* Code Snippet Box */
+    pre.code-block {
+      background-color: var(--code-bg);
+      color: var(--code-text);
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-family: "Fira Code", "Courier New", Courier, monospace;
+      font-size: 0.93rem;
+      overflow-x: auto;
+      margin: 12px 0 18px 0;
+      border-left: 4px solid var(--accent-sand);
+      line-height: 1.45;
+    }
+
+    .options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .option-item:hover {
+      border-color: var(--primary);
+      background: #faf4ed;
+    }
+
+    .option-item.selected {
+      border-color: var(--primary);
+      background: #f4ede4;
+      font-weight: 600;
+    }
+
+    .option-item.correct {
+      border-color: var(--correct) !important;
+      background: var(--correct-bg) !important;
+      color: var(--correct);
+      font-weight: 600;
+    }
+
+    .option-item.wrong {
+      border-color: var(--wrong) !important;
+      background: var(--wrong-bg) !important;
+      color: var(--wrong);
+    }
+
+    .option-prefix {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #ede6d8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: var(--text-color);
+      flex-shrink: 0;
+    }
+
+    .option-item.selected .option-prefix {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    /* Hint & Explanation Boxes */
+    .hint-box {
+      display: none;
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: var(--hint-bg);
+      border: 1px solid var(--hint-border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #795548;
+    }
+
+    .explanation-box {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 18px;
+      background: #eef4ef;
+      border-left: 4px solid var(--secondary);
+      border-radius: 6px;
+      font-size: 0.92rem;
+      color: #2e4d34;
+    }
+
+    /* Results Screen */
+    .results-summary {
+      background: var(--card-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .score-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin: 16px auto;
+      box-shadow: 0 4px 10px rgba(122, 75, 41, 0.25);
+    }
+
+    .score-circle .score-num {
+      font-size: 2rem;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .score-circle .score-label {
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    .pedagogical-comment {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--secondary);
+      margin-top: 12px;
+    }
+
+    .report-meta {
+      font-size: 0.85rem;
+      color: #776b60;
+      margin-top: 6px;
+    }
+
+    .review-section-title {
+      color: var(--primary);
+      font-size: 1.3rem;
+      margin: 28px 0 16px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .review-item {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .review-item.is-correct {
+      border-left: 5px solid var(--correct);
+    }
+
+    .review-item.is-wrong {
+      border-left: 5px solid var(--wrong);
+    }
+
+    .review-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: bold;
+      font-size: 0.85rem;
+      padding: 2px 10px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+
+    .review-status.correct {
+      background: var(--correct-bg);
+      color: var(--correct);
+    }
+
+    .review-status.wrong {
+      background: var(--wrong-bg);
+      color: var(--wrong);
+    }
+
+    /* Print Styles */
+    @media print {
+      body {
+        background: #ffffff;
+        padding: 0;
+      }
+      .app-container {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+      .actions-bar, .btn-hint, .quiz-progress-bar {
+        display: none !important;
+      }
+      .review-item {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <header>
+      <h1>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ)</h1>
+      <p>Διαδραστικό Quiz Αξιολόγησης — 4η Εβδομάδα: Ανάλυση Προβλημάτων, Δομημένος Προγραμματισμός & Δομή Επιλογής</p>
+      <span class="badge">16 Ερωτήσεις Διαβαθμισμένης Δυσκολίας</span>
+    </header>
+
+    <!-- 1. ΑΡΧΙΚΗ ΟΘΟΝΗ -->
+    <section id="screen-start" class="screen active">
+      <div class="form-group">
+        <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+        <input type="text" id="student-name" placeholder="π.χ. Αλέξανδρος Νικολάου (Προαιρετικό)">
+      </div>
+
+      <div class="form-group">
+        <label>Επιλέξτε Λειτουργία Quiz:</label>
+        <div class="mode-options">
+          <div class="mode-card selected" onclick="selectMode('learning')" id="mode-learning">
+            <h3>🎮 Εκμάθηση & Εξάσκησις</h3>
+            <p>Βήμα-βήμα προβολή ερωτήσεων με άμεσο feedback, εμφάνιση υποδείξεων και αναλυτική αιτιολογία σε κάθε απάντηση.</p>
+          </div>
+          <div class="mode-card" onclick="selectMode('simulation')" id="mode-simulation">
+            <h3>📝 Προσομοίωση & Τεστ</h3>
+            <p>Συγκεντρωτική εμφάνιση όλων των ερωτήσεων. Υποχρεωτική απάντηση σε όλα τα θέματα και αναλυτικό Report στο τέλος.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-bar" style="justify-content: center; margin-top: 36px;">
+        <button class="btn btn-primary" style="width: 100%; max-width: 320px;" onclick="startQuiz()">🚀 Έναρξη Quiz</button>
+      </div>
+    </section>
+
+    <!-- 2. ΟΘΟΝΗ ΔΙΕΞΑΓΩΓΗΣ (QUIZ SCREEN) -->
+    <section id="screen-quiz" class="screen">
+      <div class="quiz-progress-bar">
+        <div class="quiz-progress-fill" id="progress-fill"></div>
+      </div>
+
+      <div class="quiz-meta">
+        <span id="quiz-mode-indicator">Λειτουργία: Εκμάθηση</span>
+        <span id="quiz-counter">Ερώτηση 1 από 16</span>
+      </div>
+
+      <div id="questions-container">
+        <!-- Ερωτήσεις προβάλλονται δυναμικά εδώ -->
+      </div>
+
+      <div class="actions-bar">
+        <button class="btn btn-outline" id="btn-prev" onclick="prevQuestion()" style="display:none;">⬅ Προηγούμενη</button>
+        <button class="btn btn-hint" id="btn-global-hint" onclick="toggleCurrentHint()">💡 Υπόδειξη</button>
+        <button class="btn btn-primary" id="btn-next" onclick="nextQuestion()">Επόμενη ➡</button>
+        <button class="btn btn-secondary" id="btn-submit" onclick="submitQuiz()" style="display:none;">📥 Υποβολή Τεστ</button>
+      </div>
+    </section>
+
+    <!-- 3. ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ (RESULTS / REPORT SCREEN) -->
+    <section id="screen-results" class="screen">
+      <div class="results-summary">
+        <h2>Αναφορά Αποτελεσμάτων</h2>
+        <p class="report-meta" id="report-user-date">Μαθητής: - | Ημερομηνία: -</p>
+
+        <div class="score-circle">
+          <span class="score-num" id="report-score-text">0/16</span>
+          <span class="score-label" id="report-percent-text">0%</span>
+        </div>
+
+        <div class="pedagogical-comment" id="report-comment">
+          Σχόλιο Αξιολόγησης...
+        </div>
+      </div>
+
+      <h3 class="review-section-title">🔍 Αναλυτική Επισκόπηση Απαντήσεων</h3>
+      <div id="review-container">
+        <!-- Αναλυτικά αποτελέσματα -->
+      </div>
+
+      <div class="actions-bar" style="justify-content: center; margin-top: 32px;">
+        <button class="btn btn-secondary" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+        <button class="btn btn-primary" onclick="restartQuiz()">↻ Έναρξη από την αρχή</button>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // --- ΔΕΔΟΜΕΝΑ ΕΡΩΤΗΣΕΩΝ (16 ΕΡΩΤΗΣΕΙΣ ΥΛΗΣ 4ΗΣ ΕΒΔΟΜΑΔΑΣ ΑΕΠΠ) ---
+    const quizData = [
+      {
+        id: 1,
+        question: "Τι εκφράζει η τεχνική της «Ιεραρχικής Σχεδίασης» (Top-Down Design) στην ανάλυση και σχεδίαση προβλημάτων;",
+        options: [
+          "Την εκτέλεση του προγράμματος από την τελευταία εντολή προς την πρώτη.",
+          "Τη διάσπαση ενός σύνθετου προβλήματος σε απλούστερα υποπροβλήματα σε διαδοχικά επίπεδα.",
+          "Τη μετατροπή της ψευδογλώσσας σε γλώσσα μηχανής.",
+          "Την αντικατάσταση των δομών επανάληψης με δομές επιλογής."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε την προσέγγιση «από πάνω προς τα κάτω» (από το γενικό πρόβλημα στα επιμέρους τμήματα).",
+        explanation: "Η Ιεραρχική Σχεδίαση περιλαμβάνει τη διάσπαση του αρχικού προβλήματος σε ένα σύνολο απλούστερων υποπροβλημάτων, τα οποία με τη σειρά τους διασπώνται σε ακόμη απλούστερα (βαθμιαία αποσύνθεση)."
+      },
+      {
+        id: 2,
+        question: "Σύμφωνα με το Θεώρημα των Böhm - Jacopini (Αρχές Δομημένου Προγραμματισμού), κάθε αλγόριθμος μπορεί να κατασκευαστεί χρησιμοποιώντας αποκλειστικά ποιες τρεις βασικές δομές;",
+        options: [
+          "Ακολουθίας, Εκχώρησης, Εισόδου/Εξόδου",
+          "Ακολουθίας, Επιλογής, Επανάληψης",
+          "Επιλογής, Επανάληψης, Υποπρογραμμάτων",
+          "Ακολουθίας, Ταξινόμησης, Αναζήτησης"
+        ],
+        correct: 1,
+        hint: "Πρόκειται για τις τρεις θεμελιώδεις δομές ελέγχου της αλγοριθμικής.",
+        explanation: "Το θεώρημα των Böhm και Jacopini αποδεικνύει ότι κάθε υπολογίσιμος αλγόριθμος μπορεί να γραφεί χρησιμοποιώντας μόνο τρεις δομές: τη Δομή Ακολουθίας, τη Δομή Επιλογής και τη Δομή Επανάληψης."
+      },
+      {
+        id: 3,
+        question: "Ποιο από τα παρακάτω ΔΕΝ αποτελεί πλεονέκτημα του Τμηματικού Προγραμματισμού (Modular Programming);",
+        options: [
+          "Διευκόλυνση της ανάπτυξης και συντήρησης του προγράμματος.",
+          "Αύξηση της επαναχρησιμοποιησιμότητας του κώδικα.",
+          "Αυτόματη εξάλειψη όλων των λογικών λαθών κατά τη μεταγλώττιση.",
+          "Δυνατότητα παράλληλης εργασίας από ομάδα προγραμματιστών."
+        ],
+        correct: 2,
+        hint: "Σκεφτείτε αν κάποια προγραμματιστική τεχνική μπορεί να εγγυηθεί αυτόματα ότι ο προγραμματιστής δεν θα κάνει λογικά λάθη.",
+        explanation: "Ο τμηματικός προγραμματισμός χωρίζει το πρόγραμμα σε αυτόνομα υποπρογράμματα διευκολύνοντας τον έλεγχο και τη συντήρηση, αλλά ΔΕΝ εξαλείφει αυτόματα τα λογικά λάθη (τα οποία οφείλονται στη λογική του δημιουργού)."
+      },
+      {
+        id: 4,
+        question: "Πότε εκτελούνται οι εντολές που περιέχονται στο σώμα μιας απλής εντολής επιλογής `ΑΝ συνθήκη ΤΟΤΕ ... ΤΕΛΟΣ_ΑΝ`;",
+        options: [
+          "Μόνο όταν η συνθήκη αξιολογείται ως ΨΕΥΔΗΣ.",
+          "Μόνο όταν η συνθήκη αξιολογείται ως ΑΛΗΘΗΣ.",
+          "Πάντα, ανεξάρτητα από την τιμή της συνθήκης.",
+          "Τουλάχιστον μία φορά, όπως στη δομή επανάληψης."
+        ],
+        correct: 1,
+        hint: "Στην απλή δομή επιλογής, αν η συνθήκη δεν ισχύει, οι εντολές προσπερνώνται.",
+        explanation: "Στην απλή επιλογή `ΑΝ συνθήκη ΤΟΤΕ`, το μπλοκ εντολών εκτελείται αποκλειστικά και μόνο εφόσον η συνθήκη είναι ΑΛΗΘΗΣ. Αν είναι ΨΕΥΔΗΣ, η ροή συνεχίζεται μετά το ΤΕΛΟΣ_ΑΝ."
+      },
+      {
+        id: 5,
+        question: "Ποια θα είναι η τελική τιμή της μεταβλητής Z μετά την εκτέλεση του παρακάτω τμήματος κώδικα;",
+        code: "Χ ← 15\nΥ ← 20\nΑΝ Χ > 10 ΚΑΙ Υ < 15 ΤΟΤΕ\n    Z ← Χ + Υ\nΑΛΛΙΩΣ\n    Z ← Υ - Χ\nΤΕΛΟΣ_ΑΝ",
+        options: [
+          "35",
+          "5",
+          "-5",
+          "0"
+        ],
+        correct: 1,
+        hint: "Αξιολογήστε τη λογική έκφραση: (15 > 10) ΚΑΙ (20 < 15).",
+        explanation: "1) Χ > 10 (15 > 10) → ΑΛΗΘΗΣ. 2) Υ < 15 (20 < 15) → ΨΕΥΔΗΣ. 3) ΑΛΗΘΗΣ ΚΑΙ ΨΕΥΔΗΣ → ΨΕΥΔΗΣ. Επομένως εκτελείται το κλαδί ΑΛΛΙΩΣ: Z ← 20 - 15 = 5."
+      },
+      {
+        id: 6,
+        question: "Ποια τιμή θα εκχωρηθεί στη μεταβλητή `Αποτέλεσμα` κατά την εκτέλεση της πολλαπλής επιλογής;",
+        code: "Βαθμός ← 14\nΑΝ Βαθμός >= 18 ΤΟΤΕ\n    Αποτέλεσμα ← \"Άριστα\"\nΑΛΛΙΩΣ_ΑΝ Βαθμός >= 15 ΤΟΤΕ\n    Αποτέλεσμα ← \"Πολύ Καλά\"\nΑΛΛΙΩΣ_ΑΝ Βαθμός >= 12 ΤΟΤΕ\n    Αποτέλεσμα ← \"Καλά\"\nΑΛΛΙΩΣ\n    Αποτέλεσμα ← \"Μέτρια\"\nΤΕΛΟΣ_ΑΝ",
+        options: [
+          "\"Άριστα\"",
+          "\"Πολύ Καλά\"",
+          "\"Καλά\"",
+          "\"Μέτρια\""
+        ],
+        correct: 2,
+        hint: "Ελέγξτε τις συνθήκες με τη σειρά: 14 >= 18; 14 >= 15; 14 >= 12;",
+        explanation: "1) 14 >= 18 → ΨΕΥΔΗΣ. 2) 14 >= 15 → ΨΕΥΔΗΣ. 3) 14 >= 12 → ΑΛΗΘΗΣ! Εκτελείται η αντίστοιχη εκχώρηση `Αποτέλεσμα ← \"Καλά\"` και η δομή τερματίζεται."
+      },
+      {
+        id: 7,
+        question: "Ποιος περιορισμός ισχύει για την έκφραση που χρησιμοποιείται στην κεφαλίδα της εντολής `ΕΠΙΛΕΞΕ έκφραση`;",
+        options: [
+          "Πρέπει υποχρεωτικά να είναι λογική έκφραση (ΑΛΗΘΗΣ/ΨΕΥΔΗΣ).",
+          "Πρέπει να είναι ακέραιου ή χαρακτήρα (διακριτού) τύπου.",
+          "Πρέπει υποχρεωτικά να είναι πραγματικού τύπου.",
+          "Δεν υπάρχει κανένας περιορισμός στον τύπο δεδομένων."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε αν στην ΕΠΙΛΕΞΕ μπορούμε να ελέγξουμε πραγματικούς αριθμούς με δεκαδικά (π.χ. 3.1415).",
+        explanation: "Η εντολή ΕΠΙΛΕΞΕ δέχεται εκφράσεις μόνο διακριτού τύπου (Ακέραιες ή Χαρακτήρες). ΔΕΝ επιτρέπονται πραγματικές ή λογικές εκφράσεις."
+      },
+      {
+        id: 8,
+        question: "Η λογική έκφραση `ΟΧΙ (X > 5 ΚΑΙ Y <= 10)` είναι λογικά ισοδύναμη με ποια από τις παρακάτω (Νόμος De Morgan);",
+        options: [
+          "X <= 5 ΚΑΙ Y > 10",
+          "X <= 5 Ή Y > 10",
+          "X < 5 Ή Y >= 10",
+          "ΟΧΙ (X > 5) ΚΑΙ ΟΧΙ (Y <= 10)"
+        ],
+        correct: 1,
+        hint: "Εφαρμόστε τον κανόνα De Morgan: ΟΧΙ(A ΚΑΙ B) = (ΟΧΙ A) Ή (ΟΧΙ B).",
+        explanation: "Σύμφωνα με τους νόμους De Morgan: ΟΧΙ(X > 5) γίνεται (X <= 5), το ΚΑΙ γίνεται Ή, και ΟΧΙ(Y <= 10) γίνεται (Y > 10). Άρα: `X <= 5 Ή Y > 10`."
+      },
+      {
+        id: 9,
+        question: "Ποια θα είναι η τιμή της μεταβλητής `Res` μετά την εκτέλεση των παρακάτω εμφωλευμένων εντολών επιλογής;",
+        code: "A ← 8\nB ← 12\nC ← 5\nΑΝ A < B ΤΟΤΕ\n    ΑΝ C > B ΤΟΤΕ\n        Res ← 1\n    ΑΛΛΙΩΣ\n        ΑΝ C < A ΤΟΤΕ\n            Res ← 2\n        ΑΛΛΙΩΣ\n            Res ← 3\n        ΤΕΛΟΣ_ΑΝ\n    ΤΕΛΟΣ_ΑΝ\nΑΛΛΙΩΣ\n    Res ← 4\nΤΕΛΟΣ_ΑΝ",
+        options: [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        correct: 1,
+        hint: "Ακολουθήστε τα επίπεδα εμφώλευσης: 1) A < B (8 < 12); 2) C > B (5 > 12); 3) C < A (5 < 8);",
+        explanation: "1) A < B (8 < 12) → ΑΛΗΘΗΣ (εισερχόμαστε στο 1ο εξωτερικό ΑΝ). 2) C > B (5 > 12) → ΨΕΥΔΗΣ (πάμε στο 1ο ΑΛΛΙΩΣ). 3) C < A (5 < 8) → ΑΛΗΘΗΣ. Άρα εκτελείται Res ← 2."
+      },
+      {
+        id: 10,
+        question: "Ποια τιμή θα πάρει η μεταβλητή Y κατά την εκτέλεση της εντολής ΕΠΙΛΕΞΕ;",
+        code: "X ← 25\nΕΠΙΛΕΞΕ X\n    ΠΕΡΙΠΤΩΣΗ < 10\n        Y ← 1\n    ΠΕΡΙΠΤΩΣΗ 10..20\n        Y ← 2\n    ΠΕΡΙΠΤΩΣΗ 21, 25, 30\n        Y ← 3\n    ΠΕΡΙΠΤΩΣΗ ΑΛΛΙΩΣ\n        Y ← 4\nΤΕΛΟΣ_ΕΠΙΛΟΓΩΝ",
+        options: [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        correct: 2,
+        hint: "Εξετάστε σε ποιο `ΠΕΡΙΠΤΩΣΗ` περιλαμβάνεται η τιμή 25.",
+        explanation: "Η τιμή X = 25 ταιριάζει απόλυτα στη λίστα μεμονωμένων τιμών `ΠΕΡΙΠΤΩΣΗ 21, 25, 30`, οπότε εκτελείται η εντολή `Y ← 3`."
+      },
+      {
+        id: 11,
+        question: "Πότε η εντολή ΕΠΙΛΕΞΕ θεωρείται καταλληλότερη από την πολλαπλή δομή `ΑΝ...ΤΟΤΕ...ΑΛΛΙΩΣ_ΑΝ`;",
+        options: [
+          "Όταν οι συνθήκες περιλαμβάνουν συγκρίσεις πραγματικών αριθμών.",
+          "Όταν ελέγχεται μια μεταβλητή διακριτού τύπου για ισότητα με συγκεκριμένες τιμές ή περιοχές ακεραίων τιμών.",
+          "Όταν θέλουμε να εκτελέσουμε μια εντολή επανάληψης.",
+          "Όταν η συνθήκη περιλαμβάνει σύνθετους λογικούς τελεστές (ΚΑΙ, Ή)."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε την αναγνωσιμότητα του κώδικα όταν ελέγχουμε μια μεταβλητή διακριτού τύπου για πολλές διακριτές τιμές.",
+        explanation: "Η ΕΠΙΛΕΞΕ προσφέρει πιο καθαρή, κομψή και αναγνώσιμη συντακτικά δομή όταν ελέγχουμε μία μεταβλητή διακριτού τύπου έναντι πολλαπλών μεμονωμένων τιμών ή διαστημάτων."
+      },
+      {
+        id: 12,
+        question: "Αν η μεταβλητή `X` έχει την τιμή `8`, ποιες θα είναι οι τελικές τιμές των `K` και `L` μετά την εκτέλεση των δύο τμημάτων κώδικα;",
+        code: "! Τμήμα 1: Σειριακές ΑΝ\nΑΝ X > 0 ΤΟΤΕ K ← 1 ΤΕΛΟΣ_ΑΝ\nΑΝ X > 5 ΤΟΤΕ K ← 2 ΤΕΛΟΣ_ΑΝ\n\n! Τμήμα 2: Πολλαπλή ΑΝ\nΑΝ X > 0 ΤΟΤΕ L ← 1\nΑΛΛΙΩΣ_ΑΝ X > 5 ΤΟΤΕ L ← 2\nΤΕΛΟΣ_ΑΝ",
+        options: [
+          "K = 1, L = 1",
+          "K = 2, L = 1",
+          "K = 2, L = 2",
+          "K = 1, L = 2"
+        ],
+        correct: 1,
+        hint: "Στο Τμήμα 1 ελέγχονται ΚΑΙ ΟΙ ΔΥΟ ΑΝ ανεξάρτητα. Στο Τμήμα 2, μόλις ικανοποιηθεί η πρώτη συνθήκη, η υπόλοιπη δομή προσπερνάται.",
+        explanation: "Στο Τμήμα 1: 8 > 0 → K=1. Στη συνέχεια 8 > 5 → K=2 (επανεγγραφή). Στο Τμήμα 2: 8 > 0 → L=1. Επειδή η 1η συνθήκη ήταν αληθής, το ΑΛΛΙΩΣ_ΑΝ προσπερνάται! Άρα K=2, L=1."
+      },
+      {
+        id: 13,
+        question: "Ποιο από τα παρακάτω αποτελεί συντακτικό λάθος στη ΓΛΩΣΣΑ;",
+        options: [
+          "Η χρήση της εντολής `ΑΛΛΙΩΣ` χωρίς προηγούμενη εντολή `ΑΝ`.",
+          "Η παράλειψη της εντολής `ΑΛΛΙΩΣ` σε μια δομή `ΑΝ...ΤΟΤΕ...ΤΕΛΟΣ_ΑΝ`.",
+          "Η ύπαρξη πολλών `ΑΛΛΙΩΣ_ΑΝ` στην ίδια δομή επιλογής.",
+          "Η χρήση λογικού τελεστή `ΚΑΙ` στη συνθήκη της `ΑΝ`."
+        ],
+        correct: 0,
+        hint: "Σκεφτείτε ποια λέξη-κλειδί δεν μπορεί να υπάρξει αυτόνομα χωρίς να αντιστοιχεί σε κάποιο `ΑΝ`.",
+        explanation: "Η εντολή `ΑΛΛΙΩΣ` δηλώνει το εναλλακτικό κλαδί μιας δομής επιλογής και ΔΕΝ μπορεί να χρησιμοποιηθεί αυτόνομα χωρίς να συνδέεται με μια προηγούμενη `ΑΝ`."
+      },
+      {
+        id: 14,
+        question: "Υπολογίστε την τιμή της μεταβλητής `Χρέωση` για κατανάλωση `120` μονάδων (κλιμακωτή χρέωση):",
+        code: "Κατανάλωση ← 120\nΧρέωση ← 0\nΑΝ Κατανάλωση <= 100 ΤΟΤΕ\n    Χρέωση ← Κατανάλωση * 0.5\nΑΛΛΙΩΣ\n    Χρέωση ← 100 * 0.5 + (Κατανάλωση - 100) * 0.8\nΤΕΛΟΣ_ΑΝ",
+        options: [
+          "60.0",
+          "66.0",
+          "96.0",
+          "50.0"
+        ],
+        correct: 1,
+        hint: "Τα πρώτα 100 χρεώνονται με 0.5 και τα υπόλοιπα (120-100 = 20) με 0.8.",
+        explanation: "100 * 0.5 = 50. Τα επιπλέον 20 (120 - 100) χρεώνονται με 0.8 → 20 * 0.8 = 16. Συνολική Χρέωση = 50 + 16 = 66.0."
+      },
+      {
+        id: 15,
+        question: "Ποιο γεωμετρικό σχήμα χρησιμοποιείται στα Διαγράμματα Ροής για την αναπαράσταση μιας απόφασης / συνθήκης επιλογής;",
+        options: [
+          "Ορθογώνιο",
+          "Έλλειψη",
+          "Ρόμβος",
+          "Παραλληλόγραμμο"
+        ],
+        correct: 2,
+        hint: "Είναι το σχήμα από το οποίο εκκινούν δύο βέλη εξόδου (ΝΑΙ / ΟΧΙ).",
+        explanation: "Στα διαγράμματα ροής, ο Ρόμβος αντιπροσωπεύει απόφαση/συνθήκη και διακλαδώνει τη ροή εκτέλεσης σε δύο κατευθύνσεις (Αληθής/Ψευδής)."
+      },
+      {
+        id: 16,
+        question: "Έχουμε τη συνθήκη ελέγχου εγκυρότητας ηλικίας: `(Ηλικία >= 18) ΚΑΙ (Ηλικία <= 65)`. Ποια είναι η ΠΛΗΡΗΣ ΑΝΤΙΘΕΤΗ συνθήκη (πότε η ηλικία είναι ΜΗ έγκυρη);",
+        options: [
+          "(Ηλικία < 18) ΚΑΙ (Ηλικία > 65)",
+          "(Ηλικία < 18) Ή (Ηλικία > 65)",
+          "(Ηλικία <= 18) Ή (Ηλικία >= 65)",
+          "(Ηλικία = 18) Ή (Ηλικία = 65)"
+        ],
+        correct: 1,
+        hint: "Εφαρμόστε την άρνηση De Morgan στη σύνθετη έκφραση.",
+        explanation: "Η άρνηση του (>= 18 AND <= 65) είναι: το >= γίνεται <, το ΚΑΙ γίνεται Ή, και το <= γίνεται >. Άρα: `(Ηλικία < 18) Ή (Ηλικία > 65)`."
+      }
+    ];
+
+    // --- ΚΑΤΑΣΤΑΣΗ ΕΦΑΡΜΟΓΗΣ (APP STATE) ---
+    let state = {
+      studentName: "Ανώνυμος/η Μαθητής/τρια",
+      mode: "learning", // 'learning' ή 'simulation'
+      currentIndex: 0,
+      userAnswers: new Array(quizData.length).fill(null),
+      hintsOpened: new Array(quizData.length).fill(false)
+    };
+
+    // --- ΕΠΙΛΟΓΗ MODE ---
+    function selectMode(selectedMode) {
+      state.mode = selectedMode;
+      document.getElementById('mode-learning').classList.toggle('selected', selectedMode === 'learning');
+      document.getElementById('mode-simulation').classList.toggle('selected', selectedMode === 'simulation');
+    }
+
+    // --- ΕΝΑΡΞΗ QUIZ ---
+    function startQuiz() {
+      const nameInput = document.getElementById('student-name').value.trim();
+      if (nameInput !== "") {
+        state.studentName = nameInput;
+      }
+
+      state.currentIndex = 0;
+      state.userAnswers.fill(null);
+      state.hintsOpened.fill(false);
+
+      switchScreen('screen-quiz');
+      setupQuizUI();
+      renderQuiz();
+    }
+
+    function switchScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function setupQuizUI() {
+      const modeText = state.mode === 'learning' ? '🎮 Λειτουργία: Εκμάθηση & Εξάσκηση' : '📝 Λειτουργία: Προσομοίωση & Τεστ';
+      document.getElementById('quiz-mode-indicator').innerText = modeText;
+    }
+
+    // --- RENDER QUIZ ---
+    function renderQuiz() {
+      const container = document.getElementById('questions-container');
+      container.innerHTML = "";
+
+      const total = quizData.length;
+      const progressPercent = ((state.currentIndex + 1) / total) * 100;
+      document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+
+      if (state.mode === 'learning') {
+        // Εμφάνιση ΜΙΑΣ ερώτησης στη Λειτουργία Εκμάθησης
+        document.getElementById('quiz-counter').innerText = `Ερώτηση ${state.currentIndex + 1} από ${total}`;
+        
+        const q = quizData[state.currentIndex];
+        container.appendChild(createQuestionCard(q, state.currentIndex));
+
+        document.getElementById('btn-prev').style.display = state.currentIndex > 0 ? 'inline-flex' : 'none';
+        document.getElementById('btn-next').style.display = state.currentIndex < total - 1 ? 'inline-flex' : 'none';
+        document.getElementById('btn-submit').style.display = state.currentIndex === total - 1 ? 'inline-flex' : 'none';
+        document.getElementById('btn-global-hint').style.display = 'inline-flex';
+
+      } else {
+        // Εμφάνιση ΟΛΩΝ των ερωτήσεων στη Λειτουργία Προσομοίωσης
+        document.getElementById('quiz-counter').innerText = `Όλες οι Ερωτήσεις (1-${total})`;
+        document.getElementById('progress-fill').style.width = '100%';
+
+        quizData.forEach((q, idx) => {
+          container.appendChild(createQuestionCard(q, idx));
+        });
+
+        document.getElementById('btn-prev').style.display = 'none';
+        document.getElementById('btn-next').style.display = 'none';
+        document.getElementById('btn-global-hint').style.display = 'none';
+        document.getElementById('btn-submit').style.display = 'inline-flex';
+      }
+    }
+
+    // --- ΔΗΜΙΟΥΡΓΙΑ CARD ΕΡΩΤΗΣΗΣ ---
+    function createQuestionCard(q, qIndex) {
+      const card = document.createElement('div');
+      card.className = 'question-card';
+      card.id = `q-card-${qIndex}`;
+
+      let codeHTML = q.code ? `<pre class="code-block"><code>${escapeHTML(q.code)}</code></pre>` : '';
+      const prefixes = ['Α', 'Β', 'Γ', 'Δ'];
+
+      let optionsHTML = q.options.map((opt, optIdx) => {
+        let selectedClass = state.userAnswers[qIndex] === optIdx ? 'selected' : '';
+        
+        // Σε εκμάθηση, αν έχει απαντηθεί, δείχνουμε σωστό/λάθος
+        if (state.mode === 'learning' && state.userAnswers[qIndex] !== null) {
+          if (optIdx === q.correct) selectedClass += ' correct';
+          else if (optIdx === state.userAnswers[qIndex]) selectedClass += ' wrong';
+        }
+
+        return `
+          <div class="option-item ${selectedClass}" onclick="selectOption(${qIndex}, ${optIdx})">
+            <span class="option-prefix">${prefixes[optIdx]}</span>
+            <span>${escapeHTML(opt)}</span>
+          </div>
+        `;
+      }).join('');
+
+      let isHintVisible = state.hintsOpened[qIndex] ? 'display:block;' : 'display:none;';
+      let isExplVisible = (state.mode === 'learning' && state.userAnswers[qIndex] !== null) ? 'display:block;' : 'display:none;';
+
+      card.innerHTML = `
+        <div class="question-title">${qIndex + 1}. ${escapeHTML(q.question)}</div>
+        ${codeHTML}
+        <div class="options-list">${optionsHTML}</div>
+        
+        <div class="hint-box" id="hint-box-${qIndex}" style="${isHintVisible}">
+          💡 <strong>Υπόδειξη:</strong> ${escapeHTML(q.hint)}
+        </div>
+
+        <div class="explanation-box" id="expl-box-${qIndex}" style="${isExplVisible}">
+          📖 <strong>Πλήρης Αιτιολογία:</strong> ${escapeHTML(q.explanation)}
+        </div>
+      `;
+
+      return card;
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
+    // --- ΕΠΙΛΟΓΗ ΑΠΑΝΤΗΣΗΣ ---
+    function selectOption(qIndex, optIndex) {
+      state.userAnswers[qIndex] = optIndex;
+
+      if (state.mode === 'learning') {
+        // Ενημέρωση κάρτας με άμεσο feedback
+        const card = document.getElementById(`q-card-${qIndex}`);
+        const newCard = createQuestionCard(quizData[qIndex], qIndex);
+        card.replaceWith(newCard);
+      } else {
+        // Στην προσομοίωση απλά ενημερώνουμε το UI επιλογής
+        const card = document.getElementById(`q-card-${qIndex}`);
+        const items = card.querySelectorAll('.option-item');
+        items.forEach((item, idx) => {
+          item.classList.toggle('selected', idx === optIndex);
+        });
+      }
+    }
+
+    // --- TOGGLE HINT ---
+    function toggleCurrentHint() {
+      const qIndex = state.currentIndex;
+      state.hintsOpened[qIndex] = !state.hintsOpened[qIndex];
+      const hintBox = document.getElementById(`hint-box-${qIndex}`);
+      if (hintBox) {
+        hintBox.style.display = state.hintsOpened[qIndex] ? 'block' : 'none';
+      }
+    }
+
+    // --- ΠΛΟΗΓΗΣΗ (LEARNING MODE) ---
+    function nextQuestion() {
+      if (state.currentIndex < quizData.length - 1) {
+        state.currentIndex++;
+        renderQuiz();
+        window.scrollTo(0, 0);
+      }
+    }
+
+    function prevQuestion() {
+      if (state.currentIndex > 0) {
+        state.currentIndex--;
+        renderQuiz();
+        window.scrollTo(0, 0);
+      }
+    }
+
+    // --- ΥΠΟΒΟΛΗ & ΕΛΕΓΧΟΣ ΠΛΗΡΟΤΗΤΑΣ ---
+    function submitQuiz() {
+      // Έλεγχος αν υπάρχουν αναπάντητες ερωτήσεις
+      const unanswered = [];
+      state.userAnswers.forEach((ans, idx) => {
+        if (ans === null) unanswered.push(idx + 1);
+      });
+
+      if (unanswered.length > 0) {
+        alert(`⚠️ Παρακαλούμε απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή!\n\nΑναπάντητες ερωτήσεις: ${unanswered.join(', ')}`);
+        
+        // Σε προσομοίωση, εστιάζουμε στην πρώτη αναπάντητη
+        const firstUnansweredCard = document.getElementById(`q-card-${unanswered[0] - 1}`);
+        if (firstUnansweredCard) {
+          firstUnansweredCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      generateReport();
+      switchScreen('screen-results');
+    }
+
+    // --- ΔΗΜΙΟΥΡΓΙΑ ΑΝΑΦΟΡΑΣ (REPORT GENERATION) ---
+    function generateReport() {
+      let score = 0;
+      quizData.forEach((q, idx) => {
+        if (state.userAnswers[idx] === q.correct) {
+          score++;
+        }
+      });
+
+      const total = quizData.length;
+      const percentage = Math.round((score / total) * 100);
+
+      document.getElementById('report-user-date').innerText = 
+        `Μαθητής/τρια: ${state.studentName} | Ημερομηνία & Ώρα: ${new Date().toLocaleString('el-GR')}`;
+      
+      document.getElementById('report-score-text').innerText = `${score}/${total}`;
+      document.getElementById('report-percent-text').innerText = `${percentage}%`;
+
+      // Παιδαγωγικό σχόλιο
+      let comment = "";
+      if (percentage >= 90) {
+        comment = "🌟 Άριστα! Κατέχετε πλήρως τις έννοιες της Ανάλυσης, του Δομημένου Προγραμματισμού και της Δομής Επιλογής!";
+      } else if (percentage >= 75) {
+        comment = "👏 Πολύ Καλά! Έχετε πολύ γερές βάσεις στη Δομή Επιλογής και στις συνθήκες. Λίγη προσοχή μόνο στα ίχνη εκτέλεσης!";
+      } else if (percentage >= 50) {
+        comment = "👍 Καλή προσπάθεια! Χρειάζεται λίγη επιπλέον εξάσκηση στους νόμους De Morgan, την ΕΠΙΛΕΞΕ και τις εμφωλευμένες ΑΝ.";
+      } else {
+        comment = "📚 Χρειάζεται επανάληψη. Μελετήστε ξανά τις μορφές της εντολής ΑΝ, το θεώρημα Böhm-Jacopini και την ιεραρχική σχεδίαση!";
+      }
+      document.getElementById('report-comment').innerText = comment;
+
+      // Αναλυτική λίστα επανεξέτασης ερωτήσεων
+      const reviewContainer = document.getElementById('review-container');
+      reviewContainer.innerHTML = "";
+
+      const prefixes = ['Α', 'Β', 'Γ', 'Δ'];
+
+      quizData.forEach((q, idx) => {
+        const isCorrect = state.userAnswers[idx] === q.correct;
+        const userChoiceText = state.userAnswers[idx] !== null ? `${prefixes[state.userAnswers[idx]]}) ${q.options[state.userAnswers[idx]]}` : 'Καμία';
+        const correctChoiceText = `${prefixes[q.correct]}) ${q.options[q.correct]}`;
+
+        const item = document.createElement('div');
+        item.className = `review-item ${isCorrect ? 'is-correct' : 'is-wrong'}`;
+
+        let codeHTML = q.code ? `<pre class="code-block"><code>${escapeHTML(q.code)}</code></pre>` : '';
+
+        item.innerHTML = `
+          <div class="review-status ${isCorrect ? 'correct' : 'wrong'}">
+            ${isCorrect ? '✔ Σωστό' : '✖ Λάθος'}
+          </div>
+          <div class="question-title">${idx + 1}. ${escapeHTML(q.question)}</div>
+          ${codeHTML}
+          <div style="margin: 10px 0; font-size: 0.93rem;">
+            <p><strong>Η Επιλογή σας:</strong> <span style="color: ${isCorrect ? 'var(--correct)' : 'var(--wrong)'};">${escapeHTML(userChoiceText)}</span></p>
+            ${!isCorrect ? `<p><strong>Σωστή Απάντηση:</strong> <span style="color: var(--correct); font-weight:600;">${escapeHTML(correctChoiceText)}</span></p>` : ''}
+          </div>
+          <div class="explanation-box" style="display:block; margin-top:12px;">
+            📖 <strong>Αιτιολογία:</strong> ${escapeHTML(q.explanation)}
+          </div>
+        `;
+
+        reviewContainer.appendChild(item);
+      });
+    }
+
+    // --- ΕΠΑΝΕΚΚΙΝΗΣΗ QUIZ ---
+    function restartQuiz() {
+      switchScreen('screen-start');
+    }
+  </script>
+</body>
+</html>

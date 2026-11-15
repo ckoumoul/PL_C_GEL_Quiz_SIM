@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ) - Εβδομάδα 12: Γενικές Ασκήσεις σε Πίνακες, Στοίβα & Ουρά</title>
+    <style>
+        :root {
+            --bg-color: #f7f4ef;
+            --text-color: #3a322b;
+            --terracotta: #7a4b29;
+            --terracotta-hover: #61391e;
+            --olive: #4e6e52;
+            --olive-hover: #3c5640;
+            --sand: #d4b886;
+            --card-bg: #ffffff;
+            --dark-code-bg: #2d2621;
+            --dark-code-text: #f0e8df;
+            --correct-bg: #eaf3eb;
+            --correct-border: #4e6e52;
+            --wrong-bg: #fdf0ed;
+            --wrong-border: #a73c26;
+            --border-radius: 12px;
+            --shadow: 0 4px 15px rgba(58, 50, 43, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 22px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border-bottom: 4px solid var(--terracotta);
+        }
+
+        header h1 {
+            color: var(--terracotta);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--olive);
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 184, 134, 0.3);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--terracotta);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--sand);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            color: var(--text-color);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--terracotta);
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .mode-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mode-btn-card {
+            border: 2px solid var(--sand);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .mode-btn-card:hover, .mode-btn-card.selected {
+            border-color: var(--terracotta);
+            background: #fcf8f3;
+            transform: translateY(-2px);
+        }
+
+        .mode-btn-card h3 {
+            color: var(--terracotta);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .mode-btn-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--terracotta);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: var(--terracotta-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: var(--olive);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--olive-hover);
+        }
+
+        .btn-hint {
+            background-color: transparent;
+            color: var(--terracotta);
+            border: 1px solid var(--terracotta);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+
+        .btn-hint:hover {
+            background-color: rgba(122, 75, 41, 0.08);
+        }
+
+        /* Code Blocks */
+        pre code {
+            display: block;
+            background: var(--dark-code-bg);
+            color: var(--dark-code-text);
+            padding: 14px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 4px solid var(--sand);
+            white-space: pre;
+        }
+
+        /* Question Elements */
+        .question-number {
+            font-weight: 700;
+            color: var(--terracotta);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1.5px solid #e0d8cd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .option-item:hover {
+            background-color: #fcf9f5;
+            border-color: var(--sand);
+        }
+
+        .option-item input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--terracotta);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Hints & Feedback */
+        .hint-box {
+            display: none;
+            background: #fffdf7;
+            border-left: 4px solid var(--sand);
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #554a3e;
+        }
+
+        .justification-box {
+            display: none;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .justification-box.correct {
+            background-color: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: #254229;
+        }
+
+        .justification-box.incorrect {
+            background-color: var(--wrong-bg);
+            border: 1px solid var(--wrong-border);
+            color: #641e10;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0d8cd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--olive);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Report Screen */
+        .report-header {
+            text-align: center;
+            border-bottom: 2px dashed var(--sand);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-badge {
+            display: inline-block;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--terracotta);
+            margin: 10px 0;
+        }
+
+        .pedagogical-comment {
+            background: #f4efe6;
+            padding: 15px;
+            border-radius: 8px;
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 10px;
+            border-left: 4px solid var(--olive);
+        }
+
+        .report-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e0d8cd;
+        }
+
+        .report-item.is-correct {
+            border-left: 5px solid var(--olive);
+            background: #fcfdfe;
+        }
+
+        .report-item.is-incorrect {
+            border-left: 5px solid var(--wrong-border);
+            background: #fffcfc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .badge-success { background-color: var(--olive); }
+        .badge-danger { background-color: var(--wrong-border); }
+
+        .actions-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .warning-msg {
+            color: var(--wrong-border);
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .container { max-width: 100%; }
+            .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+            .actions-group, .btn-hint, #start-screen, .progress-bar-container, .warning-msg { display: none !important; }
+            #report-screen { display: block !important; }
+            header { box-shadow: none; border-bottom: 2px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ)</h1>
+        <p>Εβδομάδα 12: Γενικές Ασκήσεις Εμπέδωσης σε Πίνακες, Στοίβα & Ουρά</p>
+    </header>
+
+    <!-- 1. ΑΡΧΙΚΗ ΟΘΟΝΗ -->
+    <div id="start-screen" class="card">
+        <h2 style="color: var(--terracotta); margin-bottom: 15px;">Διαδραστικό Quiz Αξιολόγησης</h2>
+        <p style="margin-bottom: 20px;">Εξετάστε τις γνώσεις σας σε προχωρημένες τεχνικές επεξεργασίας Πινάκων (1D/2D), διαγωνίων, συνδυαστικές δομές (Arrays + Stack/Queue), ολίσθηση, εκσφαλμάτωση κώδικα και θέματα Πανελλαδικού τύπου.</p>
+        
+        <div class="form-group">
+            <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+            <input type="text" id="student-name" placeholder="π.χ. Κωνσταντίνος Κουμουλίδης (Προαιρετικό)">
+        </div>
+
+        <div class="form-group">
+            <label>Επιλέξτε Λειτουργία:</label>
+            <div class="mode-selection">
+                <div class="mode-btn-card selected" onclick="selectMode('practice', this)">
+                    <h3>🎮 Εκμάθηση & Εξάσκησή</h3>
+                    <p>Βήμα-βήμα με άμεσο feedback & επεξήγηση σε κάθε ερώτηση.</p>
+                </div>
+                <div class="mode-btn-card" onclick="selectMode('exam', this)">
+                    <h3>📝 Προσομοίωση & Τεστ</h3>
+                    <p>Συγκεντρωτική απάντηση όλων των ερωτήσεων & τελικό Report.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <button class="btn" onclick="startQuiz()">Έναρξη Κουίζ ➔</button>
+        </div>
+    </div>
+
+    <!-- 2. ΟΘΟΝΗ ΕΡΩΤΗΣΕΩΝ -->
+    <div id="quiz-screen" style="display: none;">
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+
+        <div id="questions-wrapper"></div>
+
+        <div id="warning-msg" class="warning-msg">⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή!</div>
+
+        <div class="actions-group">
+            <button id="next-btn" class="btn" onclick="nextQuestion()" style="display: none;">Επόμενη Ερώτηση ➔</button>
+            <button id="submit-btn" class="btn btn-secondary" onclick="submitExam()" style="display: none;">Υποβολή Τεστ 🏁</button>
+        </div>
+    </div>
+
+    <!-- 3. ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ / REPORT -->
+    <div id="report-screen" class="card" style="display: none;">
+        <div class="report-header">
+            <h2 style="color: var(--terracotta);">Αναφορά Επίδοσης Μαθητή</h2>
+            <p id="report-student-name" style="font-weight: bold; font-size: 1.1rem; margin-top: 5px;"></p>
+            <p id="report-date" style="font-size: 0.85rem; color: #666;"></p>
+            
+            <div id="report-score" class="score-badge">0 / 0</div>
+            <p id="report-percentage" style="font-weight: 600; font-size: 1.2rem; color: var(--olive);"></p>
+            
+            <div id="report-comment" class="pedagogical-comment"></div>
+        </div>
+
+        <h3 style="color: var(--terracotta); margin-bottom: 15px;">Αναλυτική Επισκόπηση Ερωτήσεων</h3>
+        <div id="report-list"></div>
+
+        <div class="actions-group">
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+            <button class="btn" onclick="restartQuiz()">↻ Έναρξη από την αρχή</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- ΔΕΔΟΜΕΝΑ ΕΡΩΤΗΣΕΩΝ (ΕΒΔΟΜΑΔΑ 12 - ΑΝΑΚΕΦΑΛΑΙΩΣΗ & ΣΥΝΘΕΤΕΣ ΑΣΚΗΣΕΙΣ) ---
+const questionsData = [
+    {
+        id: 1,
+        question: "Σε έναν τετραγωνικό πίνακα A[N,N], ποια μαθηματική συνθήκη ικανοποιούν οι δείκτες γραμμής i και στήλης j για τα στοιχεία που ανήκουν στη ΔΕΥΤΕΡΕΥΟΥΣΑ διαγώνιο;",
+        code: null,
+        options: [
+            "i = j",
+            "i + j = N + 1",
+            "i + j = N",
+            "j = i + 1"
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε έναν πίνακα 5x5: στη θέση A[1,5] το άθροισμα 1+5=6, στη θέση A[2,4] 2+4=6...",
+        explanation: "Σε έναν τετραγωνικό πίνακα N x N, το άθροισμα των δεικτών γραμμής i και στήλης j για κάθε στοιχείο της δευτερεύουσας διαγωνίου είναι πάντοτε σταθερό και ισούται με N + 1 (i + j = N + 1)."
+    },
+    {
+        id: 2,
+        question: "Ποια συνθήκη προσπελαύνει τα στοιχεία που βρίσκονται αυστηρά ΠΑΝΩ από την κύρια διαγώνιο σε έναν τετραγωνικό πίνακα A[N,N];",
+        code: null,
+        options: [
+            "i > j",
+            "i < j",
+            "i = j",
+            "i + j < N"
+        ],
+        correct: 1,
+        hint: "Στο άνω τρίγωνο του πίνακα, ο αριθμός της στήλης j είναι μεγαλύτερος από τον αριθμό της γραμμής i.",
+        explanation: "Τα στοιχεία που βρίσκονται πάνω από την κύρια διαγώνιο (άνω τρίγωνο) έχουν δείκτη στήλης j μεγαλύτερο από τον δείκτη γραμμής i, δηλαδή ισχύει η συνθήκη i < j."
+    },
+    {
+        id: 3,
+        question: "Σε μια στατική υλοποίηση ουράς Q[N], πότε εμφανίζεται το φαινόμενο της «Ψευδο-υπερχείλισης» (False Overflow);",
+        code: null,
+        options: [
+            "Όταν rear = N και front = 1.",
+            "Όταν rear = N και front > 1.",
+            "Όταν front = 0 και rear = 0.",
+            "Όταν front > rear."
+        ],
+        correct: 1,
+        hint: "Συμβαίνει όταν ο πίσω δείκτης τερματίσει στον πίνακα, ενώ έχουν προηγηθεί εξαγωγές από το μπροστινό μέρος.",
+        explanation: "Ψευδο-υπερχείλιση προκύπτει όταν ο δείκτης rear φτάσει στο τέλος του πίνακα (rear = N), αλλά υπάρχουν ελεύθερες θέσεις στην αρχή λόγω προγενέστερων εξαγωγών (front > 1)."
+    },
+    {
+        id: 4,
+        question: "Ποια είναι η χρονική πολυπλοκότητα της λειτουργίας Εξαγωγής (Dequeue) σε στατική ουρά N θέσεων όταν εφαρμόζεται η τεχνική της ολίσθησης (shift) των στοιχείων προς τα αριστερά;",
+        code: null,
+        options: [
+            "O(1) - Σταθερή πολυπλοκότητα",
+            "O(N) - Γραμμική πολυπλοκότητα",
+            "O(N^2) - Τετραγωνική πολυπλοκότητα",
+            "O(log N) - Λογαριθμική πολυπλοκότητα"
+        ],
+        correct: 1,
+        hint: "Η ολίσθηση απαιτεί τη μετακίνηση όλων των υπόλοιπων k στοιχείων κατά μία θέση με επαναληπτικό βρόχο.",
+        explanation: "Όταν εφαρμόζεται ολίσθηση μετά από κάθε εξαγωγή, πρέπει όλα τα εναπομείναντα στοιχεία να μετακινηθούν μία θέση αριστερά. Αυτό απαιτεί επαναληπτικό βρόχο, αυξάνοντας τη χρονική πολυπλοκότητα σε O(N)."
+    },
+    {
+        id: 5,
+        question: "Δίνεται μονοδιάστατος πίνακας A = [12, -5, 8, -2, 20] (5 στοιχεία). Εκτελούμε τον παρακάτω αλγόριθμο φιλτραρίσματος σε Στοίβα S[5] και Ουρά Q[5] (αρχικά άδειες):\n- Για κάθε στοιχείο A[i]: Αν A[i] > 0 -> Push(S, A[i]), αλλιώς Enqueue(Q, A[i]).\nΠοιες θα είναι οι τελικές τιμές των δεικτών top, front και rear;",
+        code: null,
+        options: [
+            "top = 3, front = 1, rear = 2",
+            "top = 5, front = 0, rear = 0",
+            "top = 2, front = 1, rear = 3",
+            "top = 3, front = 0, rear = 2"
+        ],
+        correct: 0,
+        hint: "Μετρήστε πόσοι είναι οι θετικοί αριθμοί (πάνε στη Στοίβα S) και πόσοι οι αρνητικοί (πάνε στην Ουρά Q).",
+        explanation: "Θετικοί (>0): 12, 8, 20 -> 3 στοιχεία στη Στοίβα S, άρα top = 3.\nΑρνητικοί (<=0): -5, -2 -> 2 στοιχεία στην Ουρά Q, άρα front = 1 και rear = 2."
+    },
+    {
+        id: 6,
+        question: "Πώς μπορούμε να αντιστρέψουμε πλήρως τα στοιχεία ενός πίνακας A[N] αξιοποιώντας μια βοηθητική δομή Στοίβας S[N];",
+        code: null,
+        options: [
+            "Εισάγουμε όλα τα στοιχεία στην Ουρά και τα εξάγουμε με τη σειρά FIFO.",
+            "Ωθούμε (Push) όλα τα στοιχεία του πίνακα A στη Στοίβα S και στη συνέχεια τα απωθούμε (Pop) διαδοχικά πίσω στον πίνακα A.",
+            "Κάνουμε ώθηση μόνο των μισών στοιχείων και τα αντικαθιστούμε με το 0.",
+            "Δεν είναι εφικτή η αντιστροφή πίνακα με χρήση Στοίβας."
+        ],
+        correct: 1,
+        hint: "Η Στοίβα λειτουργεί με την αρχή LIFO (Last-In, First-Out). Τι συμβαίνει όταν βγάζουμε τα στοιχεία που μόλις βάλαμε;",
+        explanation: "Λόγω της LIFO λειτουργίας της Στοίβας, το τελευταίο στοιχείο που ωθείται θα αφαιρεθεί πρώτο. Έτσι, κάνοντας Push όλα τα στοιχεία και μετά Pop πίσω στον πίνακα, ο πίνακας αντιστρέφεται πλήρως."
+    },
+    {
+        id: 7,
+        question: "Ποιο τμήμα αλγόριθμου ελέγχει σωστά αν ένας τετραγωνικός πίνακας A[N,N] είναι ΣΥΜΜΕΤΡΙΚΟΣ (δηλαδή A[i,j] = A[j,i] για κάθε i, j);",
+        code: "sym <- ΑΛΗΘΗΣ\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ N\n    ΓΙΑ j ΑΠΟ 1 ΜΕΧΡΙ N\n        ΑΝ (....................) ΤΟΤΕ\n            sym <- ΨΕΥΔΗΣ\n        ΤΕΛΟΣ_ΑΝ\n    ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+        options: [
+            "A[i, j] <> A[j, i]",
+            "A[i, j] = A[j, i]",
+            "i <> j",
+            "A[i, j] = 0"
+        ],
+        correct: 0,
+        hint: "Αναζητούμε τη συνθήκη παραβίασης της συμμετρίας για να αλλάξουμε τη σημαία sym σε ΨΕΥΔΗΣ.",
+        explanation: "Ένας πίνακας είναι συμμετρικός όταν `A[i, j] = A[j, i]`. Συνεπώς, αν βρεθεί έστω ένα ζεύγος όπου `A[i, j] <> A[j, i]`, ο πίνακας δεν είναι συμμετρικός και η σημαία `sym` γίνεται ΨΕΥΔΗΣ."
+    },
+    {
+        id: 8,
+        question: "Δίνεται το παρακάτω τμήμα κώδικα επεξεργασίας πίνακα A[4,4]. Ποια στοιχεία αθροίζονται στη μεταβλητή sum;",
+        code: "sum <- 0\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 4\n    ΓΙΑ j ΑΠΟ 1 ΜΕΧΡΙ 4\n        ΑΝ i > j ΤΟΤΕ\n            sum <- sum + Α[i, j]\n        ΤΕΛΟΣ_ΑΝ\n    ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+        options: [
+            "Τα στοιχεία της κύριας διαγωνίου.",
+            "Τα στοιχεία πάνω από την κύρια διαγώνιο (άνω τρίγωνο).",
+            "Τα στοιχεία κάτω από την κύρια διαγώνιο (κάτω τρίγωνο).",
+            "Όλα τα στοιχεία του πίνακα."
+        ],
+        correct: 2,
+        hint: "Η συνθήκη i > j σημαίνει ότι ο αριθμός γραμμής είναι μεγαλύτερος από τον αριθμό στήλης.",
+        explanation: "Η συνθήκη `i > j` ικανοποιείται αποκλειστικά από τα στοιχεία που βρίσκονται κάτω από την κύρια διαγώνιο (κάτω τρίγωνο) του πίνακα."
+    },
+    {
+        id: 9,
+        question: "Σε μια υλοποίηση στοίβας S[N] και ουράς Q[N], ποιες είναι οι απόλυτες οριακές συνθήκες σφάλματος που πρέπει να ελέγχονται προληπτικά;",
+        code: null,
+        options: [
+            "Στοίβα: Underflow όταν top=N. Ουρά: Overflow όταν front=0.",
+            "Στοίβα: Overflow (top=N), Underflow (top=0). Ουρά: Overflow (rear=N), Underflow (front=0).",
+            "Στοίβα & Ουρά: Σφάλμα συμβαίνει μόνο όταν οι πίνακες περιέχουν μηδενικές τιμές.",
+            "Δεν απαιτείται κανένας έλεγχος ορίων στη «ΓΛΩΣΣΑ»."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε πότε γεμίζει (Overflow) και πότε αδειάζει (Underflow) η κάθε δομή.",
+        explanation: "Για τη Στοίβα: Overflow όταν top=N (Push) & Underflow όταν top=0 (Pop). Για την Ουρά: Overflow όταν rear=N (Enqueue) & Underflow όταν front=0 (Dequeue)."
+    },
+    {
+        id: 10,
+        question: "Δίνεται ο αλγόριθμος υπολογισμού του μεγίστου στοιχείου κάθε γραμμής ενός πίνακα A[6,6] και αποθήκευσής τους σε Στοίβα S[6]. Ποια πρόταση είναι ΟΡΘΗ;",
+        code: "top <- 0\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 6\n    max_row <- Α[i, 1]\n    ΓΙΑ j ΑΠΟ 2 ΜΕΧΡΙ 6\n        ΑΝ Α[i, j] > max_row ΤΟΤΕ\n            max_row <- Α[i, j]\n        ΤΕΛΟΣ_ΑΝ\n    ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n    top <- top + 1\n    S[top] <- max_row\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+        options: [
+            "Ο αλγόριθμος είναι πλήρως ορθός και αποθηκεύει τα 6 μέγιστα στη Στοίβα S.",
+            "Ο αλγόριθμος προκαλεί σφάλμα υπερχείλισης στη 2η επανάληψη.",
+            "Το max_row πρέπει να αρχικοποιείται εκτός των επαναλήψεων στο 0.",
+            "Η ώθηση στη Στοίβα έπρεπε να γίνεται μέσα στον εσωτερικό βρόχο j."
+        ],
+        correct: 0,
+        hint: "Εξετάστε αν το max_row υπολογίζεται σωστά για κάθε γραμμή i και αν η ώθηση εκτελείται μία φορά ανά γραμμή.",
+        explanation: "Ο αλγόριθμος είναι απόλυτα σωστός! Για κάθε γραμμή i βρίσκει το μέγιστο στοιχείο `max_row` και στη συνέχεια το ωθεί στη Στοίβα S (`top <- top + 1`, `S[top] <- max_row`)."
+    },
+    {
+        id: 11,
+        question: "Σε μια στατική ουρά Q[100] εκτελείται ολίσθηση (shift) όταν rear = 100 και front = 21. Ποια είναι η τιμή της μετατόπισης offset και ποια η νέα τιμή του rear;",
+        code: null,
+        options: [
+            "offset = 21, νέα τιμή rear = 100",
+            "offset = 20, νέα τιμή rear = 80",
+            "offset = 1, νέα τιμή rear = 21",
+            "offset = 20, νέα τιμή rear = 100"
+        ],
+        correct: 1,
+        hint: "Ο τύπος υπολογισμού της μετατόπισης είναι offset <- front - 1. Η νέα τιμή του rear υπολογίζεται ως rear <- rear - offset.",
+        explanation: "Μετατόπιση: `offset = front - 1 = 21 - 1 = 20`. Νέα τιμή πίσω δείκτη: `rear = rear - offset = 100 - 20 = 80`. Ο δείκτης front γίνεται 1."
+    },
+    {
+        id: 12,
+        question: "Δίνεται το παρακάτω τμήμα κώδικα. Ποιο λογικό σφάλμα προκαλείται κατά την εκτέλεση;",
+        code: "top <- 0\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 5\n    top <- top + 1\n    S[top] <- i * 10\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n\n! Εκτύπωση στοιχείων\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 5\n    x <- S[top]\n    ΓΡΑΨΕ x\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+        options: [
+            "Προκαλείται ατέρμων βρόχος.",
+            "Εκτυπώνεται 5 φορές το ίδιο στοιχείο (το 50) διότι ο δείκτης top δεν μειώνεται (top <- top - 1) κατά την εκτύπωση/απώθηση.",
+            "Προκαλείται σφάλμα Underflow στην πρώτη επανάληψη εκτύπωσης.",
+            "Τα στοιχεία εκτυπώνονται με τη σειρά εισαγωγής τους."
+        ],
+        correct: 1,
+        hint: "Προσέξτε τη 2η επανάληψη: αλλάζει η τιμή της μεταβλητής top μέσα στο βρόχο;",
+        explanation: "Στο δεύτερο βρόχο, διαβάζεται το `S[top]` (όπου top=5), αλλά ο δείκτης top δεν μειώνεται (`top <- top - 1`). Έτσι, εκτυπώνεται 5 φορές η τιμή S[5] = 50!"
+    },
+    {
+        id: 13,
+        question: "Ποια είναι η βασική ειδοποιός διαφορά μεταξύ Στατικών (Πίνακες) και Δυναμικών Δομών Δεδομένων (Συνδεδεμένες Λίστες);",
+        code: null,
+        options: [
+            "Οι στατικές δομές δεσμεύουν σταθερή μνήμη κατά τη μεταγλώττιση, ενώ οι δυναμικές δεσμεύουν/αποδεσμεύουν μνήμη κατά την εκτέλεση.",
+            "Οι στατικές δομές είναι πάντα LIFO ενώ οι δυναμικές είναι πάντα FIFO.",
+            "Οι δυναμικές δομές παρουσιάζουν πάντα σφάλμα υπερχείλισης.",
+            "Οι στατικές δομές δεν μπορούν να αποθηκεύσουν αλφαριθμητικά δεδομένα."
+        ],
+        correct: 0,
+        hint: "Σκεφτείτε πότε καθορίζεται το μέγεθος της μνήμης (Compile time vs Runtime).",
+        explanation: "Στις στατικές δομές (πίνακες) το μέγεθος μνήμης δηλώνεται σταθερά κατά τη μεταγλώττιση. Στις δυναμικές δομές (συνδεδεμένες λίστες) η μνήμη αυξομειώνεται δυναμικά κατά τον χρόνο εκτέλεσης."
+    },
+    {
+        id: 14,
+        question: "Δίνεται ο πίνακας A[3,3] με στοιχεία:\n[1, 2, 3]\n[4, 5, 6]\n[7, 8, 9]\nΠοιο είναι το άθροισμα των στοιχείων της ΚΥΡΙΑΣ διαγωνίου (i = j);",
+        code: null,
+        options: [
+            "15 (1 + 5 + 9)",
+            "12 (3 + 5 + 7)",
+            "45 (Άθροισμα όλων)",
+            "18 (2 + 5 + 8)"
+        ],
+        correct: 0,
+        hint: "Τα στοιχεία της κύριας διαγωνίου είναι τα A[1,1], A[2,2], A[3,3].",
+        explanation: "Τα στοιχεία της κύριας διαγωνίου (όπου i = j) είναι: A[1,1]=1, A[2,2]=5, A[3,3]=9. Το άθροισμά τους είναι 1 + 5 + 9 = 15."
+    },
+    {
+        id: 15,
+        question: "Σε μια υλοποίηση μενού επιλογών διαχείρισης Παραγγελιών με Ουρά Q[100] και Στοίβα ST[100], η ενέργεια «Ακύρωση τελευταίας διεκπεραιωμένης παραγγελίας» αντιστοιχεί σε:",
+        code: null,
+        options: [
+            "Εισαγωγή (Enqueue) στην Ουρά Q.",
+            "Απώθηση (Pop) από τη Στοίβα διεκπεραιωμένων ST.",
+            "Μηδενισμό του δείκτη front.",
+            "Ολίσθηση όλων των στοιχείων του πίνακα Q."
+        ],
+        correct: 1,
+        hint: "Η πιο πρόσφατα διεκπεραιωμένη παραγγελία βρίσκεται στην κορυφή της Στοίβας ST.",
+        explanation: "Εφόσον οι διεκπεραιωμένες παραγγελίες αποθηκεύονται στη Στοίβα ST, η ακύρωση της πιο πρόσφατης παραγγελίας απαιτεί την απώθησή της (Pop) από τη Στοίβα ST (LIFO)."
+    },
+    {
+        id: 16,
+        question: "Ποια είναι η σωστή συνθήκη υπολογισμού του τρέχοντος πλήθους στοιχείων count σε μια μη άδεια στατική Ουρά Q[N] (front > 0);",
+        code: null,
+        options: [
+            "count <- rear - front + 1",
+            "count <- rear - front",
+            "count <- N - front",
+            "count <- top"
+        ],
+        correct: 0,
+        hint: "Αν front = 2 και rear = 4, τα στοιχεία στις θέσεις 2, 3, 4 είναι 3 (4 - 2 + 1 = 3).",
+        explanation: "Το πλήθος των στοιχείων σε μια μη άδεια ουρά υπολογίζεται από τη σχέση `count <- rear - front + 1`. Για παράδειγμα, αν front=2 και rear=5, το πλήθος είναι 5 - 2 + 1 = 4 στοιχεία."
+    }
+];
+
+// --- STATE VARIABLES ---
+let currentMode = 'practice';
+let studentName = '';
+let currentQuestionIndex = 0;
+let userAnswers = {};
+
+// --- LOGIC FUNCTIONS ---
+function selectMode(mode, element) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn-card').forEach(card => card.classList.remove('selected'));
+    element.classList.add('selected');
+}
+
+function startQuiz() {
+    const nameInput = document.getElementById('student-name').value.trim();
+    studentName = nameInput !== '' ? nameInput : 'Ανώνυμος/η Μαθητής/τρια';
+
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+
+    currentQuestionIndex = 0;
+    userAnswers = {};
+
+    renderQuizScreen();
+}
+
+function renderQuizScreen() {
+    const wrapper = document.getElementById('questions-wrapper');
+    wrapper.innerHTML = '';
+
+    if (currentMode === 'practice') {
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'inline-block';
+        updateProgressBar();
+        
+        const q = questionsData[currentQuestionIndex];
+        wrapper.appendChild(createQuestionCard(q, currentQuestionIndex + 1, questionsData.length, true));
+    } else {
+        // Exam Mode: Show all questions
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'inline-block';
+        document.getElementById('progress-bar').style.width = '100%';
+
+        questionsData.forEach((q, idx) => {
+            wrapper.appendChild(createQuestionCard(q, idx + 1, questionsData.length, false));
+        });
+    }
+}
+
+function createQuestionCard(q, num, total, isPractice) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `q-card-${q.id}`;
+
+    let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+    
+    let optionsHTML = '';
+    q.options.forEach((opt, idx) => {
+        if (!opt) return;
+        const isChecked = userAnswers[q.id] === idx ? 'checked' : '';
+        optionsHTML += `
+            <label class="option-item" onclick="handleOptionSelect(${q.id}, ${idx}, ${isPractice})">
+                <input type="radio" name="q_${q.id}" value="${idx}" ${isChecked}>
+                <span>${opt}</span>
+            </label>
+        `;
+    });
+
+    card.innerHTML = `
+        <div class="question-number">Ερώτηση ${num} από ${total}</div>
+        <div class="question-text">${q.question}</div>
+        ${codeHTML}
+        <div class="options-group">${optionsHTML}</div>
+        <button class="btn btn-hint" onclick="toggleHint(${q.id})">💡 Υπόδειξη</button>
+        <div id="hint-${q.id}" class="hint-box">${q.hint}</div>
+        <div id="justification-${q.id}" class="justification-box"></div>
+    `;
+
+    return card;
+}
+
+function handleOptionSelect(qId, selectedIdx, isPractice) {
+    userAnswers[qId] = selectedIdx;
+    document.getElementById('warning-msg').style.display = 'none';
+
+    if (isPractice) {
+        const q = questionsData.find(item => item.id === qId);
+        const justBox = document.getElementById(`justification-${qId}`);
+        justBox.style.display = 'block';
+
+        if (selectedIdx === q.correct) {
+            justBox.className = 'justification-box correct';
+            justBox.innerHTML = `<strong>✅ Σωστό!</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        } else {
+            justBox.className = 'justification-box incorrect';
+            justBox.innerHTML = `<strong>❌ Λάθος.</strong> Η σωστή απάντηση είναι: <em>${q.options[q.correct]}</em>.<br><br><strong>Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        }
+    }
+}
+
+function toggleHint(qId) {
+    const hintBox = document.getElementById(`hint-${qId}`);
+    hintBox.style.display = (hintBox.style.display === 'block') ? 'none' : 'block';
+}
+
+function updateProgressBar() {
+    const progress = ((currentQuestionIndex + 1) / questionsData.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+}
+
+function nextQuestion() {
+    if (userAnswers[questionsData[currentQuestionIndex].id] === undefined) {
+        alert('Παρακαλώ επιλέξτε μια απάντηση πριν προχωρήσετε!');
+        return;
+    }
+
+    if (currentQuestionIndex < questionsData.length - 1) {
+        currentQuestionIndex++;
+        renderQuizScreen();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        showReport();
+    }
+}
+
+function submitExam() {
+    const unanswered = questionsData.filter(q => userAnswers[q.id] === undefined);
+    if (unanswered.length > 0) {
+        const warning = document.getElementById('warning-msg');
+        warning.innerText = `⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή! Απομένουν ${unanswered.length} αναπάντητες ερωτήσεις.`;
+        warning.style.display = 'block';
+
+        const firstUnansweredId = unanswered[0].id;
+        document.getElementById(`q-card-${firstUnansweredId}`).scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    showReport();
+}
+
+function showReport() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('report-screen').style.display = 'block';
+
+    let score = 0;
+    const reportList = document.getElementById('report-list');
+    reportList.innerHTML = '';
+
+    questionsData.forEach((q, idx) => {
+        const userChoice = userAnswers[q.id];
+        const isCorrect = userChoice === q.correct;
+        if (isCorrect) score++;
+
+        const item = document.createElement('div');
+        item.className = `report-item ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+        let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+        let userChoiceText = userChoice !== undefined ? q.options[userChoice] : 'Δεν απαντήθηκε';
+        let correctChoiceText = q.options[q.correct];
+
+        item.innerHTML = `
+            <div>
+                <span class="badge ${isCorrect ? 'badge-success' : 'badge-danger'}">
+                    ${isCorrect ? '✅ ΣΩΣΤΟ' : '❌ ΛΑΘΟΣ'}
+                </span>
+                <strong>Ερώτηση ${idx + 1}:</strong> ${q.question}
+            </div>
+            ${codeHTML}
+            <div style="margin: 8px 0; font-size: 0.95rem;">
+                <strong>Η απάντησή σας:</strong> <span style="color: ${isCorrect ? 'var(--olive)' : 'var(--wrong-border)'}; font-weight: 600;">${userChoiceText}</span><br>
+                ${!isCorrect ? `<strong>Σωστή απάντηση:</strong> <span style="color: var(--olive); font-weight: 600;">${correctChoiceText}</span><br>` : ''}
+            </div>
+            <div style="font-size: 0.9rem; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 6px; margin-top: 6px;">
+                <strong>Τεκμηρίωση / Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}
+            </div>
+        `;
+
+        reportList.appendChild(item);
+    });
+
+    const percentage = Math.round((score / questionsData.length) * 100);
+
+    document.getElementById('report-student-name').innerText = `Μαθητής/τρια: ${studentName}`;
+    document.getElementById('report-date').innerText = `Ημερομηνία & Ώρα: ${new Date().toLocaleString('el-GR')}`;
+    document.getElementById('report-score').innerText = `${score} / ${questionsData.length}`;
+    document.getElementById('report-percentage').innerText = `Ποσοστό Επιτυχίας: ${percentage}%`;
+
+    // Pedagogical Comment
+    let comment = '';
+    if (percentage >= 90) {
+        comment = '🌟 Εξαιρετική επίδοση! Έχετε κατανοήσει πλήρως τις συνθέσεις δομών (Πίνακες, Στοίβα, Ουρά), τις διαγωνίους 2D πινάκων και τις τεχνικές εκσφαλμάτωσης.';
+    } else if (percentage >= 75) {
+        comment = '👏 Πολύ καλή προσπάθεια! Έχετε γερές βάσεις στις σύνθετες ασκήσεις. Κάντε μια μικρή επανεξέταση στις συνθήκες διαγωνίων και την ολίσθηση.';
+    } else if (percentage >= 50) {
+        comment = '👍 Ικανοποιητική παρουσία. Χρειάζεται περισσότερη εξάσκηση στις ασκήσεις ίχνους εκτέλεσης (Trace Tables) και στους 2D πίνακες.';
+    } else {
+        comment = '📚 Χρειάζεται συστηματική επανάληψη στην ύλη της 12ης εβδομάδας και επιπλέον εξάσκηση σε θέματα Πανελλαδικού τύπου.';
+    }
+    document.getElementById('report-comment').innerText = comment;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+    document.getElementById('report-screen').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ) - Εβδομάδα 21: Κληρονομικότητα & Πολυμορφισμός</title>
+    <style>
+        :root {
+            --bg-color: #f7f4ef;
+            --text-color: #3a322b;
+            --terracotta: #7a4b29;
+            --terracotta-hover: #61391e;
+            --olive: #4e6e52;
+            --olive-hover: #3c5640;
+            --sand: #d4b886;
+            --card-bg: #ffffff;
+            --dark-code-bg: #2d2621;
+            --dark-code-text: #f0e8df;
+            --correct-bg: #eaf3eb;
+            --correct-border: #4e6e52;
+            --wrong-bg: #fdf0ed;
+            --wrong-border: #a73c26;
+            --border-radius: 12px;
+            --shadow: 0 4px 15px rgba(58, 50, 43, 0.08);
+
+            /* Difficulty Badge Colors */
+            --diff-basic-bg: #4e6e52;
+            --diff-medium-bg: #b8977e;
+            --diff-advanced-bg: #c84b31;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 22px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border-bottom: 4px solid var(--terracotta);
+        }
+
+        header h1 {
+            color: var(--terracotta);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--olive);
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 184, 134, 0.3);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--terracotta);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--sand);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            color: var(--text-color);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--terracotta);
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .mode-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mode-btn-card {
+            border: 2px solid var(--sand);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .mode-btn-card:hover, .mode-btn-card.selected {
+            border-color: var(--terracotta);
+            background: #fcf8f3;
+            transform: translateY(-2px);
+        }
+
+        .mode-btn-card h3 {
+            color: var(--terracotta);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .mode-btn-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--terracotta);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: var(--terracotta-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: var(--olive);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--olive-hover);
+        }
+
+        .btn-hint {
+            background-color: transparent;
+            color: var(--terracotta);
+            border: 1px solid var(--terracotta);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+
+        .btn-hint:hover {
+            background-color: rgba(122, 75, 41, 0.08);
+        }
+
+        /* Code Blocks */
+        pre code {
+            display: block;
+            background: var(--dark-code-bg);
+            color: var(--dark-code-text);
+            padding: 14px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 4px solid var(--sand);
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        /* Question Elements Header & Badges */
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .question-number {
+            font-weight: 700;
+            color: var(--terracotta);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .diff-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #ffffff;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .diff-basic {
+            background-color: var(--diff-basic-bg);
+        }
+
+        .diff-medium {
+            background-color: var(--diff-medium-bg);
+        }
+
+        .diff-advanced {
+            background-color: var(--diff-advanced-bg);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1.5px solid #e0d8cd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .option-item:hover {
+            background-color: #fcf9f5;
+            border-color: var(--sand);
+        }
+
+        .option-item input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--terracotta);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Hints & Feedback */
+        .hint-box {
+            display: none;
+            background: #fffdf7;
+            border-left: 4px solid var(--sand);
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #554a3e;
+        }
+
+        .justification-box {
+            display: none;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .justification-box.correct {
+            background-color: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: #254229;
+        }
+
+        .justification-box.incorrect {
+            background-color: var(--wrong-bg);
+            border: 1px solid var(--wrong-border);
+            color: #641e10;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0d8cd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--olive);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Report Screen */
+        .report-header {
+            text-align: center;
+            border-bottom: 2px dashed var(--sand);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-badge {
+            display: inline-block;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--terracotta);
+            margin: 10px 0;
+        }
+
+        .pedagogical-comment {
+            background: #f4efe6;
+            padding: 15px;
+            border-radius: 8px;
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 10px;
+            border-left: 4px solid var(--olive);
+        }
+
+        .report-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e0d8cd;
+        }
+
+        .report-item.is-correct {
+            border-left: 5px solid var(--olive);
+            background: #fcfdfe;
+        }
+
+        .report-item.is-incorrect {
+            border-left: 5px solid var(--wrong-border);
+            background: #fffcfc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .badge-success { background-color: var(--olive); }
+        .badge-danger { background-color: var(--wrong-border); }
+
+        .actions-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .warning-msg {
+            color: var(--wrong-border);
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .container { max-width: 100%; }
+            .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+            .actions-group, .btn-hint, #start-screen, .progress-bar-container, .warning-msg { display: none !important; }
+            #report-screen { display: block !important; }
+            header { box-shadow: none; border-bottom: 2px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ)</h1>
+        <p>Εβδομάδα 21: Κληρονομικότητα, Πολυμορφισμός & Διαγράμματα Ιεραρχίας</p>
+    </header>
+
+    <!-- 1. ΑΡΧΙΚΗ ΟΘΟΝΗ -->
+    <div id="start-screen" class="card">
+        <h2 style="color: var(--terracotta); margin-bottom: 15px;">Διαδραστικό Quiz Αξιολόγησης</h2>
+        <p style="margin-bottom: 20px;">Εξετάστε τις γνώσεις σας στις προχωρημένες έννοιες του Αντικειμενοστραφούς Προγραμματισμού: Κληρονομικότητα (Inheritance), Υπερκλάσεις & Υποκλάσεις, Επαναχρησιμοποίηση Κώδικα (Code Reuse), Σχέση «είναι-ένα» (IS-A), Πολυμορφισμός (Polymorphism), Επαναορισμός Μεθόδων (Method Overriding) και Διαγράμματα Ιεραρχίας Κλάσεων UML.</p>
+        
+        <div class="form-group">
+            <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+            <input type="text" id="student-name" placeholder="Εισάγετε το ονοματεπώνυμό σας (Προαιρετικό)">
+        </div>
+
+        <div class="form-group">
+            <label>Επιλέξτε Λειτουργία:</label>
+            <div class="mode-selection">
+                <div class="mode-btn-card selected" onclick="selectMode('practice', this)">
+                    <h3>🎮 Εκμάθηση & Εξάσκησή</h3>
+                    <p>Βήμα-βήμα με άμεσο feedback & επεξήγηση σε κάθε ερώτηση.</p>
+                </div>
+                <div class="mode-btn-card" onclick="selectMode('exam', this)">
+                    <h3>📝 Προσομοίωση & Τεστ</h3>
+                    <p>Συγκεντρωτική απάντηση όλων των ερωτήσεων & τελικό Report.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <button class="btn" onclick="startQuiz()">Έναρξη Κουίζ ➔</button>
+        </div>
+    </div>
+
+    <!-- 2. ΟΘΟΝΗ ΕΡΩΤΗΣΕΩΝ -->
+    <div id="quiz-screen" style="display: none;">
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+
+        <div id="questions-wrapper"></div>
+
+        <div id="warning-msg" class="warning-msg">⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή!</div>
+
+        <div class="actions-group">
+            <button id="next-btn" class="btn" onclick="nextQuestion()" style="display: none;">Επόμενη Ερώτηση ➔</button>
+            <button id="submit-btn" class="btn btn-secondary" onclick="submitExam()" style="display: none;">Υποβολή Τεστ 🏁</button>
+        </div>
+    </div>
+
+    <!-- 3. ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ / REPORT -->
+    <div id="report-screen" class="card" style="display: none;">
+        <div class="report-header">
+            <h2 style="color: var(--terracotta);">Αναφορά Επίδοσης Μαθητή</h2>
+            <p id="report-student-name" style="font-weight: bold; font-size: 1.1rem; margin-top: 5px;"></p>
+            <p id="report-date" style="font-size: 0.85rem; color: #666;"></p>
+            
+            <div id="report-score" class="score-badge">0 / 0</div>
+            <p id="report-percentage" style="font-weight: 600; font-size: 1.2rem; color: var(--olive);"></p>
+            
+            <div id="report-comment" class="pedagogical-comment"></div>
+        </div>
+
+        <h3 style="color: var(--terracotta); margin-bottom: 15px;">Αναλυτική Επισκόπηση Ερωτήσεων</h3>
+        <div id="report-list"></div>
+
+        <div class="actions-group">
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+            <button class="btn" onclick="restartQuiz()">↻ Έναρξη από την αρχή</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- ΔΕΔΟΜΕΝΑ ΕΡΩΤΗΣΕΩΝ (ΕΒΔΟΜΑΔΑ 21: ΚΛΗΡΟΝΟΜΙΚΟΤΗΤΑ & ΠΟΛΥΜΟΡΦΙΣΜΟΣ) ---
+const questionsData = [
+    {
+        id: 1,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Πώς ορίζεται η «Κληρονομικότητα» (Inheritance) στον Αντικειμενοστραφή Προγραμματισμό;",
+        code: null,
+        options: [
+            "Είναι η δυνατότητα μιας κλάσης να δημιουργεί αυτόματα αντίγραφα των αντικειμένων στη μνήμη.",
+            "Είναι ο μηχανισμός μέσω του οποίου μια νέα κλάση (υποκλάση) αποκτά αυτόματα τις ιδιότητες και μεθόδους μιας υπάρχουσας κλάσης (υπερκλάση), επεκτείνοντας τη συμπεριφορά της.",
+            "Είναι η διαδικασία διαγραφής των περιττών μεθόδων από το κύριο πρόγραμμα.",
+            "Είναι η μεταβίβαση των τοπικών μεταβλητών ενός υποπρογράμματος σε μια συνάρτηση."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε τη σχέση μεταξύ της γενικής κλάσης «Άτομο» και των εξειδικευμένων κλάσεων «Μαθητής» και «Εκπαιδευτικός».",
+        explanation: "Η Κληρονομικότητα επιτρέπει σε μια υποκλάση (απόγονο) να κληρονομεί αυτόματα όλες τις ιδιότητες και μεθόδους της υπερκλάσης (προγόνου), προσθέτοντας παράλληλα τα δικά της εξειδικευμένα χαρακτηριστικά."
+    },
+    {
+        id: 2,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Ποια είναι η διαφορά μεταξύ «Υπερκλάσης» (Superclass / Πρόγονος) και «Υποκλάσης» (Subclass / Απόγονος);",
+        code: null,
+        options: [
+            "Η Υπερκλάση είναι η γενικότερη κλάση που περιέχει τα κοινά χαρακτηριστικά, ενώ η Υποκλάση είναι η εξειδικευμένη κλάση που κληρονομεί από την υπερκλάση.",
+            "Η Υποκλάση περιέχει τα κοινά χαρακτηριστικά και η Υπερκλάση τα εξειδικευμένα.",
+            "Η Υπερκλάση περιλαμβάνει μόνο μεθόδους, ενώ η Υποκλάση περιλαμβάνει μόνο ιδιότητες.",
+            "Δεν υπάρχει καμία διαφορά, οι όροι είναι απόλυτα ταυτόσημοι."
+        ],
+        correct: 0,
+        hint: "Ποια κλάση βρίσκεται ιεραρχικά πιο πάνω (γενίκευση) και ποια πιο κάτω (εξειδίκευση);",
+        explanation: "Η Υπερκλάση (Parent/Superclass) εκφράζει τη γενίκευση (γενικότερη έννοια με κοινά πεδία). Η Υποκλάση (Child/Subclass) εκφράζει την εξειδίκευση και κληρονομεί τη δομή της υπερκλάσης."
+    },
+    {
+        id: 3,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Ποιο είναι το κύριο πλεονέκτημα της Κληρονομικότητας όσον αφορά τη διαχείριση του κώδικα;",
+        code: null,
+        options: [
+            "Αυξάνει το μέγεθος του εκτελέσιμου αρχείου.",
+            "Επιτυγχάνει Επαναχρησιμοποίηση Κώδικα (Code Reuse), αποφεύγοντας τη διπλότυπη δήλωση κοινών ιδιοτήτων/μεθόδων και διευκολύνοντας τη συντήρηση.",
+            "Καταργεί την ανάγκη ορισμού μεθόδων στις υποκλάσεις.",
+            "Επιτρέπει την άμεση προσπέλαση ιδιωτικών πεδίων χωρίς μεθόδους."
+        ],
+        correct: 1,
+        hint: "Αν 5 κλάσεις έχουν 4 κοινές ιδιότητες, πού τις δηλώνουμε για να μην τις γράφουμε 5 φορές;",
+        explanation: "Με την κληρονομικότητα, τα κοινά χαρακτηριστικά δηλώνονται μία φορά στην υπερκλάση. Έτσι αποφεύγεται η επανάληψη διπλότυπου κώδικα και οποιαδήποτε διόρθωση στην υπερκλάση διαχέεται αυτόματα σε όλες τις υποκλάσεις."
+    },
+    {
+        id: 4,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Ποιο είναι το θεμελιώδες κριτήριο εγκυρότητας για τη δημιουργία μιας σχέσης κληρονομικότητας μεταξύ δύο κλάσεων;",
+        code: null,
+        options: [
+            "Η σχέση «έχει-ένα» (HAS-A relationship).",
+            "Η σχέση «είναι-ένα» (IS-A relationship), δηλαδή η [Υποκλάση] ΕΙΝΑΙ ΕΝΑΣ τύπος της [Υπερκλάσης].",
+            "Η σχέση ισότητας των ιδιοτήτων τους.",
+            "Η ύπαρξη του ίδιου αριθμού μεθόδων."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε: «Το Αυτοκίνητο ΕΙΝΑΙ Όχημα» vs «Η Τράπεζα ΕΧΕΙ Λογαριασμούς».",
+        explanation: "Η σχέση κληρονομικότητας εκφράζει αυστηρά τη σχέση «είναι-ένα» (IS-A). Για παράδειγμα: Ο «Μαθητής» ΕΙΝΑΙ «Άτομο», το «Αυτοκίνητο» ΕΙΝΑΙ «Όχημα»."
+    },
+    {
+        id: 5,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Ποια από τις παρακάτω σχέσεις αποτελεί ΕΓΚΥΡΗ σχέση κληρονομικότητας (IS-A);",
+        code: null,
+        options: [
+            "Η κλάση «Σχολική Τάξη» είναι υποκλάση της κλάσης «Σχολείο».",
+            "Η κλάση «Λογαριασμός» είναι υποκλάση της κλάσης «Τράπεζα».",
+            "Η κλάση «Ηλεκτρικό Ποδήλατο» είναι υποκλάση της κλάσης «Όχημα».",
+            "Η κλάση «Κινητήρας» είναι υποκλάση της κλάσης «Αυτοκίνητο»."
+        ],
+        correct: 2,
+        hint: "Ελέγξτε ποιο ζεύγος ικανοποιεί τη λεκτική δομή: «Το [Α] ΕΙΝΑΙ [Β]».",
+        explanation: "Το «Ηλεκτρικό Ποδήλατο» ΕΙΝΑΙ «Όχημα» (έγκυρη σχέση IS-A). Αντίθετα, το Σχολείο ΕΧΕΙ Τάξεις, η Τράπεζα ΕΧΕΙ Λογαριασμούς και το Αυτοκίνητο ΕΧΕΙ Κινητήρα (σχέσεις περιεκτικότητας HAS-A)."
+    },
+    {
+        id: 6,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Πώς ορίζεται ο «Πολυμορφισμός» (Polymorphism) στον Αντικειμενοστραφή Προγραμματισμό;",
+        code: null,
+        options: [
+            "Είναι η ιδιότητα σύμφωνα με την οποία διαφορετικά αντικείμενα μιας ιεραρχίας κλάσεων μπορούν να ανταποκρίνονται στην ίδια κλήση μεθόδου με διαφορετικό, εξειδικευμένο τρόπο.",
+            "Είναι η δυνατότητα μιας κλάσης να έχει πολλαπλά ονόματα στο ίδιο πρόγραμμα.",
+            "Είναι η μετατροπή μιας υποκλάσης σε υπερκλάση κατά τη μεταγλώττιση.",
+            "Είναι η διαγραφή όλων των μεθόδων μιας κλάσης."
+        ],
+        correct: 0,
+        hint: "Ετυμολογικά: «Πολύς» + «Μορφή» (Μία διεπαφή/εντολή, πολλές εξειδικευμένες μορφές υλοποίησης).",
+        explanation: "Πολυμορφισμός είναι η ικανότητα διαφορετικών αντικειμένων μιας ιεραρχίας να εκτελούν τη δική τους εξειδικευμένη υλοποίηση όταν καλείται η ίδια μέθοδος (π.χ. η μέθοδος `Φρενάρει()` εκτελείται διαφορετικά σε Αυτοκίνητο και σε Ηλεκτρικό Ποδήλατο)."
+    },
+    {
+        id: 7,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Ποιος είναι ο βασικός προγραμματιστικός μηχανισμός με τον οποίο επιτυγχάνεται ο Πολυμορφισμός στις υποκλάσεις;",
+        code: null,
+        options: [
+            "Η Δήλωση Σταθερών.",
+            "Ο Επαναορισμός / Υπερκάλυψη Μεθόδων (Method Overriding).",
+            "Η Στιγμιοποίηση.",
+            "Η καταστροφή των αντικειμένων."
+        ],
+        correct: 1,
+        hint: "Πώς μια υποκλάση ξαναγράφει μια μέθοδο που κληρονόμησε από την υπερκλάση;",
+        explanation: "Ο Επαναορισμός Μεθόδων (Method Overriding) συμβαίνει όταν μια υποκλάση παρέχει μια νέα, εξειδικευμένη υλοποίηση για μια μέθοδο που έχει ήδη οριστεί στην υπερκλάση της, διατηρώντας την ίδια υπογραφή (όνομα & παραμέτρους)."
+    },
+    {
+        id: 8,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Στα Διαγράμματα Ιεραρχίας Κλάσεων UML, προς ποια κατεύθυνση δείχνουν ΠΑΝΤΑ τα βέλη κληρονομικότητας;",
+        code: "       [  Όχημα  ]\n            ▲\n            │  (Βέλος Κληρονομικότητας)\n    ┌───────┴───────┐\n[ Αυτοκίνητο ]  [ Μοτοσυκλέτα ]",
+        options: [
+            "Δείχνουν από την Υπερκλάση προς τις Υποκλάσεις (από πάνω προς τα κάτω).",
+            "Δείχνουν ΠΑΝΤΑ από την Υποκλάση προς την Υπερκλάση (από τον απόγονο προς τον πρόγονο).",
+            "Δείχνουν οριζόντια μεταξύ των υποκλάσεων του ίδιου επιπέδου.",
+            "Δεν χρησιμοποιούνται βέλη, μόνο διακεκομμένες γραμμές."
+        ],
+        correct: 1,
+        hint: "Τα βέλη κληρονομικότητας υποδηλώνουν την κατεύθυνση της εξάρτησης (ποιος εξαρτάται από ποιον).",
+        explanation: "Στα διαγράμματα UML, τα βέλη κληρονομικότητας δείχνουν ΠΑΝΤΑ από την Υποκλάση προς την Υπερκλάση (δηλαδή προς τον πρόγονο), υποδηλώνοντας ότι η υποκλάση βασίζεται και εξαρτάται από την υπερκλάση."
+    },
+    {
+        id: 9,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Δίνεται η πρόταση: «Η σχέση κληρονομικότητας είναι αμφίδρομη: η υπερκλάση κληρονομεί αυτόματα όλες τις εξειδικευμένες ιδιότητες και μεθόδους των υποκλάσεών της». Η πρόταση είναι:",
+        code: null,
+        options: [
+            "Σωστή",
+            "Λανθασμένη"
+        ],
+        correct: 1,
+        hint: "Έχει ο πατέρας/πρόγονος πρόσβαση στα ειδικά χαρακτηριστικά που προσθέτει το παιδί/απόγονος;",
+        explanation: "Λανθασμένη! Η κληρονομικότητα είναι ΜΟΝΟΔΡΟΜΗ. Η υποκλάση αποκτά τα χαρακτηριστικά της υπερκλάσης, αλλά η υπερκλάση ΔΕΝ έχει καμία πρόσβαση στις εξειδικευμένες ιδιότητες ή μεθόδους που ορίζονται στις υποκλάσεις της."
+    },
+    {
+        id: 10,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Δίνεται η υπερκλάση `Προϊόν` με ιδιότητες: `κωδικός`, `τίτλος`, `τιμή_βάσης`. Η υποκλάση `Βιβλίο` προσθέτει τις ιδιότητες `συγγραφέας` και `ISBN`. Πόσες ιδιότητες διαθέτει συνολικά ένα αντικείμενο της κλάσης `Βιβλίο`;",
+        code: "Υπερκλάση: Προϊόν (κωδικός, τίτλος, τιμή_βάσης)\n  ▲\n  │\nΥποκλάση: Βιβλίο (συγγραφέας, ISBN)",
+        options: [
+            "2 ιδιότητες",
+            "3 ιδιότητες",
+            "5 ιδιότητες (3 κληρονομούμενες + 2 εξειδικευμένες)",
+            "1 ιδιότητα"
+        ],
+        correct: 2,
+        hint: "Προσθέστε τις ιδιότητες που κληρονομεί από την υπερκλάση στις δικές της ειδικές ιδιότητες.",
+        explanation: "Το αντικείμενο της υποκλάσης `Βιβλίο` διαθέτει συνολικά 5 ιδιότητες: τις 3 που κληρονομεί αυτόματα από την υπερκλάση `Προϊόν` (`κωδικός`, `τίτλος`, `τιμή_βάσης`) συν τις 2 δικές της εξειδικευμένες (`συγγραφέας`, `ISBN`)."
+    },
+    {
+        id: 11,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Δίνεται η ιεραρχία: `Όχημα` -> `Μηχανοκίνητο` -> `Αυτοκίνητο`. Πώς ορίζεται η σχέση της κλάσης `Αυτοκίνητο` με την κλάση `Όχημα`;",
+        code: "[ Όχημα ] (Superclass)\n    ▲\n[ Μηχανοκίνητο ] (Ενδιάμεση Υπερκλάση)\n    ▲\n[ Αυτοκίνητο ] (Subclass)",
+        options: [
+            "Το Αυτοκίνητο είναι άμεση υποκλάση του Οχήματος.",
+            "Το Αυτοκίνητο είναι έμμεση υποκλάση (απόγονος) του Οχήματος και κληρονομεί τα χαρακτηριστικά όλων των ανώτερων επιπέδων.",
+            "Το Όχημα είναι υποκλάση του Αυτοκινήτου.",
+            "Δεν υπάρχει καμία σχέση κληρονομικότητας μεταξύ τους."
+        ],
+        correct: 1,
+        hint: "Η κληρονομικότητα μεταβιβάζεται διαδοχικά μέσω όλων των επιπέδων της ιεραρχίας.",
+        explanation: "Η κληρονομικότητα είναι μεταβατική. Το `Αυτοκίνητο` είναι έμμεση υποκλάση του `Οχήματος` (μέσω της ενδιάμεσης κλάσης `Μηχανοκίνητο`) και κληρονομεί τα χαρακτηριστικά και των δύο ανώτερων επιπέδων."
+    },
+    {
+        id: 12,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Δίνεται το παρακάτω σενάριο εφαρμογής ενοικίασης οχημάτων (Πανελλαδικές 2026 - Θέμα Β1):\n- Αυτοκίνητο: κατασκευαστής, κωδικός_ενοικίασης, αριθμός_κυκλοφορίας, ΕφοδιάζεταιΜεΚαύσιμα(), Φρενάρει()\n- Μοτοσυκλέτα: κατασκευαστής, κωδικός_ενοικίασης, αριθμός_κυκλοφορίας, ΕφοδιάζεταιΜεΚαύσιμα(), Φρενάρει()\n- Ηλεκτρικό Ποδήλατο: κατασκευαστής, κωδικός_ενοικίασης, Φορτίζεται(), Φρενάρει()\nΠοιες είναι οι κοινές ιδιότητες της Υπερκλάσης «Όχημα»;",
+        code: null,
+        options: [
+            "αριθμός_κυκλοφορίας και ΕφοδιάζεταιΜεΚαύσιμα()",
+            "κατασκευαστής και κωδικός_ενοικίασης",
+            "Φορτίζεται() και αριθμός_κυκλοφορίας",
+            "Όλες οι ιδιότητες είναι κοινές σε όλα τα οχήματα."
+        ],
+        correct: 1,
+        hint: "Αναζητήστε τις ιδιότητες που υπάρχουν και στα 3 τύπους οχημάτων (Αυτοκίνητο, Μοτοσυκλέτα, Ηλεκτρικό Ποδήλατο).",
+        explanation: "Οι ιδιότητες `κατασκευαστής` και `κωδικός_ενοικίασης` υπάρχουν και στα 3 οχήματα, οπότε τοποθετούνται στην Υπερκλάση `Όχημα`. Ο `αριθμός_κυκλοφορίας` δεν υπάρχει στο ηλεκτρικό ποδήλατο, άρα ανήκει μόνο στα μηχανοκίνητα."
+    },
+    {
+        id: 13,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Στο ίδιο σενάριο ενοικίασης οχημάτων, ποια μέθοδος είναι Πολυμορφική και πού πρέπει να δηλωθεί;",
+        code: null,
+        options: [
+            "Η μέθοδος Φορτίζεται(), η οποία δηλώνεται στην υπερκλάση Όχημα.",
+            "Η μέθοδος ΕφοδιάζεταιΜεΚαύσιμα(), η οποία δηλώνεται στο Ηλεκτρικό Ποδήλατο.",
+            "Η μέθοδος Φρενάρει(), η οποία δηλώνεται στην υπερκλάση Όχημα και επαναορίζεται (overridden) σε κάθε υποκλάση.",
+            "Καμία μέθοδος δεν είναι πολυμορφική."
+        ],
+        correct: 2,
+        hint: "Ποια μέθοδος υπάρχει σε όλα τα οχήματα αλλά εκτελείται με διαφορετικό φυσικό τρόπο σε καθένα;",
+        explanation: "Η μέθοδος `Φρενάρει()` είναι πολυμορφική επειδή υπάρχει σε όλα τα οχήματα αλλά υλοποιείται διαφορετικά σε καθένα. Δηλώνεται στην υπερκλάση `Όχημα` και επαναορίζεται στις υποκλάσεις."
+    },
+    {
+        id: 14,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Δίνεται το παρακάτω τμήμα διαγράμματος ιεραρχίας σχολικής μονάδας (Επαναληπτικές 2024):\nΥπερκλάση: Άτομο (όνομα, επώνυμο, διεύθυνση, τηλέφωνο)\nΥποκλάση 1: Εκπαιδευτικός (ειδικότητα, ημερομηνία_διορισμού)\nΥποκλάση 2: Μαθητής (τάξη_εγγραφής, ημερομηνία_εγγραφής)\nΠού πρέπει να δηλωθεί η ιδιότητα `τηλέφωνο`;",
+        code: null,
+        options: [
+            "Μόνο στην υποκλάση Εκπαιδευτικός.",
+            "Μόνο στην υποκλάση Μαθητής.",
+            "Στην υπερκλάση Άτομο, ώστε να την κληρονομήσουν αυτόματα και ο Εκπαιδευτικός και ο Μαθητής.",
+            "Πρέπει να δηλωθεί ξεχωριστά και στις 2 υποκλάσεις διότι έχουν διαφορετικά τηλέφωνα."
+        ],
+        correct: 2,
+        hint: "Εφόσον και οι δύο κατηγορίες ατόμων διαθέτουν τηλέφωνο, πού επιβάλλει η αρχή της επαναχρησιμοποίησης να δηλωθεί;",
+        explanation: "Εφόσον το `τηλέφωνο` αποτελεί κοινό χαρακτηριστικό όλων των ατόμων της σχολικής μονάδας, δηλώνεται μία φορά στην Υπερκλάση `Άτομο` (γενίκευση) και μεταβιβάζεται αυτόματα στις υποκλάσεις."
+    },
+    {
+        id: 15,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Δίνεται το παρακάτω τμήμα ψευδογλώσσας με πολυμορφική κλήση μεθόδου:\nΠοια εκδοχή της μεθόδου `ΥπολογισμόςΤιμής()` θα εκτελεστεί στην εντολή (1) και ποια στην εντολή (2);",
+        code: "Προϊόν P1, P2\nP1 <- ΝΕΟ Βιβλίο()       ! Το P1 δείχνει σε αντικείμενο Βιβλίο\nP2 <- ΝΕΟ Περιοδικό()    ! Το P2 δείχνει σε αντικείμενο Περιοδικό\n\n(1) t1 <- P1.ΥπολογισμόςΤιμής()\n(2) t2 <- P2.ΥπολογισμόςΤιμής()",
+        options: [
+            "Και στις δύο εντολές εκτελείται η γενική μέθοδος της υπερκλάσης Προϊόν.",
+            "Στην (1) εκτελείται η επαναορισμένη μέθοδος της υποκλάσης Βιβλίο και στην (2) της υποκλάσης Περιοδικό.",
+            "Στην (1) εκτελείται η μέθοδος του Περιοδικού και στην (2) του Βιβλίου.",
+            "Προκαλείται σφάλμα μεταγλώττισης διότι η μέθοδος έχει το ίδιο όνομα."
+        ],
+        correct: 1,
+        hint: "Ο πολυμορφισμός αποφασίζει δυναμικά κατά την εκτέλεση βάσει του πραγματικού τύπου του αντικειμένου.",
+        explanation: "Χάρη στη δυναμική εκτέλεση του πολυμορφισμού, η κλήση `P1.ΥπολογισμόςΤιμής()` εκτελεί τον αλγόριθμο του `Βιβλίου` (έκπτωση 10%), ενώ η `P2.ΥπολογισμόςΤιμής()` εκτελεί τον αλγόριθμο του `Περιοδικού` (έξοδα αποστολής)."
+    },
+    {
+        id: 16,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Ποια είναι η διαφορά μεταξύ της «Γενίκευσης» (Generalization) και της «Εξειδίκευσης» (Specialization) κατά τη σχεδίαση ιεραρχίας κλάσεων;",
+        code: null,
+        options: [
+            "Γενίκευση είναι η κίνηση προς τα πάνω (εξαγωγή κοινών χαρακτηριστικών από υποκλάσεις προς υπερκλάση). Εξειδίκευση είναι η κίνηση προς τα κάτω (προσθήκη ειδικών ιδιοτήτων/μεθόδων στις υποκλάσεις).",
+            "Γενίκευση είναι η προσθήκη ιδιοτήτων στις υποκλάσεις και Εξειδίκευση είναι η διαγραφή τους.",
+            "Γενίκευση εφαρμόζεται μόνο στους πίνακες και Εξειδίκευση στις συνδεδεμένες λίστες.",
+            "Οι δύο όροι εκφράζουν την ίδια ακριβώς ενέργεια χωρίς καμία διαφορά."
+        ],
+        correct: 0,
+        hint: "Σκεφτείτε την κατεύθυνση σχεδίασης: από τα ειδικά αντικείμενα προς την κοινή υπερκλάση (bottom-up) vs από την υπερκλάση προς τα ειδικά (top-down).",
+        explanation: "Γενίκευση (Generalization) είναι η διαδικασία εντοπισμού κοινών χαρακτηριστικών σε υπάρχουσες κλάσεις και η μεταφορά τους προς τα πάνω σε μια κοινή υπερκλάση. Εξειδίκευση (Specialization) είναι η δημιουργία νέων υποκλάσεων προς τα κάτω με προσθήκη ειδικών ιδιοτήτων."
+    }
+];
+
+// --- STATE VARIABLES ---
+let currentMode = 'practice';
+let studentName = '';
+let currentQuestionIndex = 0;
+let userAnswers = {};
+
+// --- LOGIC FUNCTIONS ---
+function selectMode(mode, element) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn-card').forEach(card => card.classList.remove('selected'));
+    element.classList.add('selected');
+}
+
+function startQuiz() {
+    const nameInput = document.getElementById('student-name').value.trim();
+    studentName = nameInput !== '' ? nameInput : 'Ανώνυμος/η Μαθητής/τρια';
+
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+
+    currentQuestionIndex = 0;
+    userAnswers = {};
+
+    renderQuizScreen();
+}
+
+function renderQuizScreen() {
+    const wrapper = document.getElementById('questions-wrapper');
+    wrapper.innerHTML = '';
+
+    if (currentMode === 'practice') {
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'inline-block';
+        updateProgressBar();
+        
+        const q = questionsData[currentQuestionIndex];
+        wrapper.appendChild(createQuestionCard(q, currentQuestionIndex + 1, questionsData.length, true));
+    } else {
+        // Exam Mode: Show all questions
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'inline-block';
+        document.getElementById('progress-bar').style.width = '100%';
+
+        questionsData.forEach((q, idx) => {
+            wrapper.appendChild(createQuestionCard(q, idx + 1, questionsData.length, false));
+        });
+    }
+}
+
+function createQuestionCard(q, num, total, isPractice) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `q-card-${q.id}`;
+
+    let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+    
+    let optionsHTML = '';
+    q.options.forEach((opt, idx) => {
+        if (!opt) return;
+        const isChecked = userAnswers[q.id] === idx ? 'checked' : '';
+        optionsHTML += `
+            <label class="option-item" onclick="handleOptionSelect(${q.id}, ${idx}, ${isPractice})">
+                <input type="radio" name="q_${q.id}" value="${idx}" ${isChecked}>
+                <span>${opt}</span>
+            </label>
+        `;
+    });
+
+    // Determine difficulty badge class
+    let diffClass = "diff-basic";
+    if (q.difficulty === "medium") diffClass = "diff-medium";
+    if (q.difficulty === "advanced") diffClass = "diff-advanced";
+
+    card.innerHTML = `
+        <div class="question-header">
+            <span class="question-number">Ερώτηση ${num} από ${total}</span>
+            <span class="diff-badge ${diffClass}">${q.difficultyText}</span>
+        </div>
+        <div class="question-text">${q.question}</div>
+        ${codeHTML}
+        <div class="options-group">${optionsHTML}</div>
+        <button class="btn btn-hint" onclick="toggleHint(${q.id})">💡 Υπόδειξη</button>
+        <div id="hint-${q.id}" class="hint-box">${q.hint}</div>
+        <div id="justification-${q.id}" class="justification-box"></div>
+    `;
+
+    return card;
+}
+
+function handleOptionSelect(qId, selectedIdx, isPractice) {
+    userAnswers[qId] = selectedIdx;
+    document.getElementById('warning-msg').style.display = 'none';
+
+    if (isPractice) {
+        const q = questionsData.find(item => item.id === qId);
+        const justBox = document.getElementById(`justification-${qId}`);
+        justBox.style.display = 'block';
+
+        if (selectedIdx === q.correct) {
+            justBox.className = 'justification-box correct';
+            justBox.innerHTML = `<strong>✅ Σωστό!</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        } else {
+            justBox.className = 'justification-box incorrect';
+            justBox.innerHTML = `<strong>❌ Λάθος.</strong> Η σωστή απάντηση είναι: <em>${q.options[q.correct]}</em>.<br><br><strong>Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        }
+    }
+}
+
+function toggleHint(qId) {
+    const hintBox = document.getElementById(`hint-${qId}`);
+    hintBox.style.display = (hintBox.style.display === 'block') ? 'none' : 'block';
+}
+
+function updateProgressBar() {
+    const progress = ((currentQuestionIndex + 1) / questionsData.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+}
+
+function nextQuestion() {
+    if (userAnswers[questionsData[currentQuestionIndex].id] === undefined) {
+        alert('Παρακαλώ επιλέξτε μια απάντηση πριν προχωρήσετε!');
+        return;
+    }
+
+    if (currentQuestionIndex < questionsData.length - 1) {
+        currentQuestionIndex++;
+        renderQuizScreen();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        showReport();
+    }
+}
+
+function submitExam() {
+    const unanswered = questionsData.filter(q => userAnswers[q.id] === undefined);
+    if (unanswered.length > 0) {
+        const warning = document.getElementById('warning-msg');
+        warning.innerText = `⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή! Απομένουν ${unanswered.length} αναπάντητες ερωτήσεις.`;
+        warning.style.display = 'block';
+
+        const firstUnansweredId = unanswered[0].id;
+        document.getElementById(`q-card-${firstUnansweredId}`).scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    showReport();
+}
+
+function showReport() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('report-screen').style.display = 'block';
+
+    let score = 0;
+    const reportList = document.getElementById('report-list');
+    reportList.innerHTML = '';
+
+    questionsData.forEach((q, idx) => {
+        const userChoice = userAnswers[q.id];
+        const isCorrect = userChoice === q.correct;
+        if (isCorrect) score++;
+
+        const item = document.createElement('div');
+        item.className = `report-item ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+        let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+        let userChoiceText = userChoice !== undefined ? q.options[userChoice] : 'Δεν απαντήθηκε';
+        let correctChoiceText = q.options[q.correct];
+
+        let diffClass = "diff-basic";
+        if (q.difficulty === "medium") diffClass = "diff-medium";
+        if (q.difficulty === "advanced") diffClass = "diff-advanced";
+
+        item.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                    <span class="badge ${isCorrect ? 'badge-success' : 'badge-danger'}">
+                        ${isCorrect ? '✅ ΣΩΣΤΟ' : '❌ ΛΑΘΟΣ'}
+                    </span>
+                    <strong>Ερώτηση ${idx + 1}:</strong> ${q.question}
+                </div>
+                <span class="diff-badge ${diffClass}">${q.difficultyText}</span>
+            </div>
+            ${codeHTML}
+            <div style="margin: 8px 0; font-size: 0.95rem;">
+                <strong>Η απάντησή σας:</strong> <span style="color: ${isCorrect ? 'var(--olive)' : 'var(--wrong-border)'}; font-weight: 600;">${userChoiceText}</span><br>
+                ${!isCorrect ? `<strong>Σωστή απάντηση:</strong> <span style="color: var(--olive); font-weight: 600;">${correctChoiceText}</span><br>` : ''}
+            </div>
+            <div style="font-size: 0.9rem; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 6px; margin-top: 6px;">
+                <strong>Τεκμηρίωση / Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}
+            </div>
+        `;
+
+        reportList.appendChild(item);
+    });
+
+    const percentage = Math.round((score / questionsData.length) * 100);
+
+    document.getElementById('report-student-name').innerText = `Μαθητής/τρια: ${studentName}`;
+    document.getElementById('report-date').innerText = `Ημερομηνία & Ώρα: ${new Date().toLocaleString('el-GR')}`;
+    document.getElementById('report-score').innerText = `${score} / ${questionsData.length}`;
+    document.getElementById('report-percentage').innerText = `Ποσοστό Επιτυχίας: ${percentage}%`;
+
+    // Pedagogical Comment
+    let comment = '';
+    if (percentage >= 90) {
+        comment = '🌟 Εξαιρετική επίδοση! Έχετε κατανοήσει πλήρως τις προχωρημένες έννοιες της Κληρονομικότητας, τις σχέσεις Υπερκλάσης-Υποκλάσης (IS-A), τον Πολυμορφισμό, τον Επαναορισμό Μεθόδων και τη σχεδίαση Διαγραμμάτων Ιεραρχίας UML.';
+    } else if (percentage >= 75) {
+        comment = '👏 Πολύ καλή προσπάθεια! Έχετε γερές βάσεις στην Κληρονομικότητα και τον Πολυμορφισμό. Κάντε μια μικρή επανεξέταση στα θέματα Πανελλαδικών (Οχήματα, Σχολική Μονάδα, Ψηφιακό Περιεχόμενο).';
+    } else if (percentage >= 50) {
+        comment = '👍 Ικανοποιητική παρουσία. Χρειάζεται περισσότερη εξάσκηση στις ερωτήσεις προχωρημένου επιπέδου (πολυμορφικές μέθοδοι, διαγράμματα UML και διάκριση IS-A vs HAS-A).';
+    } else {
+        comment = '📚 Χρειάζεται συστηματική επανάληψη στη θεωρία της 21ης εβδομάδας (Ενότητες 4.4 & 4.5 Συμπληρωματικού Υλικού & Ενότητα 6.5) και επιπλέον μελέτη των παραδειγμάτων των Πανελλαδικών Εξετάσεων.';
+    }
+    document.getElementById('report-comment').innerText = comment;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+    document.getElementById('report-screen').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+</script>
+
+</body>
+</html>

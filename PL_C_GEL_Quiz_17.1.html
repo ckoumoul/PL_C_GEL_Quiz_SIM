@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ) - Εβδομάδα 17: Συνδεδεμένες Λίστες</title>
+    <style>
+        :root {
+            --bg-color: #f7f4ef;
+            --text-color: #3a322b;
+            --terracotta: #7a4b29;
+            --terracotta-hover: #61391e;
+            --olive: #4e6e52;
+            --olive-hover: #3c5640;
+            --sand: #d4b886;
+            --card-bg: #ffffff;
+            --dark-code-bg: #2d2621;
+            --dark-code-text: #f0e8df;
+            --correct-bg: #eaf3eb;
+            --correct-border: #4e6e52;
+            --wrong-bg: #fdf0ed;
+            --wrong-border: #a73c26;
+            --border-radius: 12px;
+            --shadow: 0 4px 15px rgba(58, 50, 43, 0.08);
+
+            /* Difficulty Badge Colors */
+            --diff-basic-bg: #4e6e52;
+            --diff-medium-bg: #b8977e;
+            --diff-advanced-bg: #c84b31;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 22px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border-bottom: 4px solid var(--terracotta);
+        }
+
+        header h1 {
+            color: var(--terracotta);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--olive);
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 184, 134, 0.3);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--terracotta);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--sand);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            color: var(--text-color);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--terracotta);
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .mode-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mode-btn-card {
+            border: 2px solid var(--sand);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .mode-btn-card:hover, .mode-btn-card.selected {
+            border-color: var(--terracotta);
+            background: #fcf8f3;
+            transform: translateY(-2px);
+        }
+
+        .mode-btn-card h3 {
+            color: var(--terracotta);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .mode-btn-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--terracotta);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: var(--terracotta-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: var(--olive);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--olive-hover);
+        }
+
+        .btn-hint {
+            background-color: transparent;
+            color: var(--terracotta);
+            border: 1px solid var(--terracotta);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+
+        .btn-hint:hover {
+            background-color: rgba(122, 75, 41, 0.08);
+        }
+
+        /* Code Blocks */
+        pre code {
+            display: block;
+            background: var(--dark-code-bg);
+            color: var(--dark-code-text);
+            padding: 14px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 4px solid var(--sand);
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        /* Question Elements Header & Badges */
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .question-number {
+            font-weight: 700;
+            color: var(--terracotta);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .diff-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #ffffff;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .diff-basic {
+            background-color: var(--diff-basic-bg);
+        }
+
+        .diff-medium {
+            background-color: var(--diff-medium-bg);
+        }
+
+        .diff-advanced {
+            background-color: var(--diff-advanced-bg);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1.5px solid #e0d8cd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .option-item:hover {
+            background-color: #fcf9f5;
+            border-color: var(--sand);
+        }
+
+        .option-item input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--terracotta);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Hints & Feedback */
+        .hint-box {
+            display: none;
+            background: #fffdf7;
+            border-left: 4px solid var(--sand);
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #554a3e;
+        }
+
+        .justification-box {
+            display: none;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .justification-box.correct {
+            background-color: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: #254229;
+        }
+
+        .justification-box.incorrect {
+            background-color: var(--wrong-bg);
+            border: 1px solid var(--wrong-border);
+            color: #641e10;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0d8cd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--olive);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Report Screen */
+        .report-header {
+            text-align: center;
+            border-bottom: 2px dashed var(--sand);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-badge {
+            display: inline-block;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--terracotta);
+            margin: 10px 0;
+        }
+
+        .pedagogical-comment {
+            background: #f4efe6;
+            padding: 15px;
+            border-radius: 8px;
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 10px;
+            border-left: 4px solid var(--olive);
+        }
+
+        .report-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e0d8cd;
+        }
+
+        .report-item.is-correct {
+            border-left: 5px solid var(--olive);
+            background: #fcfdfe;
+        }
+
+        .report-item.is-incorrect {
+            border-left: 5px solid var(--wrong-border);
+            background: #fffcfc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .badge-success { background-color: var(--olive); }
+        .badge-danger { background-color: var(--wrong-border); }
+
+        .actions-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .warning-msg {
+            color: var(--wrong-border);
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .container { max-width: 100%; }
+            .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+            .actions-group, .btn-hint, #start-screen, .progress-bar-container, .warning-msg { display: none !important; }
+            #report-screen { display: block !important; }
+            header { box-shadow: none; border-bottom: 2px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ)</h1>
+        <p>Εβδομάδα 17: Δυναμικές Δομές Δεδομένων – Συνδεδεμένες Λίστες</p>
+    </header>
+
+    <!-- 1. ΑΡΧΙΚΗ ΟΘΟΝΗ -->
+    <div id="start-screen" class="card">
+        <h2 style="color: var(--terracotta); margin-bottom: 15px;">Διαδραστικό Quiz Αξιολόγησης</h2>
+        <p style="margin-bottom: 20px;">Εξετάστε τις γνώσεις σας στις Συνδεδεμένες Λίστες (Linked Lists), τη δυναμική παραχώρηση μνήμης, τη ανατομία Κόμβων & Δεικτών, τον δείκτη Κεφαλής (Head), τη σημασία της τιμής NULL, τη διάσχιση, την εισαγωγή και διαγραφή κόμβων, καθώς και τη σύγκριση με τους Στατικούς Πίνακες.</p>
+        
+        <div class="form-group">
+            <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+            <input type="text" id="student-name" placeholder="Εισάγετε το ονοματεπώνυμό σας (Προαιρετικό)">
+        </div>
+
+        <div class="form-group">
+            <label>Επιλέξτε Λειτουργία:</label>
+            <div class="mode-selection">
+                <div class="mode-btn-card selected" onclick="selectMode('practice', this)">
+                    <h3>🎮 Εκμάθηση & Εξάσκησή</h3>
+                    <p>Βήμα-βήμα με άμεσο feedback & επεξήγηση σε κάθε ερώτηση.</p>
+                </div>
+                <div class="mode-btn-card" onclick="selectMode('exam', this)">
+                    <h3>📝 Προσομοίωση & Τεστ</h3>
+                    <p>Συγκεντρωτική απάντηση όλων των ερωτήσεων & τελικό Report.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <button class="btn" onclick="startQuiz()">Έναρξη Κουίζ ➔</button>
+        </div>
+    </div>
+
+    <!-- 2. ΟΘΟΝΗ ΕΡΩΤΗΣΕΩΝ -->
+    <div id="quiz-screen" style="display: none;">
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+
+        <div id="questions-wrapper"></div>
+
+        <div id="warning-msg" class="warning-msg">⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή!</div>
+
+        <div class="actions-group">
+            <button id="next-btn" class="btn" onclick="nextQuestion()" style="display: none;">Επόμενη Ερώτηση ➔</button>
+            <button id="submit-btn" class="btn btn-secondary" onclick="submitExam()" style="display: none;">Υποβολή Τεστ 🏁</button>
+        </div>
+    </div>
+
+    <!-- 3. ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ / REPORT -->
+    <div id="report-screen" class="card" style="display: none;">
+        <div class="report-header">
+            <h2 style="color: var(--terracotta);">Αναφορά Επίδοσης Μαθητή</h2>
+            <p id="report-student-name" style="font-weight: bold; font-size: 1.1rem; margin-top: 5px;"></p>
+            <p id="report-date" style="font-size: 0.85rem; color: #666;"></p>
+            
+            <div id="report-score" class="score-badge">0 / 0</div>
+            <p id="report-percentage" style="font-weight: 600; font-size: 1.2rem; color: var(--olive);"></p>
+            
+            <div id="report-comment" class="pedagogical-comment"></div>
+        </div>
+
+        <h3 style="color: var(--terracotta); margin-bottom: 15px;">Αναλυτική Επισκόπηση Ερωτήσεων</h3>
+        <div id="report-list"></div>
+
+        <div class="actions-group">
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+            <button class="btn" onclick="restartQuiz()">↻ Έναρξη από την αρχή</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- ΔΕΔΟΜΕΝΑ ΕΡΩΤΗΣΕΩΝ (ΕΒΔΟΜΑΔΑ 17: ΣΥΝΔΕΔΕΜΕΝΕΣ ΛΙΣΤΕΣ) ---
+const questionsData = [
+    {
+        id: 1,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Ποιος είναι ο ορισμός μιας απλά συνδεδεμένης λίστας (Linked List);",
+        code: null,
+        options: [
+            "Είναι μια στατική δομή δεδομένων που αποθηκεύει στοιχεία σε συνεχόμενες θέσεις μνήμης.",
+            "Είναι μια δυναμική γραμμική δομή δεδομένων που αποτελείται από σειρά κόμβων, όπου κάθε κόμβος συνδέεται με τον επόμενο μέσω δείκτη.",
+            "Είναι ένας πίνακας σταθερού μεγέθους που επιτρέπει τυχαία προσπέλαση.",
+            "Είναι μια μη γραμμική δομή δεδομένων που διασχίζεται αποκλειστικά από το τέλος προς την αρχή."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε αν οι συνδεδεμένες λίστες είναι στατικές ή δυναμικές και πώς συνδέονται τα στοιχεία μεταξύ τους.",
+        explanation: "Η απλά συνδεδεμένη λίστα είναι μια δυναμική γραμμική δομή δεδομένων που αποτελείται από μια αλυσίδα κόμβων, όπου κάθε κόμβος διατηρεί τη διεύθυνση μνήμης του επόμενου κόμβου μέσω ενός δείκτη."
+    },
+    {
+        id: 2,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Ποια είναι η θεμελιώδης διαφορά στην κατανομή μνήμης μεταξύ των Στατικών Πινάκων και των Συνδεδεμένων Λιστών;",
+        code: null,
+        options: [
+            "Οι πίνακες καταλαμβάνουν μη συνεχόμενες θέσεις στη μνήμη, ενώ οι συνδεδεμένες λίστες συνεχόμενες.",
+            "Οι κόμβοι των συνδεδεμένων λιστών δεσμεύονται δυναμικά στη μνήμη κατά την εκτέλεση και μπορούν να βρίσκονται σε μη συνεχόμενες θέσεις, ενώ οι πίνακες δεσμεύουν συνεχόμενες θέσεις.",
+            "Οι συνδεδεμένες λίστες απαιτούν προκαθορισμένο μέγεθος κατά τη φάση της μεταγλώττισης.",
+            "Δεν υπάρχει καμία διαφορά στον τρόπο κατανομής μνήμης."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε αν απαιτείται η RAM να έχει ένα συνεχόμενο μπλοκ μνήμης για να δημιουργηθεί μια συνδεδεμένη λίστα.",
+        explanation: "Οι στατικοί πίνακες απαιτούν ένα συνεχόμενο τμήμα μνήμης RAM με σταθερό μέγεθος. Αντίθετα, οι συνδεδεμένες λίστες αξιοποιούν διάσπαρτες (μη συνεχόμενες) θέσεις μνήμης, δεσμεύοντας δυναμικά χώρο για κάθε νέο κόμβο κατά την εκτέλεση."
+    },
+    {
+        id: 3,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Από ποια δύο πεδία αποτελείται η ανατομία ενός κόμβου (node) σε μια απλά συνδεδεμένη λίστα;",
+        code: null,
+        options: [
+            "Πεδίο Δείκτη Κεφαλής και Πεδίο Δείκτη NULL.",
+            "Πεδίο Δεδομένων (Data Field) και Πεδίο Δείκτη (Pointer / Next Field).",
+            "Πεδίο Δείκτη Προηγούμενου και Πεδίο Δείκτη Επόμενου.",
+            "Πεδίο Μεγέθους και Πεδίο Τύπου Δεδομένων."
+        ],
+        correct: 1,
+        hint: "Κάθε κόμβος πρέπει να αποθηκεύει την πραγματική πληροφορία και τη διεύθυνση του επόμενου κόμβου.",
+        explanation: "Κάθε κόμβος έχει διμερή ανατομία: 1) Το Πεδίο Δεδομένων (Data Field) που αποθηκεύει την ωφέλιμη πληροφορία, και 2) Το Πεδίο Δείκτη (Pointer / Next Field) που αποθηκεύει τη διεύθυνση μνήμης του επόμενου κόμβου."
+    },
+    {
+        id: 4,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Ποιος είναι ο ρόλος του δείκτη Κεφαλής (Head Pointer) σε μια συνδεδεμένη λίστα;",
+        code: null,
+        options: [
+            "Αποτελεί τον τελευταίο κόμβο της λίστας και περιέχει τα δεδομένα εξόδου.",
+            "Είναι μια εξωτερική μεταβλητή-δείκτης που αποθηκεύει τη διεύθυνση μνήμης του πρώτου κόμβου της λίστας και αποτελεί το μοναδικό σημείο εισόδου σε αυτήν.",
+            "Υπολογίζει αυτόματα το συνολικό πλήθος των κόμβων της λίστας.",
+            "Δείχνει πάντα στη θέση μνήμης 0 του υπολογιστή."
+        ],
+        correct: 1,
+        hint: "Πώς μπορεί το πρόγραμμα να προσπελάσει μια λίστα όταν οι κόμβοι είναι διασκορπισμένοι στη μνήμη;",
+        explanation: "Ο δείκτης Head (Κεφαλή) δεν είναι κόμβος με δεδομένα, αλλά μια μεταβλητή-δείκτης που κρατά τη διεύθυνση του πρώτου κόμβου. Αποτελεί το μοναδικό σημείο εισόδου για την προσπέλαση ολόκληρης της συνδεδεμένης λίστας."
+    },
+    {
+        id: 5,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Τι σημαίνει η ειδική τιμή δείκτη NULL (κενός δείκτης) στο πεδίο δείκτη ενός κόμβου;",
+        code: null,
+        options: [
+            "Σημαίνει ότι ο δείκτης έχει υποστεί σφάλμα υπερχείλισης.",
+            "Σημαίνει ότι ο δείκτης δεν δείχνει σε καμία διεύθυνση μνήμης, δηλώνοντας το λογικό τέλος της λίστας (ή ότι η λίστα είναι άδεια αν Head = NULL).",
+            "Δηλώνει ότι ο κόμβος περιέχει τον αριθμό 0 στο πεδίο δεδομένων.",
+            "Δείχνει στον πρώτο κόμβο της λίστας."
+        ],
+        correct: 1,
+        hint: "Πώς καταλαβαίνει ένας αλγόριθμος διάσχισης ότι έφτασε στον τελευταίο κόμβο;",
+        explanation: "Η τιμή NULL είναι μια ειδική σταθερά που υποδεικνύει την απουσία διεύθυνσης μνήμης. Στο πεδίο δείκτη του τελευταίου κόμβου σηματοδοτεί το τέλος της λίστας, ενώ αν Head = NULL σημαίνει ότι η λίστα είναι άδεια."
+    },
+    {
+        id: 6,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Γιατί ΔΕΝ υποστηρίζεται Τυχαία Προσπέλαση (Random Access) στις απλά συνδεδεμένες λίστες;",
+        code: null,
+        options: [
+            "Διότι απαγορεύεται από τη γλώσσα προγραμματισμού.",
+            "Διότι οι κόμβοι δεν βρίσκονται σε συνεχόμενες θέσεις μνήμης και η προσπέλαση οποιουδήποτε κόμβου απαιτεί υποχρεωτικά ακολουθιακή διάσχιση από την Κεφαλή.",
+            "Διότι ο δείκτης Head αλλάζει τιμή σε κάθε επανάληψη.",
+            "Διότι τα δεδομένα είναι πάντα ταξινομημένα σε αύξουσα σειρά."
+        ],
+        correct: 1,
+        hint: "Μπορούμε να υπολογίσουμε τη διεύθυνση του k-οστού κόμβου με έναν απλό μαθηματικό τύπο όπως στους πίνακες;",
+        explanation: "Στις συνδεδεμένες λίστες δεν υπάρχει αριθμητικός δείκτης θέσης (index). Επειδή οι κόμβοι βρίσκονται σε διάσπαρτες διευθύνσεις μνήμης, ο μόνος τρόπος να προσπελαστεί ο k-οστός κόμβος είναι ξεκινώντας από την Κεφαλή και ακολουθώντας διαδοχικά τους δείκτες (ακολουθιακή/σειριακή προσπέλαση)."
+    },
+    {
+        id: 7,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Τι θα συμβεί αν ο δείκτης Κεφαλής (Head) μιας συνδεδεμένης λίστας τροποποιηθεί λανθασμένα ή χαθεί κατά την εκτέλεση;",
+        code: null,
+        options: [
+            "Η λίστα θα μετατραπεί αυτόματα σε μονοδιάστατο πίνακα.",
+            "Ολόκληρη η συνδεδεμένη λίστα χάνεται οριστικά στη μνήμη (διαρροή μνήμης - memory leak), καθώς δεν υπάρχει πλέον κανένας τρόπος εντοπισμού των κόμβων της.",
+            "Ο τελευταίος κόμβος θα γίνει αυτόματα ο νέος πρώτος κόμβος.",
+            "Ο δείκτης NULL θα πάρει την τιμή 1."
+        ],
+        correct: 1,
+        hint: "Αν χάσετε τη διεύθυνση του πρώτου κρίκου μιας αλυσίδας, μπορείτε να βρείτε τους επόμενους;",
+        explanation: "Επειδή ο Head είναι το μοναδικό σημείο εισόδου στη δομή, αν χαθεί η διεύθυνση που αποθηκεύει, οι κόμβοι παραμένουν στη μνήμη RAM αλλά είναι παντελώς προσβάσιμοι, προκαλώντας διαρροή μνήμης (memory leak)."
+    },
+    {
+        id: 8,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Δίνεται ο παρακάτω αλγόριθμος διάσχισης απλά συνδεδεμένης λίστας σε ψευδογλώσσα. Ποια συνθήκη πρέπει να τοποθετηθεί στην εντολή `Όσο`;",
+        code: "P <- Head\nΌσο (....................) επανάλαβε\n    Γράψε P.Δεδομένα\n    P <- P.Επόμενος\nΤέλος_επανάληψης",
+        options: [
+            "P = NULL",
+            "P <> NULL",
+            "P.Επόμενος = Head",
+            "Head <> NULL"
+        ],
+        correct: 1,
+        hint: "Η επανάληψη πρέπει να συνεχίζεται όσο ο βοηθητικός δείκτης P δείχνει σε υπαρκτό κόμβο.",
+        explanation: "Η διάσχιση συνεχίζεται όσο ο βοηθητικός δείκτης `P` δείχνει σε κάποιον πραγματικό κόμβο, δηλαδή `P <> NULL`. Όταν ο `P` λάβει την τιμή `NULL` (μετά τον τελευταίο κόμβο), ο βρόχος τερματίζεται."
+    },
+    {
+        id: 9,
+        difficulty: "medium",
+        difficultyText: "Έστω τμήμα απλά συνδεδεμένης λίστας με διαδοχικούς κόμβους A και B. Θέλουμε να εισαγάγουμε έναν νέο κόμβο N ανάμεσα στους A και B. Ποια είναι η σωστή σειρά ενημέρωσης των δεικτών;",
+        code: null,
+        options: [
+            "1) N.Επόμενος <- A.Επόμενος  και  2) A.Επόμενος <- N",
+            "1) A.Επόμενος <- N  και  2) N.Επόμενος <- A.Επόμενος",
+            "1) Head <- N  και  2) N.Επόμενος <- NULL",
+            "1) B.Επόμενος <- N  και  2) N.Επόμενος <- A"
+        ],
+        correct: 0,
+        hint: "Προσοχή! Αν αλλάξετε πρώτα το A.Επόμενος <- N, θα χάσετε τη διεύθυνση του κόμβου B;",
+        explanation: "Πρώτα συνδέεται ο νέος κόμβος N με τον επόμενο B θέτοντας `N.Επόμενος <- A.Επόμενος` (ή Pointer_B). Στη συνέχεια ενημερώνεται ο προηγούμενος κόμβος A ώστε να δείχνει στον N: `A.Επόμενος <- Pointer_N`. Αν γινόταν ανάποδα, θα χανόταν ο δείκτης προς τον B!"
+    },
+    {
+        id: 10,
+        difficulty: "medium",
+        difficultyText: "Θέλουμε να διαγράψουμε τον κόμβο B που βρίσκεται ανάμεσα στους κόμβους A και C σε μια συνδεδεμένη λίστα. Ποια ενέργεια δεικτών εκτελεί την «παράκαμψη» (bypass) του B;",
+        code: null,
+        options: [
+            "B.Επόμενος <- NULL",
+            "A.Επόμενος <- B.Επόμενος (δηλαδή A.Επόμενος <- Pointer_C)",
+            "Head <- B.Επόμενος",
+            "C.Επόμενος <- A"
+        ],
+        correct: 1,
+        hint: "Πώς ο προηγούμενος κόμβος A θα δείξει απευθείας στον κόμβο C που ακολουθεί τον B;",
+        explanation: "Για τη διαγραφή του B, ο δείκτης του προηγούμενου κόμβου A ενημερώνεται ώστε να δείχνει απευθείας στον επόμενο του B (τον C): `A.Επόμενος <- B.Επόμενος`. Έτσι ο B παρακάμπτεται και στη συνέχεια αποδεσμεύεται η μνήμη του."
+    },
+    {
+        id: 11,
+        difficulty: "medium",
+        difficultyText: "Ποιο είναι το κύριο πλεονέκτημα των Συνδεδεμένων Λιστών έναντι των Στατικών Πινάκων κατά τις λειτουργίες Εισαγωγής και Διαγραφής στοιχείων;",
+        code: null,
+        options: [
+            "Η εισαγωγή και διαγραφή στις συνδεδεμένες λίστες εκτελούνται σε σταθερό χρόνο αλλάζοντας απλώς δείκτες, χωρίς να απαιτείται χρονοβόρα ολίσθηση/μετακίνηση δεδομένων όπως στους πίνακες.",
+            "Οι συνδεδεμένες λίστες απαιτούν λιγότερη μνήμη ανά στοιχείο από τους πίνακες.",
+            "Επιτρέπουν ταχύτερη τυχαία αναζήτηση με δυαδική αναζήτηση.",
+            "Δεν παρουσιάζουν ποτέ σφάλμα εκτέλεσης."
+        ],
+        correct: 0,
+        hint: "Σκεφτείτε αν χρειάζεται μετακίνηση χιλιάδων στοιχείων στη μνήμη όταν προσθέτουμε ένα στοιχείο στη μέση μιας λίστας.",
+        explanation: "Στους πίνακες η εισαγωγή/διαγραφή στη μέση απαιτεί ολίσθηση όλων των επόμενων στοιχείων. Στις συνδεδεμένες λίστες απαιτείται μόνο αναπροσαρμογή 1-2 δεικτών, χωρίς μετακίνηση των υπόλοιπων δεδομένων στη μνήμη."
+    },
+    {
+        id: 12,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Δίνεται το παρακάτω τμήμα αλγορίθμου που υποτίθεται ότι μετράει το πλήθος των κόμβων μιας συνδεδεμένης λίστας. Ποιο σοβαρό λογικό σφάλμα περιέχει;",
+        code: "P <- Head\ncount <- 0\nΌσο P <> NULL επανάλαβε\n    count <- count + 1\n    ! Λείπει εντολή προώθησης\nΤέλος_επανάληψης",
+        options: [
+            "Ο μετρητής count πρέπει να αρχικοποιείται στο 1.",
+            "Λείπει η εντολή μετακίνησης του δείκτη στον επόμενο κόμβο (`P <- P.Επόμενος`), προκαλώντας ατέρμονα βρόχο (infinite loop).",
+            "Η συνθήκη της `Όσο` πρέπει να είναι `P = NULL`.",
+            "Ο δείκτης Head πρέπει να μηδενίζεται μέσα στην επανάληψη."
+        ],
+        correct: 1,
+        hint: "Αλλάζει η τιμή του δείκτη P μέσα στον βρόχο επανάληψης;",
+        explanation: "Επειδή λείπει η εντολή `P <- P.Επόμενος`, ο βοηθητικός δείκτης P παραμένει σταθερός στον πρώτο κόμβο και η συνθήκη `P <> NULL` παραμένει για πάντα Αληθής, προκαλώντας ατέρμονα βρόχο (infinite loop)."
+    },
+    {
+        id: 13,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Πώς πραγματοποιείται η Εισαγωγή ενός νέου κόμβου N στην ΑΡΧΗ μιας απλά συνδεδεμένης λίστας (πριν από τον τρέχοντα πρώτο κόμβο);",
+        code: null,
+        options: [
+            "1) N.Επόμενος <- Head  και  2) Head <- N",
+            "1) Head <- N  και  2) N.Επόμενος <- Head",
+            "1) N.Επόμενος <- NULL  και  2) Head <- NULL",
+            "1) Head.Επόμενος <- N  και  2) N <- Head"
+        ],
+        correct: 0,
+        hint: "Συνδέουμε τον νέο κόμβο N με τον τρέχοντα πρώτο κόμβο (Head) και μετά ενημερώνουμε την Κεφαλή.",
+        explanation: "1) Το πεδίο δείκτη του νέου κόμβου N τίθεται να δείχνει στον τρέχοντα πρώτο κόμβο: `N.Επόμενος <- Head`. 2) Ο δείκτης Κεφαλής ενημερώνεται ώστε να δείχνει πλέον στον νέο κόμβο N ως πρώτο: `Head <- N`."
+    },
+    {
+        id: 14,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Πώς πραγματοποιείται η Διαγραφή του ΠΡΩΤΟΥ κόμβου μιας μη κενής συνδεδεμένης λίστας (Head <> NULL);",
+        code: null,
+        options: [
+            "1) Head <- Head.Επόμενος  και  2) Αποδέσμευση της μνήμης του πρώην πρώτου κόμβου.",
+            "1) Head <- NULL",
+            "1) Head.Επόμενος <- NULL",
+            "1) P <- NULL  και  2) Head <- P"
+        ],
+        correct: 0,
+        hint: "Πού πρέπει να μετακινηθεί ο δείκτης Κεφαλής (Head) για να δείχνει στον δεύτερο κόμβο;",
+        explanation: "Για τη διαγραφή του πρώτου κόμβου, αποθηκεύεται προσωρινά η διεύθυνσή του, ο δείκτης Κεφαλής μετακινείται στον δεύτερο κόμβο (`Head <- Head.Επόμενος`) και στη συνέχεια αποδεσμεύεται η μνήμη του αρχικού πρώτου κόμβου."
+    },
+    {
+        id: 15,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Δίνεται το παρακάτω τμήμα αλγορίθμου υπολογισμού αθροίσματος των ακέραιων τιμών μιας λίστας. Τι θα εμφανιστεί αν η λίστα περιέχει τους κόμβους [5] -> [12] -> [3] -> NULL;",
+        code: "P <- Head\nS <- 0\nΌσο P <> NULL επανάλαβε\n    ΑΝ P.Δεδομένα MOD 2 = 1 ΤΟΤΕ\n        S <- S + P.Δεδομένα\n    ΤΕΛΟΣ_ΑΝ\n    P <- P.Επόμενος\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\nΕμφάνισε S",
+        options: [
+            "20",
+            "8",
+            "12",
+            "15"
+        ],
+        correct: 1,
+        hint: "Υπολογίστε ποιοι κόμβοι ικανοποιούν τη συνθήκη περιττού αριθμού (P.Δεδομένα MOD 2 = 1).",
+        explanation: "1ος κόμβος: 5 (περιττός -> S = 0 + 5 = 5)\n2ος κόμβος: 12 (άρτιος -> δεν προστίθεται)\n3ος κόμβος: 3 (περιττός -> S = 5 + 3 = 8)\nΤελικό άθροισμα S = 8."
+    },
+    {
+        id: 16,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Ποιο από τα παρακάτω αποτελεί ΜΕΙΟΝΕΚΤΗΜΑ των συνδεδεμένων λιστών σε σύγκριση με τους στατικούς πίνακες;",
+        code: null,
+        options: [
+            "Απαιτούν πρόσθετη μνήμη ανά κόμβο για την αποθήκευση των δεικτών (διευθύνσεων μνήμης).",
+            "Δεν μπορούν να αυξομειώσουν το μέγεθός τους κατά την εκτέλεση.",
+            "Απαιτούν συνεχόμενες θέσεις μνήμης RAM.",
+            "Προκαλούν πάντα σφάλμα υποχείλισης κατά την εισαγωγή."
+        ],
+        correct: 0,
+        hint: "Εκτός από τα πραγματικά δεδομένα, τι άλλο πρέπει να αποθηκεύεται σε κάθε κόμβο;",
+        explanation: "Στις συνδεδεμένες λίστες, κάθε κόμβος εκτός από τα δεδομένα πρέπει υποχρεωτικά να αποθηκεύει και 1 (ή περισσότερους) δείκτες (διευθύνσεις μνήμης), προκαλώντας πρόσθετη επιβάρυνση μνήμης (memory overhead)."
+    }
+];
+
+// --- STATE VARIABLES ---
+let currentMode = 'practice';
+let studentName = '';
+let currentQuestionIndex = 0;
+let userAnswers = {};
+
+// --- LOGIC FUNCTIONS ---
+function selectMode(mode, element) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn-card').forEach(card => card.classList.remove('selected'));
+    element.classList.add('selected');
+}
+
+function startQuiz() {
+    const nameInput = document.getElementById('student-name').value.trim();
+    studentName = nameInput !== '' ? nameInput : 'Ανώνυμος/η Μαθητής/τρια';
+
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+
+    currentQuestionIndex = 0;
+    userAnswers = {};
+
+    renderQuizScreen();
+}
+
+function renderQuizScreen() {
+    const wrapper = document.getElementById('questions-wrapper');
+    wrapper.innerHTML = '';
+
+    if (currentMode === 'practice') {
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'inline-block';
+        updateProgressBar();
+        
+        const q = questionsData[currentQuestionIndex];
+        wrapper.appendChild(createQuestionCard(q, currentQuestionIndex + 1, questionsData.length, true));
+    } else {
+        // Exam Mode: Show all questions
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'inline-block';
+        document.getElementById('progress-bar').style.width = '100%';
+
+        questionsData.forEach((q, idx) => {
+            wrapper.appendChild(createQuestionCard(q, idx + 1, questionsData.length, false));
+        });
+    }
+}
+
+function createQuestionCard(q, num, total, isPractice) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `q-card-${q.id}`;
+
+    let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+    
+    let optionsHTML = '';
+    q.options.forEach((opt, idx) => {
+        if (!opt) return;
+        const isChecked = userAnswers[q.id] === idx ? 'checked' : '';
+        optionsHTML += `
+            <label class="option-item" onclick="handleOptionSelect(${q.id}, ${idx}, ${isPractice})">
+                <input type="radio" name="q_${q.id}" value="${idx}" ${isChecked}>
+                <span>${opt}</span>
+            </label>
+        `;
+    });
+
+    // Determine difficulty badge class
+    let diffClass = "diff-basic";
+    if (q.difficulty === "medium") diffClass = "diff-medium";
+    if (q.difficulty === "advanced") diffClass = "diff-advanced";
+
+    card.innerHTML = `
+        <div class="question-header">
+            <span class="question-number">Ερώτηση ${num} από ${total}</span>
+            <span class="diff-badge ${diffClass}">${q.difficultyText}</span>
+        </div>
+        <div class="question-text">${q.question}</div>
+        ${codeHTML}
+        <div class="options-group">${optionsHTML}</div>
+        <button class="btn btn-hint" onclick="toggleHint(${q.id})">💡 Υπόδειξη</button>
+        <div id="hint-${q.id}" class="hint-box">${q.hint}</div>
+        <div id="justification-${q.id}" class="justification-box"></div>
+    `;
+
+    return card;
+}
+
+function handleOptionSelect(qId, selectedIdx, isPractice) {
+    userAnswers[qId] = selectedIdx;
+    document.getElementById('warning-msg').style.display = 'none';
+
+    if (isPractice) {
+        const q = questionsData.find(item => item.id === qId);
+        const justBox = document.getElementById(`justification-${qId}`);
+        justBox.style.display = 'block';
+
+        if (selectedIdx === q.correct) {
+            justBox.className = 'justification-box correct';
+            justBox.innerHTML = `<strong>✅ Σωστό!</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        } else {
+            justBox.className = 'justification-box incorrect';
+            justBox.innerHTML = `<strong>❌ Λάθος.</strong> Η σωστή απάντηση είναι: <em>${q.options[q.correct]}</em>.<br><br><strong>Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        }
+    }
+}
+
+function toggleHint(qId) {
+    const hintBox = document.getElementById(`hint-${qId}`);
+    hintBox.style.display = (hintBox.style.display === 'block') ? 'none' : 'block';
+}
+
+function updateProgressBar() {
+    const progress = ((currentQuestionIndex + 1) / questionsData.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+}
+
+function nextQuestion() {
+    if (userAnswers[questionsData[currentQuestionIndex].id] === undefined) {
+        alert('Παρακαλώ επιλέξτε μια απάντηση πριν προχωρήσετε!');
+        return;
+    }
+
+    if (currentQuestionIndex < questionsData.length - 1) {
+        currentQuestionIndex++;
+        renderQuizScreen();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        showReport();
+    }
+}
+
+function submitExam() {
+    const unanswered = questionsData.filter(q => userAnswers[q.id] === undefined);
+    if (unanswered.length > 0) {
+        const warning = document.getElementById('warning-msg');
+        warning.innerText = `⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή! Απομένουν ${unanswered.length} αναπάντητες ερωτήσεις.`;
+        warning.style.display = 'block';
+
+        const firstUnansweredId = unanswered[0].id;
+        document.getElementById(`q-card-${firstUnansweredId}`).scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    showReport();
+}
+
+function showReport() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('report-screen').style.display = 'block';
+
+    let score = 0;
+    const reportList = document.getElementById('report-list');
+    reportList.innerHTML = '';
+
+    questionsData.forEach((q, idx) => {
+        const userChoice = userAnswers[q.id];
+        const isCorrect = userChoice === q.correct;
+        if (isCorrect) score++;
+
+        const item = document.createElement('div');
+        item.className = `report-item ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+        let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+        let userChoiceText = userChoice !== undefined ? q.options[userChoice] : 'Δεν απαντήθηκε';
+        let correctChoiceText = q.options[q.correct];
+
+        let diffClass = "diff-basic";
+        if (q.difficulty === "medium") diffClass = "diff-medium";
+        if (q.difficulty === "advanced") diffClass = "diff-advanced";
+
+        item.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                    <span class="badge ${isCorrect ? 'badge-success' : 'badge-danger'}">
+                        ${isCorrect ? '✅ ΣΩΣΤΟ' : '❌ ΛΑΘΟΣ'}
+                    </span>
+                    <strong>Ερώτηση ${idx + 1}:</strong> ${q.question}
+                </div>
+                <span class="diff-badge ${diffClass}">${q.difficultyText}</span>
+            </div>
+            ${codeHTML}
+            <div style="margin: 8px 0; font-size: 0.95rem;">
+                <strong>Η απάντησή σας:</strong> <span style="color: ${isCorrect ? 'var(--olive)' : 'var(--wrong-border)'}; font-weight: 600;">${userChoiceText}</span><br>
+                ${!isCorrect ? `<strong>Σωστή απάντηση:</strong> <span style="color: var(--olive); font-weight: 600;">${correctChoiceText}</span><br>` : ''}
+            </div>
+            <div style="font-size: 0.9rem; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 6px; margin-top: 6px;">
+                <strong>Τεκμηρίωση / Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}
+            </div>
+        `;
+
+        reportList.appendChild(item);
+    });
+
+    const percentage = Math.round((score / questionsData.length) * 100);
+
+    document.getElementById('report-student-name').innerText = `Μαθητής/τρια: ${studentName}`;
+    document.getElementById('report-date').innerText = `Ημερομηνία & Ώρα: ${new Date().toLocaleString('el-GR')}`;
+    document.getElementById('report-score').innerText = `${score} / ${questionsData.length}`;
+    document.getElementById('report-percentage').innerText = `Ποσοστό Επιτυχίας: ${percentage}%`;
+
+    // Pedagogical Comment
+    let comment = '';
+    if (percentage >= 90) {
+        comment = '🌟 Εξαιρετική επίδοση! Έχετε κατανοήσει πλήρως τις Δυναμικές Δομές Δεδομένων, τη λειτουργία των Συνδεδεμένων Λιστών, τη διαχείριση δεικτών Head & NULL, καθώς και τις διαδικασίες διάσχισης, εισαγωγής και διαγραφής.';
+    } else if (percentage >= 75) {
+        comment = '👏 Πολύ καλή προσπάθεια! Έχετε γερές βάσεις στις Συνδεδεμένες Λίστες. Κάντε μια μικρή επανεξέταση στους αλγόριθμους αλλαγής δεικτών κατά την εισαγωγή και διαγραφή.';
+    } else if (percentage >= 50) {
+        comment = '👍 Ικανοποιητική παρουσία. Χρειάζεται περισσότερη εξάσκηση στις ερωτήσεις προχωρημένου επιπέδου (ίχνος αλγορίθμων διάσχισης και οριακές περιπτώσεις Head/NULL).';
+    } else {
+        comment = '📚 Χρειάζεται συστηματική επανάληψη στη θεωρία της 17ης εβδομάδας (Ενότητες 1.3 & 1.3.1) και επιπλέον εξάσκηση στις διαγραμματικές αναπαραστάσεις λιστών.';
+    }
+    document.getElementById('report-comment').innerText = comment;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+    document.getElementById('report-screen').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ) - Εβδομάδα 16: Έλεγχος Λογισμικού & Μέθοδος «Μαύρο Κουτί»</title>
+    <style>
+        :root {
+            --bg-color: #f7f4ef;
+            --text-color: #3a322b;
+            --terracotta: #7a4b29;
+            --terracotta-hover: #61391e;
+            --olive: #4e6e52;
+            --olive-hover: #3c5640;
+            --sand: #d4b886;
+            --card-bg: #ffffff;
+            --dark-code-bg: #2d2621;
+            --dark-code-text: #f0e8df;
+            --correct-bg: #eaf3eb;
+            --correct-border: #4e6e52;
+            --wrong-bg: #fdf0ed;
+            --wrong-border: #a73c26;
+            --border-radius: 12px;
+            --shadow: 0 4px 15px rgba(58, 50, 43, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 22px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border-bottom: 4px solid var(--terracotta);
+        }
+
+        header h1 {
+            color: var(--terracotta);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--olive);
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 184, 134, 0.3);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--terracotta);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--sand);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            color: var(--text-color);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--terracotta);
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .mode-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mode-btn-card {
+            border: 2px solid var(--sand);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .mode-btn-card:hover, .mode-btn-card.selected {
+            border-color: var(--terracotta);
+            background: #fcf8f3;
+            transform: translateY(-2px);
+        }
+
+        .mode-btn-card h3 {
+            color: var(--terracotta);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .mode-btn-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--terracotta);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: var(--terracotta-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: var(--olive);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--olive-hover);
+        }
+
+        .btn-hint {
+            background-color: transparent;
+            color: var(--terracotta);
+            border: 1px solid var(--terracotta);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+
+        .btn-hint:hover {
+            background-color: rgba(122, 75, 41, 0.08);
+        }
+
+        /* Code Blocks */
+        pre code {
+            display: block;
+            background: var(--dark-code-bg);
+            color: var(--dark-code-text);
+            padding: 14px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 4px solid var(--sand);
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        /* Question Elements */
+        .question-number {
+            font-weight: 700;
+            color: var(--terracotta);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1.5px solid #e0d8cd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .option-item:hover {
+            background-color: #fcf9f5;
+            border-color: var(--sand);
+        }
+
+        .option-item input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--terracotta);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Hints & Feedback */
+        .hint-box {
+            display: none;
+            background: #fffdf7;
+            border-left: 4px solid var(--sand);
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #554a3e;
+        }
+
+        .justification-box {
+            display: none;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .justification-box.correct {
+            background-color: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: #254229;
+        }
+
+        .justification-box.incorrect {
+            background-color: var(--wrong-bg);
+            border: 1px solid var(--wrong-border);
+            color: #641e10;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0d8cd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--olive);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Report Screen */
+        .report-header {
+            text-align: center;
+            border-bottom: 2px dashed var(--sand);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-badge {
+            display: inline-block;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--terracotta);
+            margin: 10px 0;
+        }
+
+        .pedagogical-comment {
+            background: #f4efe6;
+            padding: 15px;
+            border-radius: 8px;
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 10px;
+            border-left: 4px solid var(--olive);
+        }
+
+        .report-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e0d8cd;
+        }
+
+        .report-item.is-correct {
+            border-left: 5px solid var(--olive);
+            background: #fcfdfe;
+        }
+
+        .report-item.is-incorrect {
+            border-left: 5px solid var(--wrong-border);
+            background: #fffcfc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .badge-success { background-color: var(--olive); }
+        .badge-danger { background-color: var(--wrong-border); }
+
+        .actions-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .warning-msg {
+            color: var(--wrong-border);
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .container { max-width: 100%; }
+            .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+            .actions-group, .btn-hint, #start-screen, .progress-bar-container, .warning-msg { display: none !important; }
+            #report-screen { display: block !important; }
+            header { box-shadow: none; border-bottom: 2px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ)</h1>
+        <p>Εβδομάδα 16: Έλεγχος Λογισμικού & Μέθοδος «Μαύρο Κουτί» (Black-Box Testing)</p>
+    </header>
+
+    <!-- 1. ΑΡΧΙΚΗ ΟΘΟΝΗ -->
+    <div id="start-screen" class="card">
+        <h2 style="color: var(--terracotta); margin-bottom: 15px;">Διαδραστικό Quiz Αξιολόγησης</h2>
+        <p style="margin-bottom: 20px;">Εξετάστε τις γνώσεις σας στον Έλεγχο Λογισμικού (Software Testing), τη μέθοδο ελέγχου «Μαύρο Κουτί» (Black-Box Testing), τον διαμερισμό σε Κλάσεις Ισοδυναμίας, την Ανάλυση Οριακών Τιμών, τη σύνταξη Περιπτώσεων Δοκιμής (Test Cases) και την εφαρμογή σε υποπρογράμματα στη «ΓΛΩΣΣΑ».</p>
+        
+        <div class="form-group">
+            <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+            <input type="text" id="student-name" placeholder="Εισάγετε το ονοματεπώνυμό σας (Προαιρετικό)">
+        </div>
+
+        <div class="form-group">
+            <label>Επιλέξτε Λειτουργία:</label>
+            <div class="mode-selection">
+                <div class="mode-btn-card selected" onclick="selectMode('practice', this)">
+                    <h3>🎮 Εκμάθηση & Εξάσκησή</h3>
+                    <p>Βήμα-βήμα με άμεσο feedback & επεξήγηση σε κάθε ερώτηση.</p>
+                </div>
+                <div class="mode-btn-card" onclick="selectMode('exam', this)">
+                    <h3>📝 Προσομοίωση & Τεστ</h3>
+                    <p>Συγκεντρωτική απάντηση όλων των ερωτήσεων & τελικό Report.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <button class="btn" onclick="startQuiz()">Έναρξη Κουίζ ➔</button>
+        </div>
+    </div>
+
+    <!-- 2. ΟΘΟΝΗ ΕΡΩΤΗΣΕΩΝ -->
+    <div id="quiz-screen" style="display: none;">
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+
+        <div id="questions-wrapper"></div>
+
+        <div id="warning-msg" class="warning-msg">⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή!</div>
+
+        <div class="actions-group">
+            <button id="next-btn" class="btn" onclick="nextQuestion()" style="display: none;">Επόμενη Ερώτηση ➔</button>
+            <button id="submit-btn" class="btn btn-secondary" onclick="submitExam()" style="display: none;">Υποβολή Τεστ 🏁</button>
+        </div>
+    </div>
+
+    <!-- 3. ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ / REPORT -->
+    <div id="report-screen" class="card" style="display: none;">
+        <div class="report-header">
+            <h2 style="color: var(--terracotta);">Αναφορά Επίδοσης Μαθητή</h2>
+            <p id="report-student-name" style="font-weight: bold; font-size: 1.1rem; margin-top: 5px;"></p>
+            <p id="report-date" style="font-size: 0.85rem; color: #666;"></p>
+            
+            <div id="report-score" class="score-badge">0 / 0</div>
+            <p id="report-percentage" style="font-weight: 600; font-size: 1.2rem; color: var(--olive);"></p>
+            
+            <div id="report-comment" class="pedagogical-comment"></div>
+        </div>
+
+        <h3 style="color: var(--terracotta); margin-bottom: 15px;">Αναλυτική Επισκόπηση Ερωτήσεων</h3>
+        <div id="report-list"></div>
+
+        <div class="actions-group">
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+            <button class="btn" onclick="restartQuiz()">↻ Έναρξη από την αρχή</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- ΔΕΔΟΜΕΝΑ ΕΡΩΤΗΣΕΩΝ (ΕΒΔΟΜΑΔΑ 16: ΕΛΕΓΧΟΣ ΛΟΓΙΣΜΙΚΟΥ & ΜΑΥΡΟ ΚΟΥΤΙ) ---
+const questionsData = [
+    {
+        id: 1,
+        question: "Ποιο είναι το κύριο χαρακτηριστικό της τεχνικής ελέγχου «Μαύρο Κουτί» (Black-Box Testing);",
+        code: null,
+        options: [
+            "Εξετάζει την εσωτερική δομή και τις εντολές του κώδικα γραμμή προς γραμμή.",
+            "Βασίζεται αποκλειστικά στις προδιαγραφές εισόδου και εξόδου του λογισμικού χωρίς εξέταση του εσωτερικού κώδικα.",
+            "Εφαρμόζεται μόνο κατά τη μεταγλώττιση του προγράμματος από τον μεταγλωττιστή.",
+            "Απαιτεί τη χρήση εργαλείων βηματικής εκτέλεσης (debugger)."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε γιατί η μέθοδος ονομάζεται «Μαύρο Κουτί»: φαίνεται το εσωτερικό του κώδικα;",
+        explanation: "Η τεχνική «Μαύρου Κουτιού» αντιμετωπίζει το λογισμικό ως ένα κλειστό/σκοτεινό κουτί. Ο ελεγκτής αγνοεί την εσωτερική δομή του κώδικα και εστιάζει αποκλειστικά στη συμπεριφορά εισόδου-εξόδου βάσει προδιαγραφών."
+    },
+    {
+        id: 2,
+        question: "Ποια είναι η ουσιαστική διαφορά μεταξύ των εννοιών «Έλεγχος Λογισμικού» (Software Testing) και «Εκσφαλμάτωση» (Debugging);",
+        code: null,
+        options: [
+            "Ο έλεγχος λογισμικού εντοπίζει την παρουσία λαθών, ενώ η εκσφαλμάτωση εντοπίζει τα αίτια και διορθώνει τα γνωστά λάθη.",
+            "Ο έλεγχος λογισμικού διορθώνει τα συντακτικά λάθη, ενώ η εκσφαλμάτωση βρίσκει τις οριακές τιμές.",
+            "Ο έλεγχος λογισμικού γίνεται μόνο από τον προγραμματιστή, ενώ η εκσφαλμάτωση από τον χρήστη.",
+            "Δεν υπάρχει καμία απολύτως διαφορά μεταξύ των δύο εννοιών."
+        ],
+        correct: 0,
+        hint: "Ποια διαδικασία αναζητά άγνωστα λάθη και ποια διορθώνει τα ήδη εντοπισμένα λάθη;",
+        explanation: "Ο Έλεγχος (Testing) είναι η συστηματική διαδικασία αναζήτησης άγνωστων λαθών στο λογισμικό. Η Εκσφαλμάτωση (Debugging) είναι η διαδικασία εντοπισμού της αληθινής αιτίας ενός ήδη εντοπισμένου λάθους και η διόρθωσή του."
+    },
+    {
+        id: 3,
+        question: "Σε ποια τμήματα ενός προγράμματος μπορεί να εφαρμοστεί η μέθοδος ελέγχου «Μαύρο Κουτί»;",
+        code: null,
+        options: [
+            "Αποκλειστικά και μόνο στο συνολικό ολοκληρωμένο πρόγραμμα.",
+            "Τόσο στο συνολικό πρόγραμμα όσο και σε μεμονωμένα υποπρογράμματα (διαδικασίες ή συναρτήσεις).",
+            "Μόνο σε δομές επανάληψης (ΓΙΑ, ΟΣΟ).",
+            "Αποκλειστικά στο τμήμα δηλώσεων μεταβλητών."
+        ],
+        correct: 1,
+        hint: "Μπορούμε να εξετάσουμε τις παραμέτρους εισόδου και τα αποτελέσματα μιας συνάρτησης ως «μαύρο κουτί»;",
+        explanation: "Ο έλεγχος «Μαύρου Κουτιού» εφαρμόζεται σε όλα τα επίπεδα λογισμικού: τόσο στο συνολικό σύστημα όσο και σε μεμονωμένα υποπρογράμματα (συναρτήσεις/διαδικασίες), εξετάζοντας τις παραμέτρους εισόδου και τα επιστρεφόμενα αποτελέσματα."
+    },
+    {
+        id: 4,
+        question: "Μπορεί ο έλεγχος λογισμικού (Testing) να αποδείξει την πλήρη απουσία λογικών λαθών σε ένα πρόγραμμα;",
+        code: null,
+        options: [
+            "Ναι, αν εκτελεστεί τουλάχιστον μία περίπτωση δοκιμής.",
+            "Ναι, αν χρησιμοποιηθούν κλάσεις ισοδυναμίας.",
+            "Όχι, ο έλεγχος μπορεί να αποδείξει την παρουσία λαθών, αλλά ποτέ την πλήρη απουσία τους.",
+            "Ναι, εφόσον το πρόγραμμα μεταγλωττιστεί χωρίς συντακτικά σφάλματα."
+        ],
+        correct: 2,
+        hint: "Είναι πρακτικά εφικτό να δοκιμαστούν όλοι οι άπειροι συνδυασμοί τιμών εισόδου;",
+        explanation: "Ο έλεγχος λογισμικού μπορεί να αποδείξει την **παρουσία** λαθών, αλλά **ποτέ την πλήρη απουσία τους**. Επειδή οι δυνατοί συνδυασμοί τιμών είναι πρακτικά άπειροι, δεν υπάρχει απόλυτη εγγύηση μηδενικών σφαλμάτων."
+    },
+    {
+        id: 5,
+        question: "Ποια είναι τα δύο θεμελιώδη στοιχεία που πρέπει να περιλαμβάνει κάθε Περίπτωση Δοκιμής (Test Case);",
+        code: null,
+        options: [
+            "Τον τύπο της μεταβλητής και τη διεύθυνση μνήμης.",
+            "Τα Δεδομένα Εισόδου (Input Data) και το Αναμενόμενο Αποτέλεσμα (Expected Output).",
+            "Το όνομα του προγραμματιστή και την ημερομηνία μεταγλώττισης.",
+            "Τον αριθμό των εντολών και το μέγεθος του πίνακα."
+        ],
+        correct: 1,
+        hint: "Τι δίνουμε ως είσοδο στο πρόγραμμα και με τι συγκρίνουμε την πραγματική έξοδο;",
+        explanation: "Κάθε Περίπτωση Δοκιμής (Test Case) αποτελείται από: 1) Τα Δεδομένα Εισόδου (Input Data) που τροφοδοτούνται στο πρόγραμμα, και 2) Το Αναμενόμενο Αποτέλεσμα (Expected Output) που υπολογίζεται εκ των προτέρων βάσει των προδιαγραφών."
+    },
+    {
+        id: 6,
+        question: "Ποιος είναι ο κύριος στόχος της τεχνικής «Χωρισμός σε Κλάσεις Ισοδυναμίας» (Equivalence Partitioning);",
+        code: null,
+        options: [
+            "Η αύξηση του πλήθους των δοκιμών στο μέγιστο δυνατό βαθμό.",
+            "Η μείωση του πλήθους των απαιτούμενων δοκιμών με χωρισμό του πεδίου τιμών σε ομάδες που συμπεριφέρονται όμοια.",
+            "Η αυτόματη διόρθωση των συντακτικών λαθών στη «ΓΛΩΣΣΑ».",
+            "Η μέτρηση της ταχύτητας εκτέλεσης της επανάληψης."
+        ],
+        correct: 1,
+        hint: "Αντί να δοκιμάσουμε 1000 παρόμοιες τιμές, τι κάνουμε με το πεδίο ορισμού;",
+        explanation: "Ο στόχος της ισοδυναμίας κλάσεων είναι η δραματική μείωση του αριθμού των δοκιμών χωρίς απώλεια αξιοπιστίας. Το πεδίο εισόδου χωρίζεται σε κλάσεις όπου όλα τα στοιχεία θεωρείται ότι αντιμετωπίζονται με τον ίδιο αλγοριθμικό τρόπο."
+    },
+    {
+        id: 7,
+        question: "Πώς διακρίνονται οι κλάσεις ισοδυναμίας τιμών εισόδου κατά το σχεδιασμό περιπτώσεων δοκιμής;",
+        code: null,
+        options: [
+            "Σε θετικές και αρνητικές κλάσεις.",
+            "Σε έγκυρες (αποδεκτές τιμές βάσει προδιαγραφών) και άκυρες (μη αποδεκτές τιμές που πρέπει να απορρίπτονται).",
+            "Σε ακέραιες και πραγματικές κλάσεις.",
+            "Σε στατικές και δυναμικές κλάσεις."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε αν ελέγχουμε μόνο τις σωστές εισόδους ή και τις λανθασμένες εισόδους του χρήστη.",
+        explanation: "Οι κλάσεις ισοδυναμίας διακρίνονται σε **Έγκυρες** (αποδεκτές τιμές σύμφωνα με τις προδιαγραφές) και **Άκυρες** (μη αποδεκτές/λανθασμένες τιμές) ώστε να ελέγχεται και η ανθεκτικότητα του προγράμματος σε σφάλματα."
+    },
+    {
+        id: 8,
+        question: "Για ποιο λόγο η Ανάλυση Οριακών Τιμών (Boundary Value Analysis) θεωρείται απαραίτητο συμπλήρωμα των κλάσεων ισοδυναμίας;",
+        code: null,
+        options: [
+            "Διότι στα όρια των διαστημάτων (συνθήκες <, <=, >, >=) εμφανίζεται η πλειονότητα των λογικών λαθών (off-by-one errors).",
+            "Διότι αντικαθιστά πλήρως τις έγκυρες κλάσεις ισοδυναμίας.",
+            "Διότι ελέγχει την ταχύτητα εκτέλεσης του υποπρογράμματος.",
+            "Διότι εφαρμόζεται μόνο σε αλφαριθμητικές μεταβλητές."
+        ],
+        correct: 0,
+        hint: "Σε ποια σημεία των προγραμματιστικών συνθηκών συμβαίνουν συχνότερα τα σφάλματα;",
+        explanation: "Οι προγραμματιστές συχνά διαπράττουν λογικά λάθη στα όρια των συνθηκών (off-by-one errors, π.χ. < αντί για <=). Η ανάλυση οριακών τιμών συμπληρώνει τις κλάσεις εστιάζοντας ακριβώς στα όρια και στα αμέσως γειτονικά τους σημεία."
+    },
+    {
+        id: 9,
+        question: "Ένα πρόγραμμα δέχεται ως είσοδο τη βαθμολογία ενός μαθητή στο διάστημα [0, 20]. Ποιες είναι οι 6 κρίσιμες οριακές τιμές που πρέπει οπωσδήποτε να περιληφθούν στις περιπτώσεις δοκιμής;",
+        code: null,
+        options: [
+            "[-5, 0, 10, 15, 20, 25]",
+            "[-1, 0, 1, 19, 20, 21]",
+            "[0, 5, 10, 15, 20, 100]",
+            "[1, 2, 3, 18, 19, 20]"
+        ],
+        correct: 1,
+        hint: "Για το κάτω όριο 0 επιλέγουμε: 0-1, 0, 0+1. Για το πάνω όριο 20 επιλέγουμε: 20-1, 20, 20+1.",
+        explanation: "Για το διάστημα [0, 20]: Κάτω όριο (0): -1 (άκυρο), 0 (έγκυρο όριο), 1 (έγκυρο). Πάνω όριο (20): 19 (έγκυρο), 20 (έγκυρο όριο), 21 (άκυρο). Άρα οι 6 οριακές τιμές είναι: -1, 0, 1, 19, 20, 21."
+    },
+    {
+        id: 10,
+        question: "Δίνεται το παρακάτω υποπρόγραμμα σε «ΓΛΩΣΣΑ» που αξιολογεί έναν βαθμό B:\nΠοιο θα είναι το αναμενόμενο αποτέλεσμα της δοκιμής για την οριακή τιμή B = 10.0;",
+        code: "ΣΥΝΑΡΤΗΣΗ Χαρακτηρισμός(Β): ΧΑΡΑΚΤΗΡΕΣ\nΜΕΤΑΒΛΗΤΕΣ\n    ΠΡΑΓΜΑΤΙΚΕΣ: Β\nΑΡΧΗ\n    ΑΝ Β < 0.0 Η Β > 20.0 ΤΟΤΕ\n        Χαρακτηρισμός ← \"ΑΚΥΡΟΣ ΒΑΘΜΟΣ\"\n    ΑΛΛΙΩΣ_ΑΝ Β < 10.0 ΤΟΤΕ\n        Χαρακτηρισμός ← \"ΑΠΟΡΡΙΠΤΕΟΣ\"\n    ΑΛΛΙΩΣ_ΑΝ Β < 18.0 ΤΟΤΕ\n        Χαρακτηρισμός ← \"ΠΡΟΑΓΕΤΑΙ\"\n    ΑΛΛΙΩΣ\n        Χαρακτηρισμός ← \"ΑΡΙΣΤΟΥΧΟΣ\"\n    ΤΕΛΟΣ_ΑΝ\nΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ",
+        options: [
+            "\"ΑΠΟΡΡΙΠΤΕΟΣ\"",
+            "\"ΠΡΟΑΓΕΤΑΙ\"",
+            "\"ΑΡΙΣΤΟΥΧΟΣ\"",
+            "\"ΑΚΥΡΟΣ ΒΑΘΜΟΣ\""
+        ],
+        correct: 1,
+        hint: "Ελέγξτε τη συνθήκη `Β < 10.0`: Για B = 10.0 η συνθήκη είναι Ψευδής, οπότε η ροή προχωρά στο επόμενο ΑΛΛΙΩΣ_ΑΝ.",
+        explanation: "Για B = 10.0, η συνθήκη `B < 10.0` είναι ΨΕΥΔΗΣ. Η ροή προχωρά στη συνθήκη `B < 18.0` που είναι ΑΛΗΘΗΣ, οπότε η συνάρτηση επιστρέφει το αλφαριθμητικό \"ΠΡΟΑΓΕΤΑΙ\"."
+    },
+    {
+        id: 11,
+        question: "Στο ίδιο υποπρόγραμμα `Χαρακτηρισμός(Β)`, ποιο αναμενόμενο αποτέλεσμα προκύπτει για την τιμή B = 17.9 και ποιο για την τιμή B = 18.0;",
+        code: null,
+        options: [
+            "B = 17.9 -> \"ΠΡΟΑΓΕΤΑΙ\", B = 18.0 -> \"ΑΡΙΣΤΟΥΧΟΣ\"",
+            "B = 17.9 -> \"ΑΠΟΡΡΙΠΤΕΟΣ\", B = 18.0 -> \"ΠΡΟΑΓΕΤΑΙ\"",
+            "B = 17.9 -> \"ΑΡΙΣΤΟΥΧΟΣ\", B = 18.0 -> \"ΑΡΙΣΤΟΥΧΟΣ\"",
+            "B = 17.9 -> \"ΠΡΟΑΓΕΤΑΙ\", B = 18.0 -> \"ΠΡΟΑΓΕΤΑΙ\""
+        ],
+        correct: 0,
+        hint: "Εξετάστε τη συνθήκη `Β < 18.0` για 17.9 (Αληθής) και για 18.0 (Ψευδής).",
+        explanation: "Για B = 17.9, η συνθήκη `B < 18.0` είναι ΑΛΗΘΗΣ -> \"ΠΡΟΑΓΕΤΑΙ\". Για B = 18.0, η συνθήκη `B < 18.0` είναι ΨΕΥΔΗΣ, οπότε η εκτέλεση καταλήγει στο ΑΛΛΙΩΣ -> \"ΑΡΙΣΤΟΥΧΟΣ\"."
+    },
+    {
+        id: 12,
+        question: "Δίνεται πρόγραμμα εκπτώσεων όπου για ποσό αγοράς Π παρέχεται έκπτωση 10% αν 50 <= Π <= 150. Ποιες είναι οι 6 οριακές τιμές για τα όρια 50 και 150;",
+        code: null,
+        options: [
+            "[49, 50, 51] και [149, 150, 151]",
+            "[0, 50, 100] και [150, 200, 250]",
+            "[10, 20, 30] και [140, 150, 160]",
+            "[50, 100, 150] και [150, 300, 450]"
+        ],
+        correct: 0,
+        hint: "Για το όριο 50 ελέγχουμε 49, 50, 51. Για το όριο 150 ελέγχουμε 149, 150, 151.",
+        explanation: "Για το κάτω όριο (50): 49 (άκυρο/χωρίς έκπτωση), 50 (έγκυρο όριο/έκπτωση 10%), 51 (έγκυρο). Για το πάνω όριο (150): 149 (έγκυρο), 150 (έγκυρο όριο), 151 (άκυρο/διαφορετική έκπτωση)."
+    },
+    {
+        id: 13,
+        question: "Ποιο από τα παρακάτω αποτελεί σημαντικό πλεονέκτημα της μεθόδου ελέγχου «Μαύρο Κουτί»;",
+        code: null,
+        options: [
+            "Εντοπίζει τμήματα κώδικα που δεν εκτελούνται ποτέ (Dead Code).",
+            "Επιτρέπει τον έλεγχο από ανεξάρτητους δοκιμαστές (Testers) χωρίς απαίτηση γνώσης της γλώσσας προγραμματισμού.",
+            "Εγγυάται την κάλυψη όλων των λογικών μονοπατιών του αλγορίθμου.",
+            "Εμφανίζει αυτόματα τις διευθύνσεις μνήμης των μεταβλητών."
+        ],
+        correct: 1,
+        hint: "Χρειάζεται ένας tester να γνωρίζει τη γλώσσα προγραμματισμού αν ελέγχει μόνο εισόδους/εξόδους;",
+        explanation: "Βασικό πλεονέκτημα είναι η ανεξαρτησία από τη γλώσσα προγραμματισμού. Ο έλεγχος μπορεί να πραγματοποιηθεί από ανεξάρτητη ομάδα δοκιμαστών (Testers) ή τελικούς χρήστες με βάση τις προδιαγραφές."
+    },
+    {
+        id: 14,
+        question: "Ποιος είναι ένας βασικός περιορισμός (μειονέκτημα) της μεθόδου ελέγχου «Μαύρο Κουτί»;",
+        code: null,
+        options: [
+            "Δεν μπορεί να ελέγξει αν οι είσοδοι παράγουν τις σωστές εξόδους.",
+            "Αδυνατεί να εντοπίσει μη εκτελέσιμο κώδικα (Dead Code) και υπάρχει κίνδυνος ελλιπούς κάλυψης πολύπλοκων μονοπατιών.",
+            "Απαιτεί πάντα την ανάγνωση του πηγαίου κώδικα από τον ελεγκτή.",
+            "Εφαρμόζεται αποκλειστικά σε μικρά προγράμματα."
+        ],
+        correct: 1,
+        hint: "Αν υπάρχει μια συνθήκη στον κώδικα που δεν εκτελείται ποτέ, μπορεί να τη δει ο ελεγκτής χωρίς να κοιτάξει τον κώδικα;",
+        explanation: "Επειδή δεν εξετάζεται ο εσωτερικός κώδικας, μη εκτελέσιμα τμήματα (Dead Code, π.χ. συνθήκη πάντα ψευδής) δεν εντοπίζονται. Επίσης υπάρχει κίνδυνος παραμόρφωσης/παράλειψης κρίσιμων μονοπατιών εκτέλεσης."
+    },
+    {
+        id: 15,
+        question: "Δίνεται το παρακάτω τμήμα προγράμματος ελέγχου ηλικίας (H) και ποσού αγορών (Π):\nΠοιο αποτέλεσμα παράγεται για τις τιμές δοκιμής: H = 18 και Π = 100.0;",
+        code: "ΑΝ (Η < 1 Η Η > 120) Η (Π <= 0.0) ΤΟΤΕ\n    ΓΡΑΨΕ 'Σφάλμα: Μη αποδεκτές τιμές εισόδου.'\nΑΛΛΙΩΣ\n    ΑΝ Η < 18 ΤΟΤΕ\n        Έκπτωση ← 15.0\n    ΑΛΛΙΩΣ_ΑΝ Η <= 65 ΤΟΤΕ\n        ΑΝ Π > 100.0 ΤΟΤΕ\n            Έκπτωση ← 10.0\n        ΑΛΛΙΩΣ\n            Έκπτωση ← 0.0\n        ΤΕΛΟΣ_ΑΝ\n    ΑΛΛΙΩΣ\n        Έκπτωση ← 20.0\n    ΤΕΛΟΣ_ΑΝ\nΤΕΛΟΣ_ΑΝ",
+        options: [
+            "Έκπτωση 15.0%",
+            "Έκπτωση 10.0%",
+            "Έκπτωση 0.0%",
+            "Σφάλμα: Μη αποδεκτές τιμές εισόδου."
+        ],
+        correct: 2,
+        hint: "Για H=18 η συνθήκη `H <= 65` είναι Αληθής. Για Π=100.0 η συνθήκη `Π > 100.0` είναι Ψευδής.",
+        explanation: "Για H = 18, η εκτέλεση μπαίνει στο `ΑΛΛΙΩΣ_ΑΝ Η <= 65`. Εκεί ελέγχεται αν `Π > 100.0`. Για Π = 100.0 η συνθήκη είναι ΨΕΥΔΗΣ, οπότε η ροή οδηγείται στο ΑΛΛΙΩΣ και ορίζεται `Έκπτωση <- 0.0`."
+    },
+    {
+        id: 16,
+        question: "Στο ίδιο τμήμα προγράμματος ελέγχου εκπτώσεων, ποιο είναι το αναμενόμενο αποτέλεσμα για την οριακή δοκιμή: H = 18 και Π = 100.01;",
+        code: null,
+        options: [
+            "Έκπτωση 0.0%",
+            "Έκπτωση 10.0%",
+            "Έκπτωση 15.0%",
+            "Έκπτωση 20.0%"
+        ],
+        correct: 1,
+        hint: "Για Π=100.01 η συνθήκη `Π > 100.0` είναι πλέον Αληθής.",
+        explanation: "Για H = 18 και Π = 100.01, η συνθήκη `Π > 100.0` (100.01 > 100.0) είναι ΑΛΗΘΗΣ, οπότε το πρόγραμμα εκτελεί την εντολή `Έκπτωση <- 10.0`."
+    }
+];
+
+// --- STATE VARIABLES ---
+let currentMode = 'practice';
+let studentName = '';
+let currentQuestionIndex = 0;
+let userAnswers = {};
+
+// --- LOGIC FUNCTIONS ---
+function selectMode(mode, element) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn-card').forEach(card => card.classList.remove('selected'));
+    element.classList.add('selected');
+}
+
+function startQuiz() {
+    const nameInput = document.getElementById('student-name').value.trim();
+    studentName = nameInput !== '' ? nameInput : 'Ανώνυμος/η Μαθητής/τρια';
+
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+
+    currentQuestionIndex = 0;
+    userAnswers = {};
+
+    renderQuizScreen();
+}
+
+function renderQuizScreen() {
+    const wrapper = document.getElementById('questions-wrapper');
+    wrapper.innerHTML = '';
+
+    if (currentMode === 'practice') {
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'inline-block';
+        updateProgressBar();
+        
+        const q = questionsData[currentQuestionIndex];
+        wrapper.appendChild(createQuestionCard(q, currentQuestionIndex + 1, questionsData.length, true));
+    } else {
+        // Exam Mode: Show all questions
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'inline-block';
+        document.getElementById('progress-bar').style.width = '100%';
+
+        questionsData.forEach((q, idx) => {
+            wrapper.appendChild(createQuestionCard(q, idx + 1, questionsData.length, false));
+        });
+    }
+}
+
+function createQuestionCard(q, num, total, isPractice) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `q-card-${q.id}`;
+
+    let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+    
+    let optionsHTML = '';
+    q.options.forEach((opt, idx) => {
+        if (!opt) return;
+        const isChecked = userAnswers[q.id] === idx ? 'checked' : '';
+        optionsHTML += `
+            <label class="option-item" onclick="handleOptionSelect(${q.id}, ${idx}, ${isPractice})">
+                <input type="radio" name="q_${q.id}" value="${idx}" ${isChecked}>
+                <span>${opt}</span>
+            </label>
+        `;
+    });
+
+    card.innerHTML = `
+        <div class="question-number">Ερώτηση ${num} από ${total}</div>
+        <div class="question-text">${q.question}</div>
+        ${codeHTML}
+        <div class="options-group">${optionsHTML}</div>
+        <button class="btn btn-hint" onclick="toggleHint(${q.id})">💡 Υπόδειξη</button>
+        <div id="hint-${q.id}" class="hint-box">${q.hint}</div>
+        <div id="justification-${q.id}" class="justification-box"></div>
+    `;
+
+    return card;
+}
+
+function handleOptionSelect(qId, selectedIdx, isPractice) {
+    userAnswers[qId] = selectedIdx;
+    document.getElementById('warning-msg').style.display = 'none';
+
+    if (isPractice) {
+        const q = questionsData.find(item => item.id === qId);
+        const justBox = document.getElementById(`justification-${qId}`);
+        justBox.style.display = 'block';
+
+        if (selectedIdx === q.correct) {
+            justBox.className = 'justification-box correct';
+            justBox.innerHTML = `<strong>✅ Σωστό!</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        } else {
+            justBox.className = 'justification-box incorrect';
+            justBox.innerHTML = `<strong>❌ Λάθος.</strong> Η σωστή απάντηση είναι: <em>${q.options[q.correct]}</em>.<br><br><strong>Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        }
+    }
+}
+
+function toggleHint(qId) {
+    const hintBox = document.getElementById(`hint-${qId}`);
+    hintBox.style.display = (hintBox.style.display === 'block') ? 'none' : 'block';
+}
+
+function updateProgressBar() {
+    const progress = ((currentQuestionIndex + 1) / questionsData.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+}
+
+function nextQuestion() {
+    if (userAnswers[questionsData[currentQuestionIndex].id] === undefined) {
+        alert('Παρακαλώ επιλέξτε μια απάντηση πριν προχωρήσετε!');
+        return;
+    }
+
+    if (currentQuestionIndex < questionsData.length - 1) {
+        currentQuestionIndex++;
+        renderQuizScreen();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        showReport();
+    }
+}
+
+function submitExam() {
+    const unanswered = questionsData.filter(q => userAnswers[q.id] === undefined);
+    if (unanswered.length > 0) {
+        const warning = document.getElementById('warning-msg');
+        warning.innerText = `⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή! Απομένουν ${unanswered.length} αναπάντητες ερωτήσεις.`;
+        warning.style.display = 'block';
+
+        const firstUnansweredId = unanswered[0].id;
+        document.getElementById(`q-card-${firstUnansweredId}`).scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    showReport();
+}
+
+function showReport() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('report-screen').style.display = 'block';
+
+    let score = 0;
+    const reportList = document.getElementById('report-list');
+    reportList.innerHTML = '';
+
+    questionsData.forEach((q, idx) => {
+        const userChoice = userAnswers[q.id];
+        const isCorrect = userChoice === q.correct;
+        if (isCorrect) score++;
+
+        const item = document.createElement('div');
+        item.className = `report-item ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+        let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+        let userChoiceText = userChoice !== undefined ? q.options[userChoice] : 'Δεν απαντήθηκε';
+        let correctChoiceText = q.options[q.correct];
+
+        item.innerHTML = `
+            <div>
+                <span class="badge ${isCorrect ? 'badge-success' : 'badge-danger'}">
+                    ${isCorrect ? '✅ ΣΩΣΤΟ' : '❌ ΛΑΘΟΣ'}
+                </span>
+                <strong>Ερώτηση ${idx + 1}:</strong> ${q.question}
+            </div>
+            ${codeHTML}
+            <div style="margin: 8px 0; font-size: 0.95rem;">
+                <strong>Η απάντησή σας:</strong> <span style="color: ${isCorrect ? 'var(--olive)' : 'var(--wrong-border)'}; font-weight: 600;">${userChoiceText}</span><br>
+                ${!isCorrect ? `<strong>Σωστή απάντηση:</strong> <span style="color: var(--olive); font-weight: 600;">${correctChoiceText}</span><br>` : ''}
+            </div>
+            <div style="font-size: 0.9rem; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 6px; margin-top: 6px;">
+                <strong>Τεκμηρίωση / Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}
+            </div>
+        `;
+
+        reportList.appendChild(item);
+    });
+
+    const percentage = Math.round((score / questionsData.length) * 100);
+
+    document.getElementById('report-student-name').innerText = `Μαθητής/τρια: ${studentName}`;
+    document.getElementById('report-date').innerText = `Ημερομηνία & Ώρα: ${new Date().toLocaleString('el-GR')}`;
+    document.getElementById('report-score').innerText = `${score} / ${questionsData.length}`;
+    document.getElementById('report-percentage').innerText = `Ποσοστό Επιτυχίας: ${percentage}%`;
+
+    // Pedagogical Comment
+    let comment = '';
+    if (percentage >= 90) {
+        comment = '🌟 Εξαιρετική επίδοση! Έχετε κατανοήσει πλήρως τις αρχές του Ελέγχου Λογισμικού, τη μέθοδο «Μαύρο Κουτί», τις Κλάσεις Ισοδυναμίας και την Ανάλυση Οριακών Τιμών.';
+    } else if (percentage >= 75) {
+        comment = '👏 Πολύ καλή προσπάθεια! Έχετε γερές βάσεις στη θεωρία ελέγχου. Κάντε μια μικρή επανεξέταση στον καθορισμό των οριακών τιμών [A-1, A, A+1].';
+    } else if (percentage >= 50) {
+        comment = '👍 Ικανοποιητική παρουσία. Χρειάζεται περισσότερη εξάσκηση στον σχεδιασμό Πινάκων Δοκιμών (Test Cases) και τη διάκριση ελέγχου vs εκσφαλμάτωσης.';
+    } else {
+        comment = '📚 Χρειάζεται συστηματική επανάληψη στη θεωρία της 16ης εβδομάδας (Ενότητες 13.2 & 5.2.5) και επιπλέον εξάσκηση στις οριακές τιμές.';
+    }
+    document.getElementById('report-comment').innerText = comment;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+    document.getElementById('report-screen').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+</script>
+
+</body>
+</html>

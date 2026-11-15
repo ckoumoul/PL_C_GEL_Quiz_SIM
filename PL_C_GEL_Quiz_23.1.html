@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ) - Εβδομάδα 23: 1η Φάση Επαναλήψεων (Δομές Ελέγχου & Πίνακες 1Δ/2Δ)</title>
+ <style>
+ :root {
+ --bg-color: #f7f4ef;
+ --text-color: #3a322b;
+ --terracotta: #7a4b29;
+ --terracotta-hover: #61391e;
+ --olive: #4e6e52;
+ --olive-hover: #3c5640;
+ --sand: #d4b886;
+ --card-bg: #ffffff;
+ --dark-code-bg: #2d2621;
+ --dark-code-text: #f0e8df;
+ --correct-bg: #eaf3eb;
+ --correct-border: #4e6e52;
+ --wrong-bg: #fdf0ed;
+ --wrong-border: #a73c26;
+ --border-radius: 12px;
+ --shadow: 0 4px 15px rgba(58, 50, 43, 0.08);
+
+ /* Difficulty Badge Colors */
+ --diff-basic-bg: #4e6e52;
+ --diff-medium-bg: #b8977e;
+ --diff-advanced-bg: #c84b31;
+ }
+
+ * {
+ box-sizing: border-box;
+ margin: 0;
+ padding: 0;
+ }
+
+ body {
+ font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+ background-color: var(--bg-color);
+ color: var(--text-color);
+ line-height: 1.6;
+ padding: 20px 15px;
+ }
+
+ .container {
+ max-width: 900px;
+ margin: 0 auto;
+ }
+
+ header {
+ text-align: center;
+ margin-bottom: 25px;
+ padding: 22px;
+ background: var(--card-bg);
+ border-radius: var(--border-radius);
+ box-shadow: var(--shadow);
+ border-bottom: 4px solid var(--terracotta);
+ }
+
+ header h1 {
+ color: var(--terracotta);
+ font-size: 1.8rem;
+ margin-bottom: 8px;
+ }
+
+ header p {
+ color: var(--olive);
+ font-weight: 600;
+ font-size: 1.05rem;
+ }
+
+ .card {
+ background: var(--card-bg);
+ padding: 25px;
+ border-radius: var(--border-radius);
+ box-shadow: var(--shadow);
+ margin-bottom: 20px;
+ border: 1px solid rgba(212, 184, 134, 0.3);
+ }
+
+ /* Form Controls */
+ .form-group {
+ margin-bottom: 20px;
+ }
+
+ label {
+ display: block;
+ font-weight: 600;
+ margin-bottom: 8px;
+ color: var(--terracotta);
+ }
+
+ input[type="text"] {
+ width: 100%;
+ padding: 12px;
+ border: 2px solid var(--sand);
+ border-radius: 8px;
+ font-size: 1rem;
+ background: #fff;
+ color: var(--text-color);
+ outline: none;
+ transition: border-color 0.2s;
+ }
+
+ input[type="text"]:focus {
+ border-color: var(--terracotta);
+ }
+
+ .mode-selection {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 15px;
+ margin-top: 15px;
+ }
+
+ @media (max-width: 600px) {
+ .mode-selection {
+ grid-template-columns: 1fr;
+ }
+ }
+
+ .mode-btn-card {
+ border: 2px solid var(--sand);
+ border-radius: 10px;
+ padding: 15px;
+ cursor: pointer;
+ text-align: center;
+ transition: all 0.2s;
+ background: #fff;
+ }
+
+ .mode-btn-card:hover, .mode-btn-card.selected {
+ border-color: var(--terracotta);
+ background: #fcf8f3;
+ transform: translateY(-2px);
+ }
+
+ .mode-btn-card h3 {
+ color: var(--terracotta);
+ margin-bottom: 5px;
+ font-size: 1.1rem;
+ }
+
+ .mode-btn-card p {
+ font-size: 0.9rem;
+ color: #666;
+ }
+
+ /* Buttons */
+ .btn {
+ display: inline-block;
+ padding: 12px 24px;
+ background-color: var(--terracotta);
+ color: #fff;
+ border: none;
+ border-radius: 8px;
+ font-size: 1rem;
+ font-weight: 600;
+ cursor: pointer;
+ transition: background 0.2s, transform 0.1s;
+ }
+
+ .btn:hover {
+ background-color: var(--terracotta-hover);
+ }
+
+ .btn:active {
+ transform: scale(0.98);
+ }
+
+ .btn-secondary {
+ background-color: var(--olive);
+ }
+
+ .btn-secondary:hover {
+ background-color: var(--olive-hover);
+ }
+
+ .btn-hint {
+ background-color: transparent;
+ color: var(--terracotta);
+ border: 1px solid var(--terracotta);
+ padding: 6px 12px;
+ font-size: 0.85rem;
+ margin-top: 10px;
+ border-radius: 6px;
+ }
+
+ .btn-hint:hover {
+ background-color: rgba(122, 75, 41, 0.08);
+ }
+
+ /* Code Blocks & Option Code Blocks */
+ pre code {
+ display: block;
+ background: var(--dark-code-bg);
+ color: var(--dark-code-text);
+ padding: 14px;
+ border-radius: 8px;
+ font-family: 'Consolas', 'Courier New', monospace;
+ font-size: 0.95rem;
+ overflow-x: auto;
+ margin: 12px 0;
+ border-left: 4px solid var(--sand);
+ white-space: pre;
+ line-height: 1.5;
+ }
+
+ .option-item.has-code {
+ align-items: flex-start;
+ }
+
+ .option-text-container {
+ width: 100%;
+ }
+
+ .option-code {
+ margin: 4px 0 0 0 !important;
+ background: var(--dark-code-bg) !important;
+ color: var(--dark-code-text) !important;
+ padding: 10px 12px !important;
+ border-radius: 6px !important;
+ font-family: 'Consolas', 'Courier New', monospace !important;
+ font-size: 0.9rem !important;
+ border-left: 3px solid var(--sand) !important;
+ white-space: pre !important;
+ line-height: 1.4 !important;
+ overflow-x: auto !important;
+ display: block !important;
+ }
+
+ /* Question Elements Header & Badges */
+ .question-header {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ margin-bottom: 8px;
+ flex-wrap: wrap;
+ gap: 6px;
+ }
+
+ .question-number {
+ font-weight: 700;
+ color: var(--terracotta);
+ font-size: 0.9rem;
+ text-transform: uppercase;
+ letter-spacing: 0.5px;
+ }
+
+ .diff-badge {
+ display: inline-block;
+ padding: 4px 12px;
+ border-radius: 6px;
+ font-weight: 700;
+ font-size: 0.8rem;
+ color: #ffffff;
+ letter-spacing: 0.3px;
+ box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+ }
+
+ .diff-basic {
+ background-color: var(--diff-basic-bg);
+ }
+
+ .diff-medium {
+ background-color: var(--diff-medium-bg);
+ }
+
+ .diff-advanced {
+ background-color: var(--diff-advanced-bg);
+ }
+
+ .question-text {
+ font-size: 1.1rem;
+ font-weight: 600;
+ margin-bottom: 15px;
+ }
+
+ .options-group {
+ display: flex;
+ flex-direction: column;
+ gap: 10px;
+ margin-bottom: 15px;
+ }
+
+ .option-item {
+ display: flex;
+ align-items: center;
+ padding: 12px 15px;
+ border: 1.5px solid #e0d8cd;
+ border-radius: 8px;
+ cursor: pointer;
+ transition: background 0.15s, border-color 0.15s;
+ }
+
+ .option-item:hover {
+ background-color: #fcf9f5;
+ border-color: var(--sand);
+ }
+
+ .option-item input[type="radio"] {
+ margin-right: 12px;
+ accent-color: var(--terracotta);
+ width: 18px;
+ height: 18px;
+ margin-top: 3px;
+ }
+
+ /* Hints & Feedback */
+ .hint-box {
+ display: none;
+ background: #fffdf7;
+ border-left: 4px solid var(--sand);
+ padding: 12px;
+ border-radius: 4px;
+ margin-top: 10px;
+ font-size: 0.95rem;
+ color: #554a3e;
+ }
+
+ .justification-box {
+ display: none;
+ padding: 14px;
+ border-radius: 8px;
+ margin-top: 15px;
+ font-size: 0.95rem;
+ line-height: 1.5;
+ }
+
+ .justification-box.correct {
+ background-color: var(--correct-bg);
+ border: 1px solid var(--correct-border);
+ color: #254229;
+ }
+
+ .justification-box.incorrect {
+ background-color: var(--wrong-bg);
+ border: 1px solid var(--wrong-border);
+ color: #641e10;
+ }
+
+ /* Progress Bar */
+ .progress-bar-container {
+ width: 100%;
+ height: 10px;
+ background-color: #e0d8cd;
+ border-radius: 5px;
+ margin-bottom: 20px;
+ overflow: hidden;
+ }
+
+ .progress-bar {
+ height: 100%;
+ background-color: var(--olive);
+ width: 0%;
+ transition: width 0.3s ease;
+ }
+
+ /* Report Screen */
+ .report-header {
+ text-align: center;
+ border-bottom: 2px dashed var(--sand);
+ padding-bottom: 20px;
+ margin-bottom: 20px;
+ }
+
+ .score-badge {
+ display: inline-block;
+ font-size: 2.2rem;
+ font-weight: 800;
+ color: var(--terracotta);
+ margin: 10px 0;
+ }
+
+ .pedagogical-comment {
+ background: #f4efe6;
+ padding: 15px;
+ border-radius: 8px;
+ font-style: italic;
+ color: var(--text-color);
+ margin-top: 10px;
+ border-left: 4px solid var(--olive);
+ }
+
+ .report-item {
+ padding: 15px;
+ border-radius: 8px;
+ margin-bottom: 15px;
+ border: 1px solid #e0d8cd;
+ }
+
+ .report-item.is-correct {
+ border-left: 5px solid var(--olive);
+ background: #fcfdfe;
+ }
+
+ .report-item.is-incorrect {
+ border-left: 5px solid var(--wrong-border);
+ background: #fffcfc;
+ }
+
+ .badge {
+ display: inline-block;
+ padding: 4px 8px;
+ border-radius: 4px;
+ font-weight: bold;
+ font-size: 0.8rem;
+ color: #fff;
+ margin-bottom: 8px;
+ }
+
+ .badge-success { background-color: var(--olive); }
+ .badge-danger { background-color: var(--wrong-border); }
+
+ .actions-group {
+ display: flex;
+ gap: 12px;
+ justify-content: center;
+ margin-top: 25px;
+ flex-wrap: wrap;
+ }
+
+ .warning-msg {
+ color: var(--wrong-border);
+ font-weight: 600;
+ margin-top: 10px;
+ display: none;
+ text-align: center;
+ }
+
+ /* Print Styles */
+ @media print {
+ body { background: #fff; color: #000; padding: 0; }
+ .container { max-width: 100%; }
+ .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+ .actions-group, .btn-hint, #start-screen, .progress-bar-container, .warning-msg { display: none !important; }
+ #report-screen { display: block !important; }
+ header { box-shadow: none; border-bottom: 2px solid #000; }
+ }
+ </style>
+</head>
+<body>
+
+<div class="container">
+ <header>
+ <h1>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ)</h1>
+ <p>Εβδομάδα 23: 1η Φάση Επαναλήψεων (Δομές Ελέγχου & Πίνακες 1Δ/2Δ)</p>
+ </header>
+
+ <!-- 1. ΑΡΧΙΚΗ ΟΘΟΝΗ -->
+ <div id="start-screen" class="card">
+ <h2 style="color: var(--terracotta); margin-bottom: 15px;">Διαδραστικό Quiz Αξιολόγησης</h2>
+ <p style="margin-bottom: 20px;">Εξετάστε τις γνώσεις σας στην 1η Φάση Συστηματικών Επαναλήψεων: Δομές Ακολουθίας, Επιλογής, Επανάληψης, Μονοδιάστατοι & Δισδιάστατοι Πίνακες, Σειριακή & Δυαδική Αναζήτηση, Ταξινόμηση Φυσαλίδας, Παράλληλοι Πίνακες, Πίνακες Τιμών (Trace Tables) και συνδυαστικά θέματα Πανελλαδικού τύπου (Θέματα Β, Γ & Δ).</p>
+ 
+ <div class="form-group">
+ <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+ <input type="text" id="student-name" placeholder="Εισάγετε το ονοματεπώνυμό σας (Προαιρετικό)">
+ </div>
+
+ <div class="form-group">
+ <label>Επιλέξτε Λειτουργία:</label>
+ <div class="mode-selection">
+ <div class="mode-btn-card selected" onclick="selectMode('practice', this)">
+ <h3>🎮 Εκμάθηση & Εξάσκησή</h3>
+ <p>Βήμα-βήμα με άμεσο feedback & επεξήγηση σε κάθε ερώτηση.</p>
+ </div>
+ <div class="mode-btn-card" onclick="selectMode('exam', this)">
+ <h3>📝 Προσομοίωση & Τεστ</h3>
+ <p>Συγκεντρωτική απάντηση όλων των ερωτήσεων & τελικό Report.</p>
+ </div>
+ </div>
+ </div>
+
+ <div style="text-align: center; margin-top: 25px;">
+ <button class="btn" onclick="startQuiz()">Έναρξη Κουίζ ➔</button>
+ </div>
+ </div>
+
+ <!-- 2. ΟΘΟΝΗ ΕΡΩΤΗΣΕΩΝ -->
+ <div id="quiz-screen" style="display: none;">
+ <div class="progress-bar-container">
+ <div id="progress-bar" class="progress-bar"></div>
+ </div>
+
+ <div id="questions-wrapper"></div>
+
+ <div id="warning-msg" class="warning-msg">⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή!</div>
+
+ <div class="actions-group">
+ <button id="next-btn" class="btn" onclick="nextQuestion()" style="display: none;">Επόμενη Ερώτηση ➔</button>
+ <button id="submit-btn" class="btn btn-secondary" onclick="submitExam()" style="display: none;">Υποβολή Τεστ 🏁</button>
+ </div>
+ </div>
+
+ <!-- 3. ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ / REPORT -->
+ <div id="report-screen" class="card" style="display: none;">
+ <div class="report-header">
+ <h2 style="color: var(--terracotta);">Αναφορά Επίδοσης Μαθητή</h2>
+ <p id="report-student-name" style="font-weight: bold; font-size: 1.1rem; margin-top: 5px;"></p>
+ <p id="report-date" style="font-size: 0.85rem; color: #666;"></p>
+ 
+ <div id="report-score" class="score-badge">0 / 0</div>
+ <p id="report-percentage" style="font-weight: 600; font-size: 1.2rem; color: var(--olive);"></p>
+
+ <div id="report-comment" class="pedagogical-comment"></div>
+ </div>
+
+ <h3 style="color: var(--terracotta); margin-bottom: 15px;">Αναλυτική Επισκόπηση Ερωτήσεων</h3>
+ <div id="report-list"></div>
+
+ <div class="actions-group">
+ <button class="btn btn-secondary" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+ <button class="btn" onclick="restartQuiz()">↻ Έναρξη από την αρχή</button>
+ </div>
+ </div>
+</div>
+
+<script>
+// --- ΔΕΔΟΜΕΝΑ ΕΡΩΤΗΣΕΩΝ (ΕΒΔΟΜΑΔΑ 23: 1η ΦΑΣΗ ΕΠΑΝΑΛΗΨΕΩΝ - ΔΟΜΕΣ & ΠΙΝΑΚΕΣ) ---
+const questionsData = [
+ {
+ id: 1,
+ difficulty: "basic",
+ difficultyText: "Βασικό",
+ question: "Δίνεται το παρακάτω τμήμα αλγορίθμου στη «ΓΛΩΣΣΑ». Ποια θα είναι η τελική τιμή της λογικής μεταβλητής `res`;",
+ code: "A <- 5\nB <- 3\nC <- 10\nres <- (A + B * 2 > C) ΚΑΙ ΟΧΙ (C DIV B = 3)",
+ options: [
+ "ΑΛΗΘΗΣ",
+ "ΨΕΥΔΗΣ",
+ "11",
+ "1"
+ ],
+ correct: 1,
+ hint: "Υπολογίστε πρώτα τις αριθμητικές πράξεις (προτεραιότητα πολλαπλασιασμού & DIV), μετά τις συγκρίσεις και τέλος τους λογικούς τελεστές (ΟΧΙ -> ΚΑΙ).",
+ explanation: "1) A + B * 2 = 5 + 6 = 11 > 10 (ΑΛΗΘΗΣ). 2) C DIV B = 10 DIV 3 = 3 = 3 (ΑΛΗΘΗΣ). 3) ΟΧΙ (ΑΛΗΘΗΣ) = ΨΕΥΔΗΣ. 4) ΑΛΗΘΗΣ ΚΑΙ ΨΕΥΔΗΣ = ΨΕΥΔΗΣ."
+ },
+ {
+ id: 2,
+ difficulty: "basic",
+ difficultyText: "Βασικό",
+ question: "Ποια είναι η θεμελιώδης λειτουργική διαφορά μεταξύ της εντολής `ΟΣΟ...ΕΠΑΝΑΛΑΒΕ` και της εντολής `ΑΡΧΗ_ΕΠΑΝΑΛΗΨΗΣ...ΜΕΧΡΙΣ_ΟΤΟΥ`;",
+ code: null,
+ options: [
+ "Η ΟΣΟ εκτελείται υποχρεωτικά τουλάχιστον 1 φορά, ενώ η ΜΕΧΡΙΣ_ΟΤΟΥ μπορεί να εκτελεστεί 0 φορές.",
+ "Η ΟΣΟ ελέγχει τη συνθήκη στην αρχή (προ-ελεγχόμενη, 0+ εκτελέσεις), ενώ η ΜΕΧΡΙΣ_ΟΤΟΥ ελέγχει τη συνθήκη στο τέλος (μετα-ελεγχόμενη, 1+ εκτελέσεις).",
+ "Η ΜΕΧΡΙΣ_ΟΤΟΥ συνεχίζει την επανάληψη όσο η συνθήκη είναι ΑΛΗΘΗΣ.",
+ "Η ΟΣΟ τερματίζεται όταν η συνθήκη γίνει ΑΛΗΘΗΣ."
+ ],
+ correct: 1,
+ hint: "Σκεφτείτε πού βρίσκεται ο έλεγχος της συνθήκης και πόσες φορές εκτελείται ελάχιστα κάθε βρόχος.",
+ explanation: "Η ΟΣΟ ελέγχει τη συνθήκη στην εισόδο του βρόχου (μπορεί να εκτελεστεί 0 φορές αν η συνθήκη είναι ψευδής), ενώ η ΜΕΧΡΙΣ_ΟΤΟΥ ελέγχει στο τέλος (εκτελείται οπωσδήποτε τουλάχιστον 1 φορά)."
+ },
+ {
+ id: 3,
+ difficulty: "basic",
+ difficultyText: "Βασικό",
+ question: "Δίνεται το παρακάτω τμήμα αλγορίθμου στη «ΓΛΩΣΣΑ». Τι θα συμβεί κατά την εκτέλεσή του;",
+ code: "ΜΕΤΑΒΛΗΤΕΣ\n ΑΚΕΡΑΙΕΣ: A[10], i\nΑΡΧΗ\n ΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 10\n A[i] <- i * 2\n ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n ΓΡΑΨΕ A[11]",
+ options: [
+ "Θα τυπωθεί η τιμή 0.",
+ "Θα τυπωθεί η τιμή 22.",
+ "Προκαλείται σφάλμα εκτέλεσης (Index Out of Bounds) και αντικανονικός τερματισμός του προγράμματος.",
+ "Θα τυπωθεί η τιμή 10."
+ ],
+ correct: 2,
+ hint: "Στη «ΓΛΩΣΣΑ» οι πίνακες έχουν αυστηρά καθορισμένα όρια κατά τη δήλωσή τους (1..10).",
+ explanation: "Η προσπέλαση του δείκτη A[11] σε έναν πίνακα 10 θέσεων (δηλωμένο ως A[10]) προκαλεί σφάλμα υπερχείλισης δείκτη (Index Out of Bounds / Run-time Error) και οδηγεί σε αντικανονικό τερματισμό."
+ },
+ {
+ id: 4,
+ difficulty: "basic",
+ difficultyText: "Βασικό",
+ question: "Σε έναν τετραγωνικό πίνακα A[N,N], ποια μαθηματική σχέση ικανοποιούν οι δείκτες γραμμής i και στήλης j για τα στοιχεία της ΔΕΥΤΕΡΕΥΟΥΣΑΣ διαγωνίου;",
+ code: null,
+ options: [
+ "i = j",
+ "i + j = N + 1",
+ "i + j = N",
+ "j = N - i"
+ ],
+ correct: 1,
+ hint: "Σκεφτείτε έναν πίνακα 4x4: τα στοιχεία της δευτερεύουσας είναι τα A[1,4], A[2,3], A[3,2], A[4,1].",
+ explanation: "Στην εναλλακτική (δευτερεύουσα) διαγώνιο ενός τετραγωνικού πίνακα N x N, το άθροισμα των δεικτών γραμμής και στήλης είναι πάντοτε σταθερό και ισούται με N + 1 (δηλαδή i + j = N + 1)."
+ },
+ {
+ id: 5,
+ difficulty: "basic",
+ difficultyText: "Βασικό",
+ question: "Ποιος είναι ο θεμελιώδης κανόνας διατήρησης της συνέπειας δεδομένων (data integrity) κατά την ταξινόμηση Παράλληλων Πινάκων;",
+ code: null,
+ options: [
+ "Ταξινομούμε μόνο τον πίνακα-κλειδί χωρίς να τροποποιούμε τους υπόλοιπους πίνακες.",
+ "Κάθε φορά που εκτελείται αντιμετάθεση στοιχείων στον πίνακα-κλειδί, αντιμετατίθενται υποχρεωτικά τα αντίστοιχα στοιχεία σε όλους τους παράλληλους πίνακες στη θέση j και j-1.",
+ "Αλλάζουμε τους δείκτες των πινάκων ώστε να μην είναι πλέον παράλληλοι.",
+ "Οι παράλληλοι πίνακες δεν μπορούν να ταξινομηθούν με τον αλγόριθμο της φυσαλίδας."
+ ],
+ correct: 1,
+ hint: "Αν μετακινηθεί το όνομα ενός μαθητή στη θέση j-1 χωρίς να μετακινηθεί ο βαθμός του, τι συμβαίνει;",
+ explanation: "Στους παράλληλους πίνακες η σύνδεση των πληροφοριών βασίζεται στον κοινό δείκτη j. Αν παράλειψουμε την ταυτόχρονη αντιμετάθεση σε όλους τους παράλληλους πίνακες, καταστρέφεται η αντιστοίχιση των δεδομένων (data corruption)."
+ },
+ {
+ id: 6,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Δίνεται το παρακάτω τμήμα αλγορίθμου ΓΙΑ με αρνητικό βήμα. Ποιο είναι το ισοδύναμο τμήμα με αποκλειστική χρήση της δομής `ΟΣΟ...ΕΠΑΝΑΛΑΒΕ`;",
+ code: "S <- 0\nΓΙΑ i ΑΠΟ 10 ΜΕΧΡΙ 2 ΜΕ_ΒΗΜΑ -2\n S <- S + i\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+ options: [
+ "i <- 10\nS <- 0\nΟΣΟ i >= 2 ΕΠΑΝΑΛΑΒΕ\n S <- S + i\n i <- i - 2\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+ "i <- 10\nS <- 0\nΟΣΟ i <= 2 ΕΠΑΝΑΛΑΒΕ\n S <- S + i\n i <- i - 2\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+ "i <- 10\nS <- 0\nΟΣΟ i > 2 ΕΠΑΝΑΛΑΒΕ\n S <- S + i\n i <- i + 2\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+ "i <- 2\nS <- 0\nΟΣΟ i <= 10 ΕΠΑΝΑΛΑΒΕ\n S <- S + i\n i <- i + 2\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ"
+ ],
+ correct: 0,
+ hint: "Αρχικοποιήστε το i στο 10, ελέγξτε τη συνθήκη i >= 2 (καθώς το βήμα είναι αρνητικό) και μειώστε το i κατά 2 στο τέλος.",
+ explanation: "Για τη μετατροπή της ΓΙΑ σε ΟΣΟ με αρνητικό βήμα (-2): 1) Αρχικοποίηση `i <- 10`, 2) Συνθήκη `i >= 2`, 3) Ρητή ενημέρωση μεταβλητής ελέγχου `i <- i - 2` στο τέλος του σώματος του βρόχου."
+ },
+ {
+ id: 7,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Δίνεται το παρακάτω τμήμα αλγορίθμου με εμφωλευμένους βρόχους. Ποια θα είναι η τελική τιμή της μεταβλητής S (Πίνακας Τιμών - Trace Table);",
+ code: "S <- 0\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 3\n ΓΙΑ j ΑΠΟ 1 ΜΕΧΡΙ i\n S <- S + i * j\n ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+ options: [
+ "14",
+ "25",
+ "19",
+ "36"
+ ],
+ correct: 1,
+ hint: "Υπολογίστε βήμα-βήμα: i=1 (j=1), i=2 (j=1,2), i=3 (j=1,2,3).",
+ explanation: "i=1: j=1 -> S = 0 + 1*1 = 1.\ni=2: j=1 -> S = 1 + 2*1 = 3 | j=2 -> S = 3 + 2*2 = 7.\ni=3: j=1 -> S = 7 + 3*1 = 10 | j=2 -> S = 10 + 3*2 = 16 | j=3 -> S = 16 + 3*3 = 25.\nΤελική τιμή S = 25."
+ },
+ {
+ id: 8,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Ποια πρόταση συγκρίνει ΣΩΣΤΑ τη Δυαδική Αναζήτηση και τη Σειριακή Αναζήτηση σε έναν μονοδιάστατο πίνακα N στοιχείων;",
+ code: null,
+ options: [
+ "Η Δυαδική Αναζήτηση εφαρμόζεται σε οποιονδήποτε πίνακα με πολυπλοκότητα O(N).",
+ "Η Δυαδική Αναζήτηση απαιτεί αυστηρά ΤΑΞΙΝΟΜΗΜΕΝΟ πίνακα και έχει πολυπλοκότητα O(log N), ενώ σε μη ταξινομημένο πίνακα εφαρμόζεται μόνο η Σειριακή Αναζήτηση με πολυπλοκότητα O(N).",
+ "Η Σειριακή Αναζήτηση απαιτεί πάντα ταξινομημένο πίνακα.",
+ "Η Δυαδική Αναζήτηση είναι πιο αργή από τη Σειριακή Αναζήτηση σε μεγάλους πίνακες."
+ ],
+ correct: 1,
+ hint: "Σκεφτείτε ποιος αλγόριθμος απαιτεί τη μέθοδο «Διαίρει και Βασίλευε» και ποια είναι η απαραίτητη προϋπόθεσή του.",
+ explanation: "Αυστηρή προϋπόθεση για τη Δυαδική Αναζήτηση είναι τα στοιχεία να είναι ήδη ταξινομημένα (πετυχαίνοντας O(log N)). Σε μη ταξινομημένο πίνακα παράγει λανθασμένα αποτελέσματα και η μόνη ενδεδειγμένη μέθοδος είναι η Σειριακή Αναζήτηση (O(N))."
+ },
+ {
+ id: 9,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Δίνεται ο αλγόριθμος υπολογισμού των αθροισμάτων ανά γραμμή ενός δισδιάστατου πίνακα Π[N,M] και αποθήκευσής τους σε μονοδιάστατο πίνακα ΣΥΝΟΛΟ[N]. Ποια πρόταση είναι ΟΡΘΗ;",
+ code: "ΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ N\n ΣΥΝΟΛΟ[i] <- 0\n ΓΙΑ j ΑΠΟ 1 ΜΕΧΡΙ M\n ΣΥΝΟΛΟ[i] <- ΣΥΝΟΛΟ[i] + Π[i, j]\n ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+ options: [
+ "Ο αλγόριθμος είναι πλήρως ορθός και υπολογίζει σωστά τα αθροίσματα των N γραμμών.",
+ "Το ΣΥΝΟΛΟ[i] <- 0 έπρεπε να τοποθετηθεί πριν από τον εξωτερικό βρόχο i.",
+ "Ο εσωτερικός βρόχος έπρεπε να σαρώνει το i και ο εξωτερικός το j.",
+ "Η εντολή άθροισης έπρεπε να είναι ΣΥΝΟΛΟ[j] <- ΣΥΝΟΛΟ[j] + Π[i, j]."
+ ],
+ correct: 0,
+ hint: "Ελέγξτε πού μηδενίζεται το άθροισμα της κάθε γραμμής i και πώς συσσωρεύονται οι στήλες j.",
+ explanation: "Ο αλγόριθμος είναι απόλυτα σωστός! Για κάθε γραμμή i, μηδενίζεται το `ΣΥΝΟΛΟ[i] <- 0` πριν από τον εσωτερικό βρόχο j, και στη συνέχεια συσσωρεύονται όλα τα στοιχεία των M στηλών της γραμμής αυτής."
+ },
+ {
+ id: 10,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Εκτελούμε Δυαδική Αναζήτηση για την τιμή ` target ` σε έναν πίνακα MO[30] που είναι ταξινομημένος σε ΦΘΙΝΟΥΣΑ σειρά. Πώς προσαρμόζονται οι δείκτες `αρχή` και `τέλος` όταν `MO[μέσο] < target`;",
+ code: "αρχή <- 1\nτέλος <- 30\nμέσο <- (αρχή + τέλος) DIV 2\n! Ο πίνακας MO είναι σε ΦΘΙΝΟΥΣΑ σειρά (μεγάλες τιμές αριστερά)",
+ options: [
+ "τέλος <- μέσο - 1 (διότι οι μεγαλύτερες τιμές βρίσκονται αριστερά)",
+ "αρχή <- μέσο + 1 (διότι οι μεγαλύτερες τιμές βρίσκονται δεξιά)",
+ "τέλος <- μέσο + 1",
+ "αρχή <- μέσο - 1"
+ ],
+ correct: 0,
+ hint: "Σε φθίνοντα πίνακα, αν η τιμή στο μέσο είναι μικρότερη από τη ζητούμενη, πού βρίσκονται οι μεγαλύτερες τιμές;",
+ explanation: "Επειδή ο πίνακας είναι φθίνων, οι μεγαλύτερες τιμές βρίσκονται στα **αριστερά** (μικρότεροι δείκτες). Επομένως, αν `MO[μέσο] < target`, η ζητούμενη τιμή βρίσκεται αριστερά, άρα ενημερώνουμε το `τέλος <- μέσο - 1`."
+ },
+ {
+ id: 11,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Δίνεται ο τετραγωνικός πίνακας A[4,4]. Ποιο θα είναι το αποτέλεσμα της εκτέλεσης του παρακάτω τμήματος κώδικα αν όλα τα στοιχεία του πίνακα είναι ίσα με 1;",
+ code: "S <- 0\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 4\n S <- S + A[i, i] + A[i, 5 - i]\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+ options: [
+ "8",
+ "4",
+ "16",
+ "0"
+ ],
+ correct: 0,
+ hint: "Υπολογίστε τις τιμές για i=1, 2, 3, 4: A[i,i] είναι η κύρια διαγώνιος και A[i, 5-i] είναι η δευτερεύουσα.",
+ explanation: "i=1: A[1,1] + A[1,4] = 1 + 1 = 2.\ni=2: A[2,2] + A[2,3] = 1 + 1 = 2.\ni=3: A[3,3] + A[3,2] = 1 + 1 = 2.\ni=4: A[4,4] + A[4,1] = 1 + 1 = 2.\nΣυνολικό άθροισμα S = 2 + 2 + 2 + 2 = 8."
+ },
+ {
+ id: 12,
+ difficulty: "advanced",
+ difficultyText: "Προχωρημένο",
+ question: "Δίνεται το παρακάτω τμήμα αλγορίθμου που υποτίθεται ότι αντιστρέφει τα στοιχεία ενός μονοδιάστατου πίνακα A[N]. Ποιο λογικό σφάλμα προκαλείται κατά την εκτέλεσή του;",
+ code: "ΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ N\n temp <- A[i]\n A[i] <- A[N + 1 - i]\n A[N + 1 - i] <- temp\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+ options: [
+ "Ο πίνακας αντιστρέφεται σωστά.",
+ "Στα μισά βήματα ο πίνακας αντιστρέφεται, αλλά στα υπόλοιπα μισά βήματα τα στοιχεία επαναφέρονται στην αρχική τους θέση! Έπρεπε `ΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ N DIV 2`.",
+ "Προκαλείται σφάλμα δείκτη εκτός ορίων.",
+ "Το temp πρέπει να αρχικοποιηθεί στο 0."
+ ],
+ correct: 1,
+ hint: "Προσέξτε τι συμβαίνει όταν το i ξεπεράσει το μέσο του πίνακα (i > N DIV 2).",
+ explanation: "Αυτό είναι το κλασικό σφάλμα διπλής αντιστροφής! Στο πρώτο μισό του πίνακα (1..N DIV 2) τα στοιχεία αντιστρέφονται, αλλά στο δεύτερο μισό ξανα-αντιμετατίθενται, επαναφέροντας τον πίνακα στην αρχική του κατάσταση."
+ },
+ {
+ id: 13,
+ difficulty: "advanced",
+ difficultyText: "Προχωρημένο",
+ question: "Δίνεται ο αλγόριθμος εύρεσης της μέγιστης τιμής (MAX) και εκτύπωσης ΟΛΩΝ των θέσεων στις οποίες εμφανίζεται σε έναν πίνακα A[20]. Ποια πρόταση είναι ΟΡΘΗ;",
+ code: "MAX <- A[1]\nΓΙΑ i ΑΠΟ 2 ΜΕΧΡΙ 20\n ΑΝ A[i] > MAX ΤΟΤΕ\n MAX <- A[i]\n ΤΕΛΟΣ_ΑΝ\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n\nΓΡΑΨΕ 'Η μέγιστη τιμή εμφανίζεται στις θέσεις:'\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 20\n ΑΝ A[i] = MAX ΤΟΤΕ\n ΓΡΑΨΕ i\n ΤΕΛΟΣ_ΑΝ\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+ options: [
+ "Ο αλγόριθμος είναι πλήρως ορθός και εντοπίζει όλες τις θέσεις εμφάνισης του MAX (ακόμα κι αν υπάρχει πάνω από μία φορά).",
+ "Η εκτύπωση των θέσεων έπρεπε να γίνει υποχρεωτικά μέσα στο πρώτο βρόχο.",
+ "Το MAX έπρεπε να αρχικοποιηθεί στο 0.",
+ "Ο δεύτερος βρόχος έπρεπε να ξεκινά από το 2."
+ ],
+ correct: 0,
+ hint: "Εξετάστε αν ο πρώτος βρόχος βρισκει το απόλυτο MAX και αν ο δεύτερος βρόχος σαρώνει όλον τον πίνακα για να τυπώσει τις θέσεις όπου A[i] = MAX.",
+ explanation: "Ο αλγόριθμος είναι απόλυτα σωστός! Πρώτα βρισκει την απόλυτη μέγιστη τιμή MAX σε 1ο περασμα, και στη συνέχεια σαρώνει εκ νέου τον πίνακα από τη θέση 1 έως 20 τυπώνοντας όλους τους δείκτες i όπου `A[i] = MAX`."
+ },
+ {
+ id: 14,
+ difficulty: "advanced",
+ difficultyText: "Προχωρημένο",
+ question: "Σε έναν τετραγωνικό πίνακα A[N,N], ποια συνθήκη ικανοποιούν οι δείκτες i και j για τα στοιχεία που βρίσκονται αυστηρά ΚΑΤΩ από τη ΔΕΥΤΕΡΕΥΟΥΣΑ διαγώνιο;",
+ code: null,
+ options: [
+ "i + j > N + 1",
+ "i + j < N + 1",
+ "i > j",
+ "i + j = N + 1"
+ ],
+ correct: 0,
+ hint: "Στη δευτερεύουσα διαγώνιο i+j = N+1. Πάνω από τη δευτερεύουσα i+j < N+1. Κάτω από τη δευτερεύουσα;",
+ explanation: "Στη δευτερεύουσα διαγώνιο ισχύει `i + j = N + 1`. Στο πάνω τρίγωνο της δευτερεύουσας ισχύει `i + j < N + 1`. Στο κάτω τρίγωνο της δευτερεύουσας διαγωνίου ισχύει `i + j > N + 1`."
+ },
+ {
+ id: 15,
+ difficulty: "advanced",
+ difficultyText: "Προχωρημένο",
+ question: "Στον αλγόριθμο Σειριακής Αναζήτησης σε πίνακα A[N], εξετάστε τη συνθήκη της εντολής `ΟΣΟ (i <= N) ΚΑΙ (βρέθηκε = ΨΕΥΔΗΣ)`. Γιατί η σειρά των όρων θεωρείται κρίσιμη για την ασφάλεια του προγράμματος;",
+ code: "i <- 1\nβρέθηκε <- ΨΕΥΔΗΣ\nΟΣΟ (i <= N) ΚΑΙ (βρέθηκε = ΨΕΥΔΗΣ) ΕΠΑΝΑΛΑΒΕ\n ΑΝ A[i] = K ΤΟΤΕ\n βρέθηκε <- ΑΛΗΘΗΣ\n ΑΛΛΙΩΣ\n i <- i + 1\n ΤΕΛΟΣ_ΑΝ\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+ options: [
+ "Διότι αν i > N, ο πρώτος όρος `(i <= N)` γίνεται ΨΕΥΔΗΣ και η αξιολόγηση σταματά, αποτρέποντας την προσπέλαση στη μη υπάρχουσα θέση A[N+1] (Index Out of Bounds).",
+ "Διότι αν αντιστραφεί η σειρά, ο αλγόριθμος εκτελείται πιο γρήγορα.",
+ "Διότι ο τελεστής ΚΑΙ απαιτεί πάντα ο δεύτερος όρος να εκτελείται πρώτος.",
+ "Η σειρά των όρων δεν παίζει κανέναν απολύτως ρόλο στη «ΓΛΩΣΣΑ»."
+ ],
+ correct: 0,
+ hint: "Σκεφτείτε τι συμβαίνει όταν i = N + 1 αν ελεγχόταν πρώτα το A[i] = K.",
+ explanation: "Πρέπει πρώτα να ελέγχεται αν ο δείκτης είναι εντός ορίων `(i <= N)`. Αν ελεγχθεί πρώτα το `A[i] = K` όταν `i = N + 1`, θα επιχειρηθεί προσπέλαση εκτός ορίων στη θέση `A[N+1]`, προκαλώντας σφάλμα εκτέλεσης."
+ }
+];
+
+// --- STATE VARIABLES ---
+let currentMode = 'practice';
+let studentName = '';
+let currentQuestionIndex = 0;
+let userAnswers = {};
+
+// --- LOGIC FUNCTIONS ---
+function selectMode(mode, element) {
+ currentMode = mode;
+ document.querySelectorAll('.mode-btn-card').forEach(card => card.classList.remove('selected'));
+ element.classList.add('selected');
+}
+
+function startQuiz() {
+ const nameInput = document.getElementById('student-name').value.trim();
+ studentName = nameInput !== '' ? nameInput : 'Ανώνυμος/η Μαθητής/τρια';
+
+ document.getElementById('start-screen').style.display = 'none';
+ document.getElementById('quiz-screen').style.display = 'block';
+
+ currentQuestionIndex = 0;
+ userAnswers = {};
+
+ renderQuizScreen();
+}
+
+function renderQuizScreen() {
+ const wrapper = document.getElementById('questions-wrapper');
+ wrapper.innerHTML = '';
+
+ if (currentMode === 'practice') {
+ document.getElementById('submit-btn').style.display = 'none';
+ document.getElementById('next-btn').style.display = 'inline-block';
+ updateProgressBar();
+ 
+ const q = questionsData[currentQuestionIndex];
+ wrapper.appendChild(createQuestionCard(q, currentQuestionIndex + 1, questionsData.length, true));
+ } else {
+ // Exam Mode: Show all questions
+ document.getElementById('next-btn').style.display = 'none';
+ document.getElementById('submit-btn').style.display = 'inline-block';
+ document.getElementById('progress-bar').style.width = '100%';
+
+ questionsData.forEach((q, idx) => {
+ wrapper.appendChild(createQuestionCard(q, idx + 1, questionsData.length, false));
+ });
+ }
+}
+
+function formatOptionText(text) {
+ if (!text || text === 'Δεν απαντήθηκε') return text;
+ if (text.includes('\n')) {
+ return `<pre class="option-code"><code>${escapeHTML(text)}</code></pre>`;
+ }
+ return escapeHTML(text);
+}
+
+function createQuestionCard(q, num, total, isPractice) {
+ const card = document.createElement('div');
+ card.className = 'card';
+ card.id = `q-card-${q.id}`;
+
+ let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+ 
+ let optionsHTML = '';
+ q.options.forEach((opt, idx) => {
+ if (!opt) return;
+ const isChecked = userAnswers[q.id] === idx ? 'checked' : '';
+ const hasCode = opt.includes('\n');
+ const formattedOpt = formatOptionText(opt);
+
+ optionsHTML += `
+ <label class="option-item ${hasCode ? 'has-code' : ''}" onclick="handleOptionSelect(${q.id}, ${idx}, ${isPractice})">
+ <input type="radio" name="q_${q.id}" value="${idx}" ${isChecked}>
+ <div class="option-text-container">${formattedOpt}</div>
+ </label>
+ `;
+ });
+
+ // Determine difficulty badge class
+ let diffClass = "diff-basic";
+ if (q.difficulty === "medium") diffClass = "diff-medium";
+ if (q.difficulty === "advanced") diffClass = "diff-advanced";
+
+ card.innerHTML = `
+ <div class="question-header">
+ <span class="question-number">Ερώτηση ${num} από ${total}</span>
+ <span class="diff-badge ${diffClass}">${q.difficultyText}</span>
+ </div>
+ <div class="question-text">${q.question}</div>
+ ${codeHTML}
+ <div class="options-group">${optionsHTML}</div>
+ <button class="btn btn-hint" onclick="toggleHint(${q.id})">💡 Υπόδειξη</button>
+ <div id="hint-${q.id}" class="hint-box">${q.hint}</div>
+ <div id="justification-${q.id}" class="justification-box"></div>
+ `;
+
+ return card;
+}
+
+function handleOptionSelect(qId, selectedIdx, isPractice) {
+ userAnswers[qId] = selectedIdx;
+ document.getElementById('warning-msg').style.display = 'none';
+
+ if (isPractice) {
+ const q = questionsData.find(item => item.id === qId);
+ const justBox = document.getElementById(`justification-${qId}`);
+ justBox.style.display = 'block';
+
+ let correctOptFormatted = formatOptionText(q.options[q.correct]);
+
+ if (selectedIdx === q.correct) {
+ justBox.className = 'justification-box correct';
+ justBox.innerHTML = `<strong>✅ Σωστό!</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+ } else {
+ justBox.className = 'justification-box incorrect';
+ justBox.innerHTML = `<strong>❌ Λάθος.</strong> Η σωστή απάντηση είναι: <div>${correctOptFormatted}</div><br><strong>Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+ }
+ }
+}
+
+function toggleHint(qId) {
+ const hintBox = document.getElementById(`hint-${qId}`);
+ hintBox.style.display = (hintBox.style.display === 'block') ? 'none' : 'block';
+}
+
+function updateProgressBar() {
+ const progress = ((currentQuestionIndex + 1) / questionsData.length) * 100;
+ document.getElementById('progress-bar').style.width = `${progress}%`;
+}
+
+function nextQuestion() {
+ if (userAnswers[questionsData[currentQuestionIndex].id] === undefined) {
+ alert('Παρακαλώ επιλέξτε μια απάντηση πριν προχωρήσετε!');
+ return;
+ }
+
+ if (currentQuestionIndex < questionsData.length - 1) {
+ currentQuestionIndex++;
+ renderQuizScreen();
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+ } else {
+ showReport();
+ }
+}
+
+function submitExam() {
+ const unanswered = questionsData.filter(q => userAnswers[q.id] === undefined);
+ if (unanswered.length > 0) {
+ const warning = document.getElementById('warning-msg');
+ warning.innerText = `⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή! Απομένουν ${unanswered.length} αναπάντητες ερωτήσεις.`;
+ warning.style.display = 'block';
+
+ const firstUnansweredId = unanswered[0].id;
+ document.getElementById(`q-card-${firstUnansweredId}`).scrollIntoView({ behavior: 'smooth' });
+ return;
+ }
+
+ showReport();
+}
+
+function showReport() {
+ document.getElementById('quiz-screen').style.display = 'none';
+ document.getElementById('report-screen').style.display = 'block';
+
+ let score = 0;
+ const reportList = document.getElementById('report-list');
+ reportList.innerHTML = '';
+
+ questionsData.forEach((q, idx) => {
+ const userChoice = userAnswers[q.id];
+ const isCorrect = userChoice === q.correct;
+ if (isCorrect) score++;
+
+ const item = document.createElement('div');
+ item.className = `report-item ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+ let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+ let userChoiceText = userChoice !== undefined ? formatOptionText(q.options[userChoice]) : 'Δεν απαντήθηκε';
+ let correctChoiceText = formatOptionText(q.options[q.correct]);
+
+ let diffClass = "diff-basic";
+ if (q.difficulty === "medium") diffClass = "diff-medium";
+ if (q.difficulty === "advanced") diffClass = "diff-advanced";
+
+ item.innerHTML = `
+ <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+ <div>
+ <span class="badge ${isCorrect ? 'badge-success' : 'badge-danger'}">
+ ${isCorrect ? '✅ ΣΩΣΤΟ' : '❌ ΛΑΘΟΣ'}
+ </span>
+ <strong>Ερώτηση ${idx + 1}:</strong> ${q.question}
+ </div>
+ <span class="diff-badge ${diffClass}">${q.difficultyText}</span>
+ </div>
+ ${codeHTML}
+ <div style="margin: 8px 0; font-size: 0.95rem;">
+ <strong>Η απάντησή σας:</strong> <div style="color: ${isCorrect ? 'var(--olive)' : 'var(--wrong-border)'}; font-weight: 600;">${userChoiceText}</div>
+ ${!isCorrect ? `<strong>Σωστή απάντηση:</strong> <div style="color: var(--olive); font-weight: 600;">${correctChoiceText}</div>` : ''}
+ </div>
+ <div style="font-size: 0.9rem; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 6px; margin-top: 6px;">
+ <strong>Τεκμηρίωση / Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}
+ </div>
+ `;
+
+ reportList.appendChild(item);
+ });
+
+ const percentage = Math.round((score / questionsData.length) * 100);
+
+ document.getElementById('report-student-name').innerText = `Μαθητής/τρια: ${studentName}`;
+ document.getElementById('report-date').innerText = `Ημερομηνία & Ώρα: ${new Date().toLocaleString('el-GR')}`;
+ document.getElementById('report-score').innerText = `${score} / ${questionsData.length}`;
+ document.getElementById('report-percentage').innerText = `Ποσοστό Επιτυχίας: ${percentage}%`;
+
+ // Pedagogical Comment
+ let comment = '';
+ if (percentage >= 90) {
+ comment = '🌟 Εξαιρετική επίδοση! Έχετε κατανοήσει πλήρως τη συνδεσιμότητα των Δομών Ελέγχου και των Πινάκων (1Δ & 2Δ), την εκτέλεση αλγορίθμων ταξινόμησης & αναζήτησης και την επίλυση συνδυαστικών θεμάτων Πανελλαδικού τύπου (Θέματα Β, Γ & Δ).';
+ } else if (percentage >= 75) {
+ comment = '👏 Πολύ καλή προσπάθεια! Έχετε γερές βάσεις στις δομές ελέγχου και στους πίνακες. Κάντε μια μικρή επανεξέταση στην παράλληλη ταξινόμηση 2Δ πινάκων και στις συνθήκες διαγωνίων.';
+ } else if (percentage >= 50) {
+ comment = '👍 Ικανοποιητική παρουσία. Χρειάζεται περισσότερη εξάσκηση στις ερωτήσεις προχωρημένου επιπέδου (Trace Tables, μετατροπές βρόχων και ασφαλείς συνθήκες σειριακής αναζήτησης).';
+ } else {
+ comment = '📚 Χρειάζεται συστηματική επανάληψη στη θεωρία της 23ης εβδομάδας (Κεφάλαια 2, 3, 7, 8 & 9 Σχολικού Βιβλίου), μελέτη των λυμένων ασκήσεων του Φύλλου Εργασίας και επιπλέον εξάσκηση σε Θέματα Πανελλαδικών.';
+ }
+ document.getElementById('report-comment').innerText = comment;
+
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+ document.getElementById('report-screen').style.display = 'none';
+ document.getElementById('start-screen').style.display = 'block';
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHTML(str) {
+ return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ) - Εβδομάδα 13: Τμηματικός Προγραμματισμός & Υποπρογράμματα</title>
+    <style>
+        :root {
+            --bg-color: #f7f4ef;
+            --text-color: #3a322b;
+            --terracotta: #7a4b29;
+            --terracotta-hover: #61391e;
+            --olive: #4e6e52;
+            --olive-hover: #3c5640;
+            --sand: #d4b886;
+            --card-bg: #ffffff;
+            --dark-code-bg: #2d2621;
+            --dark-code-text: #f0e8df;
+            --correct-bg: #eaf3eb;
+            --correct-border: #4e6e52;
+            --wrong-bg: #fdf0ed;
+            --wrong-border: #a73c26;
+            --border-radius: 12px;
+            --shadow: 0 4px 15px rgba(58, 50, 43, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 22px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border-bottom: 4px solid var(--terracotta);
+        }
+
+        header h1 {
+            color: var(--terracotta);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--olive);
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 184, 134, 0.3);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--terracotta);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--sand);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            color: var(--text-color);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--terracotta);
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .mode-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mode-btn-card {
+            border: 2px solid var(--sand);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .mode-btn-card:hover, .mode-btn-card.selected {
+            border-color: var(--terracotta);
+            background: #fcf8f3;
+            transform: translateY(-2px);
+        }
+
+        .mode-btn-card h3 {
+            color: var(--terracotta);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .mode-btn-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--terracotta);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: var(--terracotta-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: var(--olive);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--olive-hover);
+        }
+
+        .btn-hint {
+            background-color: transparent;
+            color: var(--terracotta);
+            border: 1px solid var(--terracotta);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+
+        .btn-hint:hover {
+            background-color: rgba(122, 75, 41, 0.08);
+        }
+
+        /* Code Blocks */
+        pre code {
+            display: block;
+            background: var(--dark-code-bg);
+            color: var(--dark-code-text);
+            padding: 14px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 4px solid var(--sand);
+            white-space: pre;
+        }
+
+        /* Question Elements */
+        .question-number {
+            font-weight: 700;
+            color: var(--terracotta);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1.5px solid #e0d8cd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .option-item:hover {
+            background-color: #fcf9f5;
+            border-color: var(--sand);
+        }
+
+        .option-item input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--terracotta);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Hints & Feedback */
+        .hint-box {
+            display: none;
+            background: #fffdf7;
+            border-left: 4px solid var(--sand);
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #554a3e;
+        }
+
+        .justification-box {
+            display: none;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .justification-box.correct {
+            background-color: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: #254229;
+        }
+
+        .justification-box.incorrect {
+            background-color: var(--wrong-bg);
+            border: 1px solid var(--wrong-border);
+            color: #641e10;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0d8cd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--olive);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Report Screen */
+        .report-header {
+            text-align: center;
+            border-bottom: 2px dashed var(--sand);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-badge {
+            display: inline-block;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--terracotta);
+            margin: 10px 0;
+        }
+
+        .pedagogical-comment {
+            background: #f4efe6;
+            padding: 15px;
+            border-radius: 8px;
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 10px;
+            border-left: 4px solid var(--olive);
+        }
+
+        .report-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e0d8cd;
+        }
+
+        .report-item.is-correct {
+            border-left: 5px solid var(--olive);
+            background: #fcfdfe;
+        }
+
+        .report-item.is-incorrect {
+            border-left: 5px solid var(--wrong-border);
+            background: #fffcfc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .badge-success { background-color: var(--olive); }
+        .badge-danger { background-color: var(--wrong-border); }
+
+        .actions-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .warning-msg {
+            color: var(--wrong-border);
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .container { max-width: 100%; }
+            .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+            .actions-group, .btn-hint, #start-screen, .progress-bar-container, .warning-msg { display: none !important; }
+            #report-screen { display: block !important; }
+            header { box-shadow: none; border-bottom: 2px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ)</h1>
+        <p>Εβδομάδα 13: Τμηματικός Προγραμματισμός & Υποπρογράμματα (10.1 - 10.4)</p>
+    </header>
+
+    <!-- 1. ΑΡΧΙΚΗ ΟΘΟΝΗ -->
+    <div id="start-screen" class="card">
+        <h2 style="color: var(--terracotta); margin-bottom: 15px;">Διαδραστικό Quiz Αξιολόγησης</h2>
+        <p style="margin-bottom: 20px;">Εξετάστε τις γνώσεις σας στη φιλοσοφία του Τμηματικού Προγραμματισμού, την Ιεραρχική Σχεδίαση (Top-Down), τα 5 θεμελιώδη χαρακτηριστικά και τα πλεονεκτήματα των υποπρογραμμάτων, τις Πραγματικές και Τυπικές παραμέτρους και τους 3 κανόνες αντιστοίχισης.</p>
+        
+        <div class="form-group">
+            <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+            <input type="text" id="student-name" placeholder="π.χ. Μαρία Παπαδοπούλου (Προαιρετικό)">
+        </div>
+
+        <div class="form-group">
+            <label>Επιλέξτε Λειτουργία:</label>
+            <div class="mode-selection">
+                <div class="mode-btn-card selected" onclick="selectMode('practice', this)">
+                    <h3>🎮 Εκμάθηση & Εξάσκησή</h3>
+                    <p>Βήμα-βήμα με άμεσο feedback & επεξήγηση σε κάθε ερώτηση.</p>
+                </div>
+                <div class="mode-btn-card" onclick="selectMode('exam', this)">
+                    <h3>📝 Προσομοίωση & Τεστ</h3>
+                    <p>Συγκεντρωτική απάντηση όλων των ερωτήσεων & τελικό Report.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <button class="btn" onclick="startQuiz()">Έναρξη Κουίζ ➔</button>
+        </div>
+    </div>
+
+    <!-- 2. ΟΘΟΝΗ ΕΡΩΤΗΣΕΩΝ -->
+    <div id="quiz-screen" style="display: none;">
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+
+        <div id="questions-wrapper"></div>
+
+        <div id="warning-msg" class="warning-msg">⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή!</div>
+
+        <div class="actions-group">
+            <button id="next-btn" class="btn" onclick="nextQuestion()" style="display: none;">Επόμενη Ερώτηση ➔</button>
+            <button id="submit-btn" class="btn btn-secondary" onclick="submitExam()" style="display: none;">Υποβολή Τεστ 🏁</button>
+        </div>
+    </div>
+
+    <!-- 3. ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ / REPORT -->
+    <div id="report-screen" class="card" style="display: none;">
+        <div class="report-header">
+            <h2 style="color: var(--terracotta);">Αναφορά Επίδοσης Μαθητή</h2>
+            <p id="report-student-name" style="font-weight: bold; font-size: 1.1rem; margin-top: 5px;"></p>
+            <p id="report-date" style="font-size: 0.85rem; color: #666;"></p>
+            
+            <div id="report-score" class="score-badge">0 / 0</div>
+            <p id="report-percentage" style="font-weight: 600; font-size: 1.2rem; color: var(--olive);"></p>
+            
+            <div id="report-comment" class="pedagogical-comment"></div>
+        </div>
+
+        <h3 style="color: var(--terracotta); margin-bottom: 15px;">Αναλυτική Επισκόπηση Ερωτήσεων</h3>
+        <div id="report-list"></div>
+
+        <div class="actions-group">
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+            <button class="btn" onclick="restartQuiz()">↻ Έναρξη από την αρχή</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- ΔΕΔΟΜΕΝΑ ΕΡΩΤΗΣΕΩΝ (ΕΒΔΟΜΑΔΑ 13: 10.1 - 10.4) ---
+const questionsData = [
+    {
+        id: 1,
+        question: "Ποια είναι η θεμελιώδης αρχή της Ιεραρχικής Σχεδίασης (Top-Down Design) στον Τμηματικό Προγραμματισμό;",
+        code: null,
+        options: [
+            "Η συγγραφή όλων των εντολών σε μία ενιαία μονολιθική δομή χωρίς υποπρογράμματα.",
+            "Η διάσπαση του αρχικού προβλήματος σε απλούστερα υποπροβλήματα 1ου, 2ου κ.ο.κ. επιπέδου («Διαίρει και Βασίλευε»).",
+            "Η αντικατάσταση όλων των μεταβλητών του προγράμματος από καθολικές μεταβλητές.",
+            "Η αυτόματη διόρθωση των συντακτικών λαθών από τον μεταγλωττιστή."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε πώς αναλύεται ένα σύνθετο πρόβλημα από το γενικότερο προς το ειδικότερο επίπεδο.",
+        explanation: "Η Ιεραρχική Σχεδίαση (Top-Down Design) ταυτίζεται με την προσέγγιση «από πάνω προς τα κάτω», διασπώντας το αρχικό πρόβλημα σε υποπροβλήματα 1ου επιπέδου και στη συνέχεια σε υποπροβλήματα 2ου επιπέδου μέχρι να φτάσουμε σε απλά υποπρογράμματα."
+    },
+    {
+        id: 2,
+        question: "Ποιο από τα παρακάτω ΔΕΝ ανήκει στα 5 θεμελιώδη χαρακτηριστικά των υποπρογραμμάτων;",
+        code: null,
+        options: [
+            "Η αυτοτέλεια και πλήρης ανεξαρτησία από άλλα υποπρογράμματα.",
+            "Το μοναδικό όνομα και το μικρό διαχειρίσιμο μέγεθος.",
+            "Η αποκλειστική χρήση καθολικών μεταβλητών για την ανταλλαγή δεδομένων.",
+            "Οι συγκεκριμένες και καθορισμένες είσοδοι και έξοδοι."
+        ],
+        correct: 2,
+        hint: "Εξετάστε αν η χρήση καθολικών μεταβλητών προάγει ή καταστρατηγεί την ανεξαρτησία των υποπρογραμμάτων.",
+        explanation: "Τα 5 θεμελιώδη χαρακτηριστικά είναι: 1) Αυτοτέλεια/Ανεξαρτησία, 2) Μοναδικό όνομα, 3) Συγκεκριμένη λειτουργία, 4) Καθορισμένες είσοδοι/έξοδοι, 5) Μικρό μέγεθος. Η χρήση καθολικών μεταβλητών καταστρατηγεί την αυτοτέλεια."
+    },
+    {
+        id: 3,
+        question: "Πού δηλώνονται οι Τυπικές (Formal) παράμετροι ενός υποπρογράμματος;",
+        code: null,
+        options: [
+            "Στο σημείο κλήσης του υποπρογράμματος μέσα στο κύριο πρόγραμμα.",
+            "Στο τμήμα δηλώσεων μεταβλητών του κύριου προγράμματος.",
+            "Στην επικεφαλίδα (ορισμό) του υποπρογράμματος.",
+            "Στο τέλος του υποπρογράμματος μετά την εντολή επιστροφής."
+        ],
+        correct: 2,
+        hint: "Οι τυπικές παράμετροι λειτουργούν ως υποδοχείς τιμών στον ορισμό του υποπρογράμματος.",
+        explanation: "Οι τυπικές παράμετροι δηλώνονται στην επικεφαλίδα ορισμού του υποπρογράμματος και χρησιμεύουν ως τοπικές μεταβλητές υποδοχής των τιμών κατά την κλήση."
+    },
+    {
+        id: 4,
+        question: "Πού συναντώνται οι Πραγματικές (Actual) παράμετροι;",
+        code: null,
+        options: [
+            "Αποκλειστικά στην επικεφαλίδα ορισμού του υποπρογράμματος.",
+            "Στο σημείο κλήσης του υποπρογράμματος (μέσα στο κύριο πρόγραμμα ή σε άλλο υποπρόγραμμα).",
+            "Στο τμήμα δηλώσεων σταθερών του υποπρογράμματος.",
+            "Μέσα στους βρόχους επανάληψης του υποπρογράμματος."
+        ],
+        correct: 1,
+        hint: "Πού δίνουμε τις συγκεκριμένες τιμές ή μεταβλητές όταν ενεργοποιούμε ένα υποπρόγραμμα;",
+        explanation: "Οι πραγματικές παράμετροι είναι οι μεταβλητές, σταθερές ή εκφράσεις που χρησιμοποιούνται στην εντολή κλήσης του υποπρογράμματος στο κύριο πρόγραμμα ή σε άλλο υποπρόγραμμα."
+    },
+    {
+        id: 5,
+        question: "Ποιοι είναι οι 3 αυστηροί κανόνες που διέπουν την αντιστοίχιση μεταξύ πραγματικών και τυπικών παραμέτρων;",
+        code: null,
+        options: [
+            "Ονόματα, Τύπος, Μέγεθος",
+            "Πλήθος, Τύπος, Σειρά (Θέση)",
+            "Πλήθος, Ονόματα, Τιμή",
+            "Σειρά, Ονόματα, Εμβέλεια"
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε πόσες είναι οι παράμετροι, τι είδος δεδομένων μεταφέρουν και πώς συνδέονται από αριστερά προς τα δεξιά.",
+        explanation: "Οι 3 κανόνες αντιστοίχισης είναι: 1) Πλήθος (ακριβώς ίσος αριθμός παραμέτρων), 2) Τύπος (ίδιος τύπος δεδομένων ανά θέση), 3) Σειρά (αντιστοίχιση 1 προς 1 από αριστερά προς τα δεξιά)."
+    },
+    {
+        id: 6,
+        question: "Δίνεται η επικεφαλίδα υποπρογράμματος:\nΥΠΟΠΡΟΓΡΑΜΜΑ ΥΠΟ1(Α, Β, Γ, Δ)\nόπου Α: Ακέραια, Β: Πραγματική, Γ: Χαρακτήρας, Δ: Λογική.\nΣτο κύριο πρόγραμμα υπάρχουν οι μεταβλητές X: Ακέραια, Y: Πραγματική, Z: Χαρακτήρας, W: Λογική. Ποια κλήση είναι ΕΓΚΥΡΗ;",
+        code: null,
+        options: [
+            "ΚΑΛΕΣΕ ΥΠΟ1(X, Y, Z, W)",
+            "ΚΑΛΕΣΕ ΥΠΟ1(X, Y, Z)",
+            "ΚΑΛΕΣΕ ΥΠΟ1(Y, X, Z, W)",
+            "ΚΑΛΕΣΕ ΥΠΟ1(X, Z, Y, W)"
+        ],
+        correct: 0,
+        hint: "Ελέγξτε αν υπάρχει πλήρης συμφωνία Πλήθους (4), Τύπου (Ακέραιος, Πραγματικός, Χαρακτήρας, Λογικός) και Σειράς.",
+        explanation: "Η κλήση `ΚΑΛΕΣΕ ΥΠΟ1(X, Y, Z, W)` είναι έγκυρη διότι υπάρχουν 4 πραγματικές παράμετροι που συμφωνούν απόλυτα ανά θέση ως προς τον τύπο δεδομένων: X (Ακέραιος->Α), Y (Πραγματικός->Β), Z (Χαρακτήρας->Γ), W (Λογικός->Δ)."
+    },
+    {
+        id: 7,
+        question: "Στην επικεφαλίδα ΥΠΟ1(Α:Ακέραια, Β:Πραγματική, Γ:Χαρακτήρας, Δ:Λογική), γιατί η κλήση `ΚΑΛΕΣΕ ΥΠΟ1(X, Y, Z)` είναι ΑΚΥΡΗ;",
+        code: null,
+        options: [
+            "Διότι παραβιάζεται ο 2ος κανόνας (Τύπος δεδομένων).",
+            "Διότι παραβιάζεται ο 1ος κανόνας (Πλήθος παραμέτρων: δόθηκαν 3 πραγματικές αντί για 4 τυπικές).",
+            "Διότι τα ονόματα των μεταβλητών διαφέρουν από αυτά των τυπικών παραμέτρων.",
+            "Διότι η μεταβλητή X είναι ακέραια."
+        ],
+        correct: 1,
+        hint: "Μετρήστε πόσες παράμετροι δόθηκαν στην κλήση και πόσες δηλώνονται στην επικεφαλίδα.",
+        explanation: "Η κλήση είναι άκυρη διότι παραβιάζεται ο 1ος κανόνας αντιστοίχισης (Πλήθος): δόθηκαν 3 πραγματικές παράμετροι (X, Y, Z) ενώ η επικεφαλίδα απαιτεί 4 τυπικές (Α, Β, Γ, Δ)."
+    },
+    {
+        id: 8,
+        question: "Στην επικεφαλίδα ΥΠΟ1(Α:Ακέραια, Β:Πραγματική, Γ:Χαρακτήρας, Δ:Λογική), γιατί η κλήση `ΚΑΛΕΣΕ ΥΠΟ1(Y, X, Z, W)` είναι ΑΚΥΡΗ (όπου Y:Πραγματική, X:Ακέραια);",
+        code: null,
+        options: [
+            "Διότι παραβιάζεται ο 2ος κανόνας (Τύπος): στην 1η θέση το Y είναι Πραγματικός ενώ το A Ακέραιος.",
+            "Διότι παραβιάζεται ο 1ος κανόνας (Πλήθος παραμέτρων).",
+            "Διότι παραβιάζεται ο κανόνας ονομασίας παραμέτρων.",
+            "Διότι το Z είναι μεταβλητή χαρακτήρα."
+        ],
+        correct: 0,
+        hint: "Συγκρίνετε τον τύπο δεδομένων της 1ης πραγματικής παραμέτρου Y με την 1η τυπική παράμετρο Α.",
+        explanation: "Η κλήση είναι άκυρη διότι παραβιάζεται ο 2ος κανόνας (Τύπος): στην 1η θέση περνάει η πραγματική παράμετρος Y (Πραγματική) στην τυπική παράμετρο Α (Ακέραια)."
+    },
+    {
+        id: 9,
+        question: "Επιτρέπεται η χρήση σταθερών τιμών (literals) ή εκφράσεων ως πραγματικών παραμέτρων κατά την κλήση ενός υποπρογράμματος, π.χ. `ΚΑΛΕΣΕ ΥΠΟ1(10, 3.14, 'A', ΑΛΗΘΗΣ)`;",
+        code: null,
+        options: [
+            "Όχι, ως πραγματικές παράμετροι επιτρέπονται αυστηρά και μόνο μεταβλητές.",
+            "Ναι, επιτρέπονται σταθερές τιμές ή εκφράσεις, εφόσον υπάρχει πλήρης συμφωνία πλήθους, τύπων και σειράς.",
+            "Ναι, αλλά επιτρέπονται μόνο ακέραιες σταθερές τιμές.",
+            "Όχι, διότι οι σταθερές δεν έχουν διεύθυνση μνήμης στη «ΓΛΩΣΣΑ»."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε αν ως πραγματική παράμετρος μπορεί να χρησιμοποιηθεί μια τιμή όπως το 10 ή μια έκφραση a + b.",
+        explanation: "Σωστό! Ως πραγματικές παράμετροι μπορούν να χρησιμοποιηθούν μεταβλητές, σταθερές τιμές (π.χ. 10, 'A') ή αριθμητικές/λογικές εκφράσεις (π.χ. a + b), αρκεί να τηρούνται οι 3 κανόνες αντιστοίχισης."
+    },
+    {
+        id: 10,
+        question: "Πώς ο τμηματικός προγραμματισμός διευκολύνει τον εντοπισμό και τη διόρθωση σφαλμάτων (debugging);",
+        code: null,
+        options: [
+            "Εξαλείφει αυτόματα όλα τα συντακτικά λάθη κατά τη μεταγλώττιση.",
+            "Επιτρέπει τον μεμονωμένο έλεγχο και την αποσφάλτωση κάθε υποπρογράμματος ανεξάρτητα από το υπόλοιπο πρόγραμμα.",
+            "Καταργεί τη χρήση μεταβλητών στο κύριο πρόγραμμα.",
+            "Αυξάνει το μέγεθος του εκτελέσιμου αρχείου."
+        ],
+        correct: 1,
+        hint: "Όταν ένα πρόγραμμα είναι χωρισμένο σε αυτόνομα τμήματα, πώς ελέγχουμε κάθε τμήμα;",
+        explanation: "Ο τμηματικός προγραμματισμός επιτρέπει τον μεμονωμένο έλεγχο και την αποσφάλτωση (debugging) κάθε υποπρογράμματος ξεχωριστά, μειώνοντας δραστικά την πολυπλοκότητα αναζήτησης λογικών σφαλμάτων."
+    },
+    {
+        id: 11,
+        question: "Γιατί η εκτεταμένη χρήση καθολικών (global) μεταβλητών θεωρείται κακή πρακτική στον τμηματικό προγραμματισμό;",
+        code: null,
+        options: [
+            "Διότι αυξάνει την ταχύτητα εκτέλεσης του προγράμματος.",
+            "Διότι καταστρατηγεί την αυτοτέλεια και ανεξαρτησία των υποπρογραμμάτων, δημιουργώντας ανεπιθύμητες εξαρτήσεις.",
+            "Διότι απαγορεύεται αυστηρά από τη σύνταξη της «ΓΛΩΣΣΑΣ».",
+            "Διότι καταλαμβάνει λιγότερη μνήμη στη στοίβα εκτέλεσης."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε τι συμβαίνει στην αυτονομία ενός υποπρογράμματος αν τροποποιεί μεταβλητές εκτός του πεδίου του.",
+        explanation: "Η χρήση καθολικών μεταβλητών παραβιάζει την αρχή της αυτοτέλειας/ανεξαρτησίας των υποπρογραμμάτων, καθιστώντας τα εξαρτημένα από το περιβάλλον κλήσης."
+    },
+    {
+        id: 12,
+        question: "Η αντιστοίχιση μεταξύ πραγματικών και τυπικών παραμέτρων γίνεται με βάση τα ονόματα των μεταβλητών και όχι με βάση τη θέση τους.",
+        code: null,
+        options: [
+            "Σωστό",
+            "Λάθος"
+        ],
+        correct: 1,
+        hint: "Παίζει ρόλο αν μια μεταβλητή ονομάζεται X στο κύριο πρόγραμμα και A στο υποπρόγραμμα;",
+        explanation: "Λάθος! Η αντιστοίχιση γίνεται αυστηρά με βάση τη σειρά/θέση των παραμέτρων από αριστερά προς τα δεξιά (1η με 1η, 2η με 2η κ.ο.κ.) και ανεξάρτητα από τα ονόματα που φέρουν."
+    },
+    {
+        id: 13,
+        question: "Τι εκφράζει το πλεονέκτημα της «Επαναχρησιμοποίησης Κώδικα» (Code Reusability);",
+        code: null,
+        options: [
+            "Ένα υποπρόγραμμα γράφεται μία φορά και μπορεί να καλείται πολλές φορές από διαφορετικά σημεία του προγράμματος.",
+            "Το πρόγραμμα εκτελείται χωρίς να χρειάζεται μεταγλώττιση.",
+            "Οι μεταβλητές διαγράφονται αυτόματα μετά την εκτέλεση.",
+            "Το κύριο πρόγραμμα μετατρέπεται αυτόματα σε υποπρόγραμμα."
+        ],
+        correct: 0,
+        hint: "Σκεφτείτε αν αρκεί να γράψουμε έναν αλγόριθμο υπολογισμού μία φορά και να τον καλούμε όπου χρειάζεται.",
+        explanation: "Η επαναχρησιμοποίηση κώδικα σημαίνει ότι γράφουμε και εκσφαλματώνουμε ένα υποπρόγραμμα μία φορά, και στη συνέχεια μπορούμε να το καλούμε όσες φορές απαιτείται από διάφορα σημεία της εφαρμογής."
+    },
+    {
+        id: 14,
+        question: "Δίνεται το παρακάτω τμήμα αλγορίθμου κλήσης υποπρογράμματος:\n! Ορισμός επικεφαλίδας:\n! ΥΠΟΠΡΟΓΡΑΜΜΑ ΥΠΟ2(A, B) όπου A, B: Ακέραιες\n! Στο κύριο πρόγραμμα:\nX <- 5\nΚΑΛΕΣΕ ΥΠΟ2(X)\nΠοιο θα είναι το αποτέλεσμα της εκτέλεσης;",
+        code: null,
+        options: [
+            "Εκτελείται κανονικά και το B παίρνει την τιμή 0.",
+            "Προκαλείται σφάλμα μεταγλώττισης/σύνταξης λόγω μη ισότητας του πλήθους παραμέτρων (1 πραγματική αντί για 2 τυπικές).",
+            "Η μεταβλητή X μεταβιβάζεται αυτόματα και στις δύο τυπικές παραμέτρους.",
+            "Το πρόγραμμα τερματίζει ομαλά χωρίς να εκτελεστεί το υποπρόγραμμα."
+        ],
+        correct: 1,
+        hint: "Ελέγξτε τον 1ο κανόνα αντιστοίχισης παραμέτρων (Πλήθος).",
+        explanation: "Προκαλείται σφάλμα διότι παραβιάζεται ο 1ος κανόνας (Πλήθος): η κλήση `ΚΑΛΕΣΕ ΥΠΟ2(X)` δίνει 1 πραγματική παράμετρο, ενώ η επικεφαλίδα του υποπρογράμματος απαιτεί 2 τυπικές (A, B)."
+    },
+    {
+        id: 15,
+        question: "Ποιος είναι ο ρόλος του κύριου προγράμματος σε μια τμηματικά σχεδιασμένη εφαρμογή;",
+        code: null,
+        options: [
+            "Να εκτελεί όλους τους υπολογισμούς χωρίς να καλεί άλλα τμήματα.",
+            "Να λειτουργεί ως συντονιστής, ελέγχοντας τη ροή εκτέλεσης και καλώντας τα κατάλληλα υποπρογράμματα.",
+            "Να αποθηκεύει μόνο τις σταθερές τιμές της εφαρμογής.",
+            "Να αντικαθιστά τα ιεραρχικά διαγράμματα δομής."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε τον ρόλο ενός συντονιστή που καλεί τα εξειδικευμένα τμήματα της εφαρμογής.",
+        explanation: "Στον τμηματικό προγραμματισμό, το κύριο πρόγραμμα γίνεται σύντομο, περιεκτικό και λειτουργεί ως συντονιστής, καλώντας τα επιμέρους υποπρογράμματα για την εκτέλεση εξειδικευμένων εργασιών."
+    },
+    {
+        id: 16,
+        question: "Ένα υποπρόγραμμα πρέπει υποχρεωτικά να είναι μικρό σε μέγεθος. Γιατί;",
+        code: null,
+        options: [
+            "Για να καταλαμβάνει λιγότερο χώρο στον σκληρό δίσκο.",
+            "Για να παραμένει σύντομο, εύκολα κατανοητό, να ελέγχεται και να συντηρείται απλά.",
+            "Διότι η «ΓΛΩΣΣΑ» επιτρέπει το πολύ 10 γραμμές κώδικα ανά υποπρόγραμμα.",
+            "Για να μην χρειάζεται παραμέτρους εισόδου."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε πότε είναι πιο εύκολο να διαβάσουμε και να διορθώσουμε έναν αλγόριθμο.",
+        explanation: "Ένα από τα θεμελιώδη χαρακτηριστικά των υποπρογραμμάτων είναι το μικρό μέγεθος, ώστε το υποπρόγραμμα να παραμένει σύντομο, απόλυτα κατανοητό και εύκολα συντηρήσιμο."
+    }
+];
+
+// --- STATE VARIABLES ---
+let currentMode = 'practice';
+let studentName = '';
+let currentQuestionIndex = 0;
+let userAnswers = {};
+
+// --- LOGIC FUNCTIONS ---
+function selectMode(mode, element) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn-card').forEach(card => card.classList.remove('selected'));
+    element.classList.add('selected');
+}
+
+function startQuiz() {
+    const nameInput = document.getElementById('student-name').value.trim();
+    studentName = nameInput !== '' ? nameInput : 'Ανώνυμος/η Μαθητής/τρια';
+
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+
+    currentQuestionIndex = 0;
+    userAnswers = {};
+
+    renderQuizScreen();
+}
+
+function renderQuizScreen() {
+    const wrapper = document.getElementById('questions-wrapper');
+    wrapper.innerHTML = '';
+
+    if (currentMode === 'practice') {
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'inline-block';
+        updateProgressBar();
+        
+        const q = questionsData[currentQuestionIndex];
+        wrapper.appendChild(createQuestionCard(q, currentQuestionIndex + 1, questionsData.length, true));
+    } else {
+        // Exam Mode: Show all questions
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'inline-block';
+        document.getElementById('progress-bar').style.width = '100%';
+
+        questionsData.forEach((q, idx) => {
+            wrapper.appendChild(createQuestionCard(q, idx + 1, questionsData.length, false));
+        });
+    }
+}
+
+function createQuestionCard(q, num, total, isPractice) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `q-card-${q.id}`;
+
+    let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+    
+    let optionsHTML = '';
+    q.options.forEach((opt, idx) => {
+        if (!opt) return;
+        const isChecked = userAnswers[q.id] === idx ? 'checked' : '';
+        optionsHTML += `
+            <label class="option-item" onclick="handleOptionSelect(${q.id}, ${idx}, ${isPractice})">
+                <input type="radio" name="q_${q.id}" value="${idx}" ${isChecked}>
+                <span>${opt}</span>
+            </label>
+        `;
+    });
+
+    card.innerHTML = `
+        <div class="question-number">Ερώτηση ${num} από ${total}</div>
+        <div class="question-text">${q.question}</div>
+        ${codeHTML}
+        <div class="options-group">${optionsHTML}</div>
+        <button class="btn btn-hint" onclick="toggleHint(${q.id})">💡 Υπόδειξη</button>
+        <div id="hint-${q.id}" class="hint-box">${q.hint}</div>
+        <div id="justification-${q.id}" class="justification-box"></div>
+    `;
+
+    return card;
+}
+
+function handleOptionSelect(qId, selectedIdx, isPractice) {
+    userAnswers[qId] = selectedIdx;
+    document.getElementById('warning-msg').style.display = 'none';
+
+    if (isPractice) {
+        const q = questionsData.find(item => item.id === qId);
+        const justBox = document.getElementById(`justification-${qId}`);
+        justBox.style.display = 'block';
+
+        if (selectedIdx === q.correct) {
+            justBox.className = 'justification-box correct';
+            justBox.innerHTML = `<strong>✅ Σωστό!</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        } else {
+            justBox.className = 'justification-box incorrect';
+            justBox.innerHTML = `<strong>❌ Λάθος.</strong> Η σωστή απάντηση είναι: <em>${q.options[q.correct]}</em>.<br><br><strong>Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        }
+    }
+}
+
+function toggleHint(qId) {
+    const hintBox = document.getElementById(`hint-${qId}`);
+    hintBox.style.display = (hintBox.style.display === 'block') ? 'none' : 'block';
+}
+
+function updateProgressBar() {
+    const progress = ((currentQuestionIndex + 1) / questionsData.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+}
+
+function nextQuestion() {
+    if (userAnswers[questionsData[currentQuestionIndex].id] === undefined) {
+        alert('Παρακαλώ επιλέξτε μια απάντηση πριν προχωρήσετε!');
+        return;
+    }
+
+    if (currentQuestionIndex < questionsData.length - 1) {
+        currentQuestionIndex++;
+        renderQuizScreen();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        showReport();
+    }
+}
+
+function submitExam() {
+    const unanswered = questionsData.filter(q => userAnswers[q.id] === undefined);
+    if (unanswered.length > 0) {
+        const warning = document.getElementById('warning-msg');
+        warning.innerText = `⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή! Απομένουν ${unanswered.length} αναπάντητες ερωτήσεις.`;
+        warning.style.display = 'block';
+
+        const firstUnansweredId = unanswered[0].id;
+        document.getElementById(`q-card-${firstUnansweredId}`).scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    showReport();
+}
+
+function showReport() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('report-screen').style.display = 'block';
+
+    let score = 0;
+    const reportList = document.getElementById('report-list');
+    reportList.innerHTML = '';
+
+    questionsData.forEach((q, idx) => {
+        const userChoice = userAnswers[q.id];
+        const isCorrect = userChoice === q.correct;
+        if (isCorrect) score++;
+
+        const item = document.createElement('div');
+        item.className = `report-item ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+        let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+        let userChoiceText = userChoice !== undefined ? q.options[userChoice] : 'Δεν απαντήθηκε';
+        let correctChoiceText = q.options[q.correct];
+
+        item.innerHTML = `
+            <div>
+                <span class="badge ${isCorrect ? 'badge-success' : 'badge-danger'}">
+                    ${isCorrect ? '✅ ΣΩΣΤΟ' : '❌ ΛΑΘΟΣ'}
+                </span>
+                <strong>Ερώτηση ${idx + 1}:</strong> ${q.question}
+            </div>
+            ${codeHTML}
+            <div style="margin: 8px 0; font-size: 0.95rem;">
+                <strong>Η απάντησή σας:</strong> <span style="color: ${isCorrect ? 'var(--olive)' : 'var(--wrong-border)'}; font-weight: 600;">${userChoiceText}</span><br>
+                ${!isCorrect ? `<strong>Σωστή απάντηση:</strong> <span style="color: var(--olive); font-weight: 600;">${correctChoiceText}</span><br>` : ''}
+            </div>
+            <div style="font-size: 0.9rem; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 6px; margin-top: 6px;">
+                <strong>Τεκμηρίωση / Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}
+            </div>
+        `;
+
+        reportList.appendChild(item);
+    });
+
+    const percentage = Math.round((score / questionsData.length) * 100);
+
+    document.getElementById('report-student-name').innerText = `Μαθητής/τρια: ${studentName}`;
+    document.getElementById('report-date').innerText = `Ημερομηνία & Ώρα: ${new Date().toLocaleString('el-GR')}`;
+    document.getElementById('report-score').innerText = `${score} / ${questionsData.length}`;
+    document.getElementById('report-percentage').innerText = `Ποσοστό Επιτυχίας: ${percentage}%`;
+
+    // Pedagogical Comment
+    let comment = '';
+    if (percentage >= 90) {
+        comment = '🌟 Εξαιρετική επίδοση! Έχετε κατανοήσει πλήρως τη φιλοσοφία του Τμηματικού Προγραμματισμού, την Ιεραρχική Σχεδίαση Top-Down και τους 3 Κανόνες Αντιστοίχισης Παραμέτρων.';
+    } else if (percentage >= 75) {
+        comment = '👏 Πολύ καλή προσπάθεια! Έχετε γερές βάσεις στις έννοιες των υποπρογραμμάτων. Κάντε μια μικρή επανεξέταση στους κανόνες αντιστοίχισης τύπων και σειράς.';
+    } else if (percentage >= 50) {
+        comment = '👍 Ικανοποιητική παρουσία. Χρειάζεται περισσότερη εξάσκηση στη διάκριση Πραγματικών και Τυπικών παραμέτρων και στα πλεονεκτήματα του τμηματικού προγραμματισμού.';
+    } else {
+        comment = '📚 Χρειάζεται συστηματική επανάληψη στη θεωρία της 13ης εβδομάδας (Ενότητες 10.1 - 10.4) και επιπλέον εξάσκηση στον εντοπισμό σφαλμάτων αντιστοίχισης παραμέτρων.';
+    }
+    document.getElementById('report-comment').innerText = comment;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+    document.getElementById('report-screen').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+</script>
+
+</body>
+</html>

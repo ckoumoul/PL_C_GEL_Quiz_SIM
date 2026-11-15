@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ) - Εβδομάδα 24: 2η Φάση Επαναλήψεων (Υποπρογράμματα, Δομές Δεδομένων & OOP)</title>
+ <style>
+ :root {
+ --bg-color: #f7f4ef;
+ --text-color: #3a322b;
+ --terracotta: #7a4b29;
+ --terracotta-hover: #61391e;
+ --olive: #4e6e52;
+ --olive-hover: #3c5640;
+ --sand: #d4b886;
+ --card-bg: #ffffff;
+ --dark-code-bg: #2d2621;
+ --dark-code-text: #f0e8df;
+ --correct-bg: #eaf3eb;
+ --correct-border: #4e6e52;
+ --wrong-bg: #fdf0ed;
+ --wrong-border: #a73c26;
+ --border-radius: 12px;
+ --shadow: 0 4px 15px rgba(58, 50, 43, 0.08);
+
+ /* Difficulty Badge Colors */
+ --diff-basic-bg: #4e6e52;
+ --diff-medium-bg: #b8977e;
+ --diff-advanced-bg: #c84b31;
+ }
+
+ * {
+ box-sizing: border-box;
+ margin: 0;
+ padding: 0;
+ }
+
+ body {
+ font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+ background-color: var(--bg-color);
+ color: var(--text-color);
+ line-height: 1.6;
+ padding: 20px 15px;
+ }
+
+ .container {
+ max-width: 900px;
+ margin: 0 auto;
+ }
+
+ header {
+ text-align: center;
+ margin-bottom: 25px;
+ padding: 22px;
+ background: var(--card-bg);
+ border-radius: var(--border-radius);
+ box-shadow: var(--shadow);
+ border-bottom: 4px solid var(--terracotta);
+ }
+
+ header h1 {
+ color: var(--terracotta);
+ font-size: 1.8rem;
+ margin-bottom: 8px;
+ }
+
+ header p {
+ color: var(--olive);
+ font-weight: 600;
+ font-size: 1.05rem;
+ }
+
+ .card {
+ background: var(--card-bg);
+ padding: 25px;
+ border-radius: var(--border-radius);
+ box-shadow: var(--shadow);
+ margin-bottom: 20px;
+ border: 1px solid rgba(212, 184, 134, 0.3);
+ }
+
+ /* Form Controls */
+ .form-group {
+ margin-bottom: 20px;
+ }
+
+ label {
+ display: block;
+ font-weight: 600;
+ margin-bottom: 8px;
+ color: var(--terracotta);
+ }
+
+ input[type="text"] {
+ width: 100%;
+ padding: 12px;
+ border: 2px solid var(--sand);
+ border-radius: 8px;
+ font-size: 1rem;
+ background: #fff;
+ color: var(--text-color);
+ outline: none;
+ transition: border-color 0.2s;
+ }
+
+ input[type="text"]:focus {
+ border-color: var(--terracotta);
+ }
+
+ .mode-selection {
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 15px;
+ margin-top: 15px;
+ }
+
+ @media (max-width: 600px) {
+ .mode-selection {
+ grid-template-columns: 1fr;
+ }
+ }
+
+ .mode-btn-card {
+ border: 2px solid var(--sand);
+ border-radius: 10px;
+ padding: 15px;
+ cursor: pointer;
+ text-align: center;
+ transition: all 0.2s;
+ background: #fff;
+ }
+
+ .mode-btn-card:hover, .mode-btn-card.selected {
+ border-color: var(--terracotta);
+ background: #fcf8f3;
+ transform: translateY(-2px);
+ }
+
+ .mode-btn-card h3 {
+ color: var(--terracotta);
+ margin-bottom: 5px;
+ font-size: 1.1rem;
+ }
+
+ .mode-btn-card p {
+ font-size: 0.9rem;
+ color: #666;
+ }
+
+ /* Buttons */
+ .btn {
+ display: inline-block;
+ padding: 12px 24px;
+ background-color: var(--terracotta);
+ color: #fff;
+ border: none;
+ border-radius: 8px;
+ font-size: 1rem;
+ font-weight: 600;
+ cursor: pointer;
+ transition: background 0.2s, transform 0.1s;
+ }
+
+ .btn:hover {
+ background-color: var(--terracotta-hover);
+ }
+
+ .btn:active {
+ transform: scale(0.98);
+ }
+
+ .btn-secondary {
+ background-color: var(--olive);
+ }
+
+ .btn-secondary:hover {
+ background-color: var(--olive-hover);
+ }
+
+ .btn-hint {
+ background-color: transparent;
+ color: var(--terracotta);
+ border: 1px solid var(--terracotta);
+ padding: 6px 12px;
+ font-size: 0.85rem;
+ margin-top: 10px;
+ border-radius: 6px;
+ }
+
+ .btn-hint:hover {
+ background-color: rgba(122, 75, 41, 0.08);
+ }
+
+ /* Code Blocks & Option Code Blocks */
+ pre code {
+ display: block;
+ background: var(--dark-code-bg);
+ color: var(--dark-code-text);
+ padding: 14px;
+ border-radius: 8px;
+ font-family: 'Consolas', 'Courier New', monospace;
+ font-size: 0.95rem;
+ overflow-x: auto;
+ margin: 12px 0;
+ border-left: 4px solid var(--sand);
+ white-space: pre;
+ line-height: 1.5;
+ }
+
+ .option-item.has-code {
+ align-items: flex-start;
+ }
+
+ .option-text-container {
+ width: 100%;
+ }
+
+ .option-code {
+ margin: 4px 0 0 0 !important;
+ background: var(--dark-code-bg) !important;
+ color: var(--dark-code-text) !important;
+ padding: 10px 12px !important;
+ border-radius: 6px !important;
+ font-family: 'Consolas', 'Courier New', monospace !important;
+ font-size: 0.9rem !important;
+ border-left: 3px solid var(--sand) !important;
+ white-space: pre !important;
+ line-height: 1.4 !important;
+ overflow-x: auto !important;
+ display: block !important;
+ }
+
+ /* Question Elements Header & Badges */
+ .question-header {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ margin-bottom: 8px;
+ flex-wrap: wrap;
+ gap: 6px;
+ }
+
+ .question-number {
+ font-weight: 700;
+ color: var(--terracotta);
+ font-size: 0.9rem;
+ text-transform: uppercase;
+ letter-spacing: 0.5px;
+ }
+
+ .diff-badge {
+ display: inline-block;
+ padding: 4px 12px;
+ border-radius: 6px;
+ font-weight: 700;
+ font-size: 0.8rem;
+ color: #ffffff;
+ letter-spacing: 0.3px;
+ box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+ }
+
+ .diff-basic {
+ background-color: var(--diff-basic-bg);
+ }
+
+ .diff-medium {
+ background-color: var(--diff-medium-bg);
+ }
+
+ .diff-advanced {
+ background-color: var(--diff-advanced-bg);
+ }
+
+ .question-text {
+ font-size: 1.1rem;
+ font-weight: 600;
+ margin-bottom: 15px;
+ }
+
+ .options-group {
+ display: flex;
+ flex-direction: column;
+ gap: 10px;
+ margin-bottom: 15px;
+ }
+
+ .option-item {
+ display: flex;
+ align-items: center;
+ padding: 12px 15px;
+ border: 1.5px solid #e0d8cd;
+ border-radius: 8px;
+ cursor: pointer;
+ transition: background 0.15s, border-color 0.15s;
+ }
+
+ .option-item:hover {
+ background-color: #fcf9f5;
+ border-color: var(--sand);
+ }
+
+ .option-item input[type="radio"] {
+ margin-right: 12px;
+ accent-color: var(--terracotta);
+ width: 18px;
+ height: 18px;
+ margin-top: 3px;
+ }
+
+ /* Hints & Feedback */
+ .hint-box {
+ display: none;
+ background: #fffdf7;
+ border-left: 4px solid var(--sand);
+ padding: 12px;
+ border-radius: 4px;
+ margin-top: 10px;
+ font-size: 0.95rem;
+ color: #554a3e;
+ }
+
+ .justification-box {
+ display: none;
+ padding: 14px;
+ border-radius: 8px;
+ margin-top: 15px;
+ font-size: 0.95rem;
+ line-height: 1.5;
+ }
+
+ .justification-box.correct {
+ background-color: var(--correct-bg);
+ border: 1px solid var(--correct-border);
+ color: #254229;
+ }
+
+ .justification-box.incorrect {
+ background-color: var(--wrong-bg);
+ border: 1px solid var(--wrong-border);
+ color: #641e10;
+ }
+
+ /* Progress Bar */
+ .progress-bar-container {
+ width: 100%;
+ height: 10px;
+ background-color: #e0d8cd;
+ border-radius: 5px;
+ margin-bottom: 20px;
+ overflow: hidden;
+ }
+
+ .progress-bar {
+ height: 100%;
+ background-color: var(--olive);
+ width: 0%;
+ transition: width 0.3s ease;
+ }
+
+ /* Report Screen */
+ .report-header {
+ text-align: center;
+ border-bottom: 2px dashed var(--sand);
+ padding-bottom: 20px;
+ margin-bottom: 20px;
+ }
+
+ .score-badge {
+ display: inline-block;
+ font-size: 2.2rem;
+ font-weight: 800;
+ color: var(--terracotta);
+ margin: 10px 0;
+ }
+
+ .pedagogical-comment {
+ background: #f4efe6;
+ padding: 15px;
+ border-radius: 8px;
+ font-style: italic;
+ color: var(--text-color);
+ margin-top: 10px;
+ border-left: 4px solid var(--olive);
+ }
+
+ .report-item {
+ padding: 15px;
+ border-radius: 8px;
+ margin-bottom: 15px;
+ border: 1px solid #e0d8cd;
+ }
+
+ .report-item.is-correct {
+ border-left: 5px solid var(--olive);
+ background: #fcfdfe;
+ }
+
+ .report-item.is-incorrect {
+ border-left: 5px solid var(--wrong-border);
+ background: #fffcfc;
+ }
+
+ .badge {
+ display: inline-block;
+ padding: 4px 8px;
+ border-radius: 4px;
+ font-weight: bold;
+ font-size: 0.8rem;
+ color: #fff;
+ margin-bottom: 8px;
+ }
+
+ .badge-success { background-color: var(--olive); }
+ .badge-danger { background-color: var(--wrong-border); }
+
+ .actions-group {
+ display: flex;
+ gap: 12px;
+ justify-content: center;
+ margin-top: 25px;
+ flex-wrap: wrap;
+ }
+
+ .warning-msg {
+ color: var(--wrong-border);
+ font-weight: 600;
+ margin-top: 10px;
+ display: none;
+ text-align: center;
+ }
+
+ /* Print Styles */
+ @media print {
+ body { background: #fff; color: #000; padding: 0; }
+ .container { max-width: 100%; }
+ .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+ .actions-group, .btn-hint, #start-screen, .progress-bar-container, .warning-msg { display: none !important; }
+ #report-screen { display: block !important; }
+ header { box-shadow: none; border-bottom: 2px solid #000; }
+ }
+ </style>
+</head>
+<body>
+
+<div class="container">
+ <header>
+ <h1>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ)</h1>
+ <p>Εβδομάδα 24: 2η Φάση Επαναλήψεων (Υποπρογράμματα, Δυναμικές Δομές & Αντικειμενοστραφής Προγραμματισμός)</p>
+ </header>
+
+ <!-- 1. ΑΡΧΙΚΗ ΟΘΟΝΗ -->
+ <div id="start-screen" class="card">
+ <h2 style="color: var(--terracotta); margin-bottom: 15px;">Διαδραστικό Quiz Αξιολόγησης</h2>
+ <p style="margin-bottom: 20px;">Εξετάστε τις γνώσεις σας στη 2η Φάση Συστηματικών Επαναλήψεων: Υποπρογράμματα (Συναρτήσεις & Διαδικασίες), Μεταβίβαση Παραμέτρων & Εμβέλεια Μεταβλητών, Στατικές vs Δυναμικές Δομές (Στοίβα, Ουρά, Συνδεδεμένες Λίστες, BST, Γράφοι), Αντικειμενοστραφής Προγραμματισμός (Κλάσεις, Αντικείμενα, Ενθυλάκωση, Κληρονομικότητα, Πολυμορφισμός, Overriding) και Εκσφαλμάτωση / Black-Box Testing.</p>
+ 
+ <div class="form-group">
+ <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+ <input type="text" id="student-name" placeholder="Εισάγετε το ονοματεπώνυμό σας (Προαιρετικό)">
+ </div>
+
+ <div class="form-group">
+ <label>Επιλέξτε Λειτουργία:</label>
+ <div class="mode-selection">
+ <div class="mode-btn-card selected" onclick="selectMode('practice', this)">
+ <h3>🎮 Εκμάθηση & Εξάσκησή</h3>
+ <p>Βήμα-βήμα με άμεσο feedback & επεξήγηση σε κάθε ερώτηση.</p>
+ </div>
+ <div class="mode-btn-card" onclick="selectMode('exam', this)">
+ <h3>📝 Προσομοίωση & Τεστ</h3>
+ <p>Συγκεντρωτική απάντηση όλων των ερωτήσεων & τελικό Report.</p>
+ </div>
+ </div>
+ </div>
+
+ <div style="text-align: center; margin-top: 25px;">
+ <button class="btn" onclick="startQuiz()">Έναρξη Κουίζ ➔</button>
+ </div>
+ </div>
+
+ <!-- 2. ΟΘΟΝΗ ΕΡΩΤΗΣΕΩΝ -->
+ <div id="quiz-screen" style="display: none;">
+ <div class="progress-bar-container">
+ <div id="progress-bar" class="progress-bar"></div>
+ </div>
+
+ <div id="questions-wrapper"></div>
+
+ <div id="warning-msg" class="warning-msg">⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή!</div>
+
+ <div class="actions-group">
+ <button id="next-btn" class="btn" onclick="nextQuestion()" style="display: none;">Επόμενη Ερώτηση ➔</button>
+ <button id="submit-btn" class="btn btn-secondary" onclick="submitExam()" style="display: none;">Υποβολή Τεστ 🏁</button>
+ </div>
+ </div>
+
+ <!-- 3. ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ / REPORT -->
+ <div id="report-screen" class="card" style="display: none;">
+ <div class="report-header">
+ <h2 style="color: var(--terracotta);">Αναφορά Επίδοσης Μαθητή</h2>
+ <p id="report-student-name" style="font-weight: bold; font-size: 1.1rem; margin-top: 5px;"></p>
+ <p id="report-date" style="font-size: 0.85rem; color: #666;"></p>
+ 
+ <div id="report-score" class="score-badge">0 / 0</div>
+ <p id="report-percentage" style="font-weight: 600; font-size: 1.2rem; color: var(--olive);"></p>
+
+ <div id="report-comment" class="pedagogical-comment"></div>
+ </div>
+
+ <h3 style="color: var(--terracotta); margin-bottom: 15px;">Αναλυτική Επισκόπηση Ερωτήσεων</h3>
+ <div id="report-list"></div>
+
+ <div class="actions-group">
+ <button class="btn btn-secondary" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+ <button class="btn" onclick="restartQuiz()">↻ Έναρξη από την αρχή</button>
+ </div>
+ </div>
+</div>
+
+<script>
+// --- ΔΕΔΟΜΕΝΑ ΕΡΩΤΗΣΕΩΝ (ΕΒΔΟΜΑΔΑ 24: 2η ΦΑΣΗ ΕΠΑΝΑΛΗΨΕΩΝ - ΥΠΟΠΡΟΓΡΑΜΜΑΤΑ, ΔΟΜΕΣ & OOP) ---
+const questionsData = [
+ {
+ id: 1,
+ difficulty: "basic",
+ difficultyText: "Βασικό",
+ question: "Στη γλώσσα προγραμματισμού «ΓΛΩΣΣΑ», ποια είναι η θεμελιώδης διαφορά μεταξύ μιας Συνάρτησης και μιας Διαδικασίας ως προς τις τιμές που επιστρέφουν;",
+ code: null,
+ options: [
+ "Η Συνάρτηση επιστρέφει υποχρεωτικά μία μόνο τιμή απλού τύπου μέσω του ονόματός της, ενώ η Διαδικασία μπορεί να μην επιστρέφει καμία, να επιστρέφει μία ή περισσότερες τιμές μέσω παραμέτρων.",
+ "Η Συνάρτηση μπορεί να επιστρέψει ολόκληρο πίνακα τιμών, ενώ η Διαδικασία μόνο μία τιμή.",
+ "Η Διαδικασία καλείται πάντα ως μέρος μιας αριθμητικής έκφρασης, ενώ η Συνάρτηση καλείται αυτόνομα με την εντολή ΚΑΛΕΣΕ.",
+ "Η Συνάρτηση δεν δέχεται παραμέτρους, ενώ η Διαδικασία δέχεται υποχρεωτικά παραμέτρους."
+ ],
+ correct: 0,
+ hint: "Σκεφτείτε πώς καλείται κάθε υποπρόγραμμα και ποιος είναι ο τύπος επιστροφής της συνάρτησης.",
+ explanation: "Στη «ΓΛΩΣΣΑ», η συνάρτηση επιστρέφει αυστηρά μία μόνο τιμή απλού τύπου μέσω του ονόματός της. Για την επιστροφή ή τροποποίηση περισσότερων τιμών ή σύνθετων δομών (όπως πίνακες), χρησιμοποιείται αποκλειστικά Διαδικασία."
+ },
+ {
+ id: 2,
+ difficulty: "basic",
+ difficultyText: "Βασικό",
+ question: "Ποιοι είναι οι τρεις χρυσοί κανόνες αντιστοίχισης μεταξύ των Πραγματικών και Τυπικών Παραμέτρων κατά την κλήση ενός υποπρογράμματος;",
+ code: null,
+ options: [
+ "Κανόνας Πλήθους (ίσος αριθμός), Κανόνας Τύπου (ίδιος τύπος δεδομένων) και Κανόνας Σειράς (αντιστοίχιση από αριστερά προς τα δεξιά).",
+ "Κανόνας Ονόματος (ίδιο όνομα μεταβλητών), Κανόνας Τύπου και Κανόνας Μεγέθους.",
+ "Κανόνας Εμβέλειας, Κανόνας Εκχώρησης και Κανόνας Επιστροφής.",
+ "Κανόνας Πλήθους, Κανόνας Αλφαβητικής Σειράς και Κανόνας Καθολικότητας."
+ ],
+ correct: 0,
+ hint: "Εξετάστε τις απαιτήσεις του μεταγλωττιστή στην επικεφαλίδα του υποπρογράμματος και στην εντολή κλήσης.",
+ explanation: "Για να είναι έγκυρη η κλήση υποπρογράμματος πρέπει να τηρούνται 3 κανόνες: 1) Πλήθους (ίσος αριθμός παραμέτρων), 2) Τύπου (ίδιος τύπος ανά αντίστοιχη παράμετρο), 3) Σειράς (1η πραγματική με 1η τυπική, 2η με 2η κ.ο.κ.)."
+ },
+ {
+ id: 3,
+ difficulty: "basic",
+ difficultyText: "Βασικό",
+ question: "Τι ισχύει για την εμβέλεια των μεταβλητών και την ύπαρξη καθολικών (global) μεταβλητών στη «ΓΛΩΣΣΑ»;",
+ code: null,
+ options: [
+ "Όλες οι μεταβλητές του κύριου προγράμματος είναι αυτόματα καθολικές και προσβάσιμες από όλα τα υποπρογράμματα.",
+ "Στη «ΓΛΩΣΣΑ» δεν υπάρχουν καθολικές μεταβλητές. Κάθε υποπρόγραμμα έχει τις δικές του τοπικές μεταβλητές, προστατεύοντας τον κώδικα από παρενέργειες (side effects).",
+ "Οι μεταβλητές των συναρτήσεων είναι καθολικές, ενώ των διαδικασιών είναι τοπικές.",
+ "Καθολικές μεταβλητές δηλώνονται με τη λέξη ΚΑΘΟΛΙΚΕΣ στο τμήμα δηλώσεων."
+ ],
+ correct: 1,
+ hint: "Σκεφτείτε αν μια μεταβλητή που δηλώθηκε στο κύριο πρόγραμμα μπορεί να χρησιμοποιηθεί απευθείας μέσα σε μια διαδικασία χωρίς να μεταβιβαστεί ως παράμετρος.",
+ explanation: "Στη «ΓΛΩΣΣΑ» ΔΕΝ υπάρχουν καθολικές μεταβλητές. Όλες οι μεταβλητές είναι αυστηρά τοπικές στο τμήμα όπου δηλώνονται. Η επικοινωνία δεδομένων γίνεται αποκλειστικά μέσω των παραμέτρων."
+ },
+ {
+ id: 4,
+ difficulty: "basic",
+ difficultyText: "Βασικό",
+ question: "Ποια είναι η κύρια διαφορά στη διαχείριση μνήμης μεταξύ Στατικών Δομών Δεδομένων (Πινάκων) και Δυναμικών Δομών Δεδομένων (π.χ. Συνδεδεμένων Λιστών);",
+ code: null,
+ options: [
+ "Στους πίνακες η δέσμευση μνήμης γίνεται στατικά κατά τη μεταγλώττιση σε συνεχόμενες θέσεις, ενώ στις δυναμικές δομές η μνήμη παραχωρείται/αποδεσμεύεται δυναμικά κατά την εκτέλεση σε μη συνεχόμενες θέσεις.",
+ "Οι δυναμικές δομές δεσμεύουν σταθερή μνήμη κατά τη μεταγλώττιση, ενώ οι πίνακες αυξομειώνονται κατά την εκτέλεση.",
+ "Οι πίνακες χρησιμοποιούν δείκτες μνήμης για τη σύνδεση των στοιχείων τους, ενώ οι συνδεδεμένες λίστες όχι.",
+ "Δεν υπάρχει καμία διαφορά στη διαχείριση μνήμης."
+ ],
+ correct: 0,
+ hint: "Σκεφτείτε πότε καθορίζεται το μέγεθος ενός πίνακα και πώς συνδέονται οι κόμβοι μιας συνδεδεμένης λίστα.",
+ explanation: "Οι στατικές δομές (πίνακες) δεσμεύουν σταθερό μέγεθος μνήμης κατά τη μεταγλώττιση σε συνεχόμενες θέσεις. Οι δυναμικές δομές (λίστες, δένδρα) δεσμεύουν και απελευθερώνουν μνήμη κατά την εκτέλεση (runtime) και τα στοιχεία συνδέονται μέσω δεικτών."
+ },
+ {
+ id: 5,
+ difficulty: "basic",
+ difficultyText: "Βασικό",
+ question: "Ποιες είναι οι τρεις θεμελιώδεις αρχές του Αντικειμενοστραφούς Προγραμματισμού (OOP);",
+ code: null,
+ options: [
+ "Ακολουθία, Επιλογή, Επανάληψη.",
+ "Ενθυλάκωση, Κληρονομικότητα, Πολυμορφισμός.",
+ "Ταξινόμηση, Αναζήτηση, Μετάφραση.",
+ "Κλάσεις, Αντικείμενα, Μεταβλητές."
+ ],
+ correct: 1,
+ hint: "Σκεφτείτε τις 3 βασικές έννοιες που χαρακτηρίζουν τη σχεδίαση κλάσεων και ιεραρχιών στο OOP.",
+ explanation: "Οι τρεις βασικοί πυλώνες του OOP είναι η Ενθυλάκωση (απόκρυψη δεδομένων/μεθόδων σε κλάση), η Κληρονομικότητα (επέκταση ιδιοτήτων/μεθόδων από υπερκλάση σε υποκλάση) και ο Πολυμορφισμός (διαφορετική συμπεριφορά στην ίδια κλήση μεθόδου)."
+ },
+ {
+ id: 6,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Ποιος μηχανισμός μεταβίβασης παραμέτρων (Call by Value vs Call by Reference) χρησιμοποιείται στη «ΓΛΩΣΣΑ» κατά τη μεταβίβαση πινάκων στα υποπρογράμματα;",
+ code: null,
+ options: [
+ "Οι πίνακες μεταβιβάζονται ΠΑΝΤΑ κατ' αναφορά (Call by Reference), πράγμα που σημαίνει ότι οποιαδήποτε τροποποίηση των στοιχείων τους εντός του υποπρογράμματος επηρεάζει άμεσα τον αρχικό πίνακα.",
+ "Οι πίνακες μεταβιβάζονται πάντα κατ' αξία (Call by Value) δημιουργώντας αντίγραφο στη μνήμη.",
+ "Ο προγραμματιστής επιλέγει αν ο πίνακας θα μεταβιβαστεί κατ' αξία ή κατ' αναφορά με ειδική εντολή.",
+ "Οι μονοδιάστατοι πίνακες μεταβιβάζονται κατ' αξία και οι δισδιάστατοι κατ' αναφορά."
+ ],
+ correct: 0,
+ hint: "Τι συμβαίνει όταν μια διαδικασία ταξινομεί έναν πίνακα που της περάστηκε ως παράμετρος;",
+ explanation: "Στη «ΓΛΩΣΣΑ», οι πίνακες μεταβιβάζονται πάντα κατ' αναφορά (περνώντας τη διεύθυνση μνήμης). Συνεπώς, κάθε αλλαγή στις τιμές του πίνακα μέσα στο υποπρόγραμμα διατηρείται και μετά την επιστροφή στο καλούν πρόγραμμα."
+ },
+ {
+ id: 7,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Δίνεται μια απλά συνδεδεμένη λίστα n στοιχείων. Ποια είναι η χρονική πολυπλοκότητα για την προσπέλαση του k-οστού στοιχείου της λίστα;",
+ code: null,
+ options: [
+ "O(1) όπως και στους πίνακες λόγω τυχαίας προσπέλασης.",
+ "O(k), δηλαδή O(n) στη χειρότερη περίπτωση, διότι η συνδεδεμένη λίστα δεν υποστηρίζει τυχαία προσπέλαση (random access) και απαιτείται ακολουθιακή διάσχιση των προηγούμενων k-1 δεικτών.",
+ "O(log n) με δυαδική προσπέλαση.",
+ "O(n²) λόγω των δεικτών."
+ ],
+ correct: 1,
+ hint: "Μπορούμε να προσπελάσουμε απευθείας το 5ο στοιχείο μιας λίστα χωρίς να περάσουμε από το 1ο, 2ο, 3ο και 4ο;",
+ explanation: "Στις συνδεδεμένες λίστες δεν υπάρχει άμεση αριθμητική διευθυνσιοδότηση (random access). Για να φτάσουμε στο k-οστό στοιχείο πρέπει να διασχίσουμε διαδοχικά τους δείκτες Next από την κεφαλή (HEAD), άρα η πολυπλοκότητα είναι O(k) -> O(n)."
+ },
+ {
+ id: 8,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Ποιο είναι το αποτέλεσμα της ενδοδιατεταμένης διάσχισης (in-order traversal) σε ένα Δυαδικό Δένδρο Αναζήτησης (BST);",
+ code: null,
+ options: [
+ "Επισκέπτεται τους κόμβους με τυχαία σειρά.",
+ "Επισκέπτεται τους κόμβους με αυστηρά ΑΥΞΟΥΣΑ σειρά των τιμών των κλειδιών τους (Αριστερό Υποδένδρο -> Ρίζα -> Δεξί Υποδένδρο).",
+ "Επισκέπτεται τους κόμβους με φθίνουσα σειρά.",
+ "Επισκέπτεται πρώτα τη ρίζα και μετά τα παιδιά."
+ ],
+ correct: 1,
+ hint: "Στο BST όλα τα στοιχεία στο αριστερό υποδένδρο είναι μικρότερα της ρίζας και στο δεξί μεγαλύτερα. Η σειρά In-order είναι: Αριστερά, Ρίζα, Δεξιά.",
+ explanation: "Λόγω της ιδιότητας του Δυαδικού Δένδρου Αναζήτησης (όλα τα στοιχεία στο αριστερό υποδένδρο < ρίζα < στοιχεία δεξιού υποδένδρου), η ενδοδιατεταμένη διάσχιση (In-order: Left -> Root -> Right) παράγει τα στοιχεία σε αυστηρά αύξουσα ταξινομημένη σειρά."
+ },
+ {
+ id: 9,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Στη δομή δεδομένων Στοίβα (Stack - LIFO), ποιες είναι οι δύο βασικές λειτουργίες και ποιες καταστάσεις σφάλματος πρέπει να ελέγχονται πριν την εκτέλεσή τους;",
+ code: null,
+ options: [
+ "Εισαγωγή (Enqueue) και Εξαγωγή (Dequeue).",
+ "Ώθηση (Push) με έλεγχο Υπερχείλισης (Overflow - όταν η στοίβα είναι γεμάτη) και Απώθηση (Pop) με έλεγχο Υποχείλισης (Underflow - όταν η στοίβα είναι άδεια).",
+ "Αναζήτηση και Ταξινόμηση.",
+ "Διάσχιση και Ενημέρωση."
+ ],
+ correct: 1,
+ hint: "Σκεφτείτε τους αγγλικούς/ελληνικούς όρους για την προσθήκη και αφαίρεση στοιχείου στο πάνω μέρος μιας στοίβας.",
+ explanation: "Στη Στοίβα (LIFO), η εισαγωγή στοιχείου ονομάζεται Ώθηση (Push) και απαιτεί έλεγχο αν η στοίβα είναι γεμάτη (Υπερχείλιση/Overflow). Η εξαγωγή ονομάζεται Απώθηση (Pop) και απαιτεί έλεγχο αν είναι άδεια (Υποχείλιση/Underflow)."
+ },
+ {
+ id: 10,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Στη δομή ελέγχου λογισμικού με τη μέθοδο του «Μαύρου Κουτιού» (Black-Box Testing), σε τι εστιάζει ο δοκιμαστής (tester);",
+ code: null,
+ options: [
+ "Στον αναλυτικό έλεγχο των εσωτερικών γραμμών κώδικα και των τοπικών μεταβλητών του υποπρογράμματος.",
+ "Αποκλειστικά στη σχέση μεταξύ των δεδομένων εισόδου και των αναμενόμενων αποτελεσμάτων εξόδου, χωρίζοντας τα δεδομένα σε Κλάσεις Ισοδυναμίας και ελέγχοντας Οριακές Τιμές.",
+ "Στη μέτρηση του χρόνου μεταγλώττισης του προγράμματος.",
+ "Στη μετατροπή του προγράμματος από ψευδοκώδικα σε γλώσσα μηχανής."
+ ],
+ correct: 1,
+ hint: "Στο Black-Box Testing ο εσωτερικός κώδικας θεωρείται αδιαφανής.",
+ explanation: "Στο Black-Box Testing, το υποπρόγραμμα θεωρείται αδιαφανές («μαύρο κουτί»). Ο ελεγκτής αγνοεί την εσωτερική δομή του κώδικα και επικεντρώνεται στην ορθότητα της εξόδου για συγκεκριμένες εισόδους (κλάσεις ισοδυναμίας & οριακές τιμές)."
+ },
+ {
+ id: 11,
+ difficulty: "medium",
+ difficultyText: "Μεσαίο",
+ question: "Τι συμβαίνει κατά την υπερκάλυψη μεθόδου (method overriding) στον Αντικειμενοστραφή Προγραμματισμό;",
+ code: null,
+ options: [
+ "Μια υποκλάση επανορίζει μια μέθοδο της υπερκλάσης διατηρώντας την ίδια ακριβώς υπογραφή (όνομα και παραμέτρους) ώστε να παρέχει εξειδικευμένη συμπεριφορά (δυναμικός πολυμορφισμός).",
+ "Μια κλάση δημιουργεί δύο μεθόδους με το ίδιο όνομα αλλά διαφορετικές παραμέτρους στην ίδια κλάση.",
+ "Διαγράφεται η μέθοδος της υπερκλάσης.",
+ "Δημιουργείται αυτόματα νέο αντικείμενο."
+ ],
+ correct: 0,
+ hint: "Σκεφτείτε την κλάση ΗλεκτρικόΌχημα που κληρονομεί τη μέθοδο υπολόγισε_κόστος από την κλάση Όχημα αλλά εφαρμόζει έκπτωση.",
+ explanation: "Overriding (υπερκάλυψη) συμβαίνει όταν μια παράγωγη κλάση (υποκλάση) ξαναγράφει μια μέθοδο που κληρονόμησε από τη βασική κλάση (υπερκλάση) με την ίδια ακριβώς υπογραφή, επιτυγχάνοντας πολυμορφική συμπεριφορά κατά την εκτέλεση."
+ },
+ {
+ id: 12,
+ difficulty: "advanced",
+ difficultyText: "Προχωρημένο",
+ question: "Δίνεται το παρακάτω τμήμα αλγορίθμου στη «ΓΛΩΣΣΑ». Τι θα τυπωθεί κατά την εκτέλεσή του;",
+ code: "ΠΡΟΓΡΑΜΜΑ Δοκιμή\nΜΕΤΑΒΛΗΤΕΣ\n ΑΚΕΡΑΙΕΣ: x, y\nΑΡΧΗ\n x <- 5\n y <- 10\n ΚΑΛΕΣΕ Υπολογισμός(x, y)\n ΓΡΑΨΕ x, y\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ\n\nΔΙΑΔΙΚΑΣΙΑ Υπολογισμός(a, b)\nΜΕΤΑΒΛΗΤΕΣ\n ΑΚΕΡΑΙΕΣ: a, b, temp\nΑΡΧΗ\n temp <- a\n a <- b\n b <- temp\nΤΕΛΟΣ_ΔΙΑΔΙΚΑΣΙΑΣ",
+ options: [
+ "5 10",
+ "10 5",
+ "5 5",
+ "10 10"
+ ],
+ correct: 1,
+ hint: "Θυμηθείτε ότι στη «ΓΛΩΣΣΑ» οι απλές μεταβλητές που περνούν σε διαδικασία μεταβιβάζονται κατ' αναφορά.",
+ explanation: "Στη «ΓΛΩΣΣΑ», οι απλές μεταβλητές που μεταβιβάζονται σε διαδικασία ως παράμετροι ενημερώνονται κατ' αναφορά (call by reference). Η διαδικασία αντιμεταθέτει τις τιμές των παραμέτρων a και b, οπότε οι αρχικές μεταβλητές x και y αλλάζουν τιμές σε x = 10 και y = 5."
+ },
+ {
+ id: 13,
+ difficulty: "advanced",
+ difficultyText: "Προχωρημένο",
+ question: "Σε έναν κατευθυνόμενο γράφο G=(V,E) με 5 κορυφές, ποια πρόταση είναι ορθή σχετικά με τον βαθμό εισόδου (in-degree) και εξόδου (out-degree);",
+ code: null,
+ options: [
+ "Ο βαθμός εισόδου κάθε κορυφής είναι υποχρεωτικά ίσος με τον βαθμό εξόδου της ίδιας κορυφής.",
+ "Το άθροισμα των βαθμών εισόδου όλων των κορυφών είναι υποχρεωτικά ίσο με το άθροισμα των βαθμών εξόδου όλων των κορυφών (και ίσο με το συνολικό πλήθος των ακμών |E|).",
+ "Κάθε κορυφή πρέπει να έχει βαθμό εισόδου τουλάχιστον 1.",
+ "Ο συνολικός βαθμός του γράφου είναι πάντα διπλάσιος από το πλήθος των κορυφών."
+ ],
+ correct: 1,
+ hint: "Κάθε κατευθυνόμενη ακμή ξεκινά από μία κορυφή (out-degree) και καταλήγει σε μία κορυφή (in-degree).",
+ explanation: "Σε έναν κατευθυνόμενο γράφο, κάθε ακμή ξεκινά από μια κορυφή (συνεισφέροντας 1 στο out-degree) και καταλήγει σε μια κορυφή (συνεισφέροντας 1 στο in-degree). Επομένως, το συνολικό άθροισμα των in-degrees ισούται με το συνολικό άθροισμα των out-degrees και ισούται με το πλήθος των ακμών |E|."
+ },
+ {
+ id: 14,
+ difficulty: "advanced",
+ difficultyText: "Προχωρημένο",
+ question: "Δίνεται ο παρακάτω αντικειμενοστραφής ψευδοκώδικας. Ποιο θα είναι το αποτέλεσμα εκτέλεσης του κυρίου προγράμματος;",
+ code: "Κλάση Σχήμα\n Δημόσιες Μέθοδοι:\n Συνάρτηση εμβαδόν(): Πραγματικό\n Επιστρέψτε 0.0\n Τέλος_Συναρτήσης\nΤέλος_Κλάσης\n\nΚλάση Τετράγωνο Επεκτείνει Σχήμα\n Ιδιωτικές Μεταβλητές: πλευρά: Πραγματικό\n Δημόσιες Μέθοδοι:\n Κατασκευαστής(p: Πραγματικό)\n πλευρά <- p\n Τέλος_Κατασκευαστή\n Συνάρτηση εμβαδόν(): Πραγματικό\n Επιστρέψτε πλευρά * πλευρά\n Τέλος_Συναρτήσης\nΤέλος_Κλάσης\n\n! Κύριο Πρόγραμμα\ns <- Νέο Τετράγωνο(4.0)\nΕμφάνισε s.εμβαδόν()",
+ options: [
+ "Θα εμφανιστεί 0.0",
+ "Θα εμφανιστεί 16.0",
+ "Προκαλείται σφάλμα μεταγλώττισης λόγω κληρονομικότητας.",
+ "Θα εμφανιστεί 4.0"
+ ],
+ correct: 1,
+ hint: "Ποια μέθοδος εκτελείται λόγω υπερκάλυψης (overriding) όταν το αντικειμένο s είναι τύπου Τετράγωνο;",
+ explanation: "Η κλάση Τετράγωνο κληρονομεί από την κλάση Σχήμα και πραγματοποιεί υπερκάλυψη (overriding) της μεθόδου εμβαδόν(). Κατά την κλήση s.εμβαδόν() εκτελείται η εξειδικευμένη μέθοδος του Τετραγώνου, επιστρέφοντας 4.0 * 4.0 = 16.0."
+ },
+ {
+ id: 15,
+ difficulty: "advanced",
+ difficultyText: "Προχωρημένο",
+ question: "Δίνεται το παρακάτω τμήμα αλγορίθμου στη «ΓΛΩΣΣΑ» που χρησιμοποιεί συνάρτηση. Ποια είναι η τελική τιμή που θα εκτυπωθεί για τη μεταβλητή res;",
+ code: "ΠΡΟΓΡΑΜΜΑ Υπολογισμοί\nΜΕΤΑΒΛΗΤΕΣ\n ΑΚΕΡΑΙΕΣ: res\nΑΡΧΗ\n res <- FX(4) + FX(2)\n ΓΡΑΨΕ res\nΤΕΛΟΣ_ΠΡΟΓΡΑΜΜΑΤΟΣ\n\nΣΥΝΑΡΤΗΣΗ FX(n): ΑΚΕΡΑΙΑ\nΜΕΤΑΒΛΗΤΕΣ\n ΑΚΕΡΑΙΕΣ: n, s, i\nΑΡΧΗ\n s <- 0\n ΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ n\n s <- s + i\n ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\n FX <- s\nΤΕΛΟΣ_ΣΥΝΑΡΤΗΣΗΣ",
+ options: [
+ "13",
+ "6",
+ "10",
+ "15"
+ ],
+ correct: 0,
+ hint: "Υπολογίστε τι επιστρέφει η συνάρτηση FX(4) και τι η FX(2).",
+ explanation: "Η συνάρτηση FX(n) υπολογίζει το άθροισμα των ακεραίων από 1 έως n.\nΓια n=4: FX(4) = 1 + 2 + 3 + 4 = 10.\nΓια n=2: FX(2) = 1 + 2 = 3.\nΆρα res = 10 + 3 = 13."
+ }
+];
+
+// --- STATE VARIABLES ---
+let currentMode = 'practice';
+let studentName = '';
+let currentQuestionIndex = 0;
+let userAnswers = {};
+
+// --- LOGIC FUNCTIONS ---
+function selectMode(mode, element) {
+ currentMode = mode;
+ document.querySelectorAll('.mode-btn-card').forEach(card => card.classList.remove('selected'));
+ element.classList.add('selected');
+}
+
+function startQuiz() {
+ const nameInput = document.getElementById('student-name').value.trim();
+ studentName = nameInput !== '' ? nameInput : 'Ανώνυμος/η Μαθητής/τρια';
+
+ document.getElementById('start-screen').style.display = 'none';
+ document.getElementById('quiz-screen').style.display = 'block';
+
+ currentQuestionIndex = 0;
+ userAnswers = {};
+
+ renderQuizScreen();
+}
+
+function renderQuizScreen() {
+ const wrapper = document.getElementById('questions-wrapper');
+ wrapper.innerHTML = '';
+
+ if (currentMode === 'practice') {
+ document.getElementById('submit-btn').style.display = 'none';
+ document.getElementById('next-btn').style.display = 'inline-block';
+ updateProgressBar();
+ 
+ const q = questionsData[currentQuestionIndex];
+ wrapper.appendChild(createQuestionCard(q, currentQuestionIndex + 1, questionsData.length, true));
+ } else {
+ // Exam Mode: Show all questions
+ document.getElementById('next-btn').style.display = 'none';
+ document.getElementById('submit-btn').style.display = 'inline-block';
+ document.getElementById('progress-bar').style.width = '100%';
+
+ questionsData.forEach((q, idx) => {
+ wrapper.appendChild(createQuestionCard(q, idx + 1, questionsData.length, false));
+ });
+ }
+}
+
+function formatOptionText(text) {
+ if (!text || text === 'Δεν απαντήθηκε') return text;
+ if (text.includes('\n')) {
+ return `<pre class="option-code"><code>${escapeHTML(text)}</code></pre>`;
+ }
+ return escapeHTML(text);
+}
+
+function createQuestionCard(q, num, total, isPractice) {
+ const card = document.createElement('div');
+ card.className = 'card';
+ card.id = `q-card-${q.id}`;
+
+ let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+ 
+ let optionsHTML = '';
+ q.options.forEach((opt, idx) => {
+ if (!opt) return;
+ const isChecked = userAnswers[q.id] === idx ? 'checked' : '';
+ const hasCode = opt.includes('\n');
+ const formattedOpt = formatOptionText(opt);
+
+ optionsHTML += `
+ <label class="option-item ${hasCode ? 'has-code' : ''}" onclick="handleOptionSelect(${q.id}, ${idx}, ${isPractice})">
+ <input type="radio" name="q_${q.id}" value="${idx}" ${isChecked}>
+ <div class="option-text-container">${formattedOpt}</div>
+ </label>
+ `;
+ });
+
+ // Determine difficulty badge class
+ let diffClass = "diff-basic";
+ if (q.difficulty === "medium") diffClass = "diff-medium";
+ if (q.difficulty === "advanced") diffClass = "diff-advanced";
+
+ card.innerHTML = `
+ <div class="question-header">
+ <span class="question-number">Ερώτηση ${num} από ${total}</span>
+ <span class="diff-badge ${diffClass}">${q.difficultyText}</span>
+ </div>
+ <div class="question-text">${q.question}</div>
+ ${codeHTML}
+ <div class="options-group">${optionsHTML}</div>
+ <button class="btn btn-hint" onclick="toggleHint(${q.id})">💡 Υπόδειξη</button>
+ <div id="hint-${q.id}" class="hint-box">${q.hint}</div>
+ <div id="justification-${q.id}" class="justification-box"></div>
+ `;
+
+ return card;
+}
+
+function handleOptionSelect(qId, selectedIdx, isPractice) {
+ userAnswers[qId] = selectedIdx;
+ document.getElementById('warning-msg').style.display = 'none';
+
+ if (isPractice) {
+ const q = questionsData.find(item => item.id === qId);
+ const justBox = document.getElementById(`justification-${qId}`);
+ justBox.style.display = 'block';
+
+ let correctOptFormatted = formatOptionText(q.options[q.correct]);
+
+ if (selectedIdx === q.correct) {
+ justBox.className = 'justification-box correct';
+ justBox.innerHTML = `<strong>✅ Σωστό!</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+ } else {
+ justBox.className = 'justification-box incorrect';
+ justBox.innerHTML = `<strong>❌ Λάθος.</strong> Η σωστή απάντηση είναι: <div>${correctOptFormatted}</div><br><strong>Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+ }
+ }
+}
+
+function toggleHint(qId) {
+ const hintBox = document.getElementById(`hint-${qId}`);
+ hintBox.style.display = (hintBox.style.display === 'block') ? 'none' : 'block';
+}
+
+function updateProgressBar() {
+ const progress = ((currentQuestionIndex + 1) / questionsData.length) * 100;
+ document.getElementById('progress-bar').style.width = `${progress}%`;
+}
+
+function nextQuestion() {
+ if (userAnswers[questionsData[currentQuestionIndex].id] === undefined) {
+ alert('Παρακαλώ επιλέξτε μια απάντηση πριν προχωρήσετε!');
+ return;
+ }
+
+ if (currentQuestionIndex < questionsData.length - 1) {
+ currentQuestionIndex++;
+ renderQuizScreen();
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+ } else {
+ showReport();
+ }
+}
+
+function submitExam() {
+ const unanswered = questionsData.filter(q => userAnswers[q.id] === undefined);
+ if (unanswered.length > 0) {
+ const warning = document.getElementById('warning-msg');
+ warning.innerText = `⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή! Απομένουν ${unanswered.length} αναπάντητες ερωτήσεις.`;
+ warning.style.display = 'block';
+
+ const firstUnansweredId = unanswered[0].id;
+ document.getElementById(`q-card-${firstUnansweredId}`).scrollIntoView({ behavior: 'smooth' });
+ return;
+ }
+
+ showReport();
+}
+
+function showReport() {
+ document.getElementById('quiz-screen').style.display = 'none';
+ document.getElementById('report-screen').style.display = 'block';
+
+ let score = 0;
+ const reportList = document.getElementById('report-list');
+ reportList.innerHTML = '';
+
+ questionsData.forEach((q, idx) => {
+ const userChoice = userAnswers[q.id];
+ const isCorrect = userChoice === q.correct;
+ if (isCorrect) score++;
+
+ const item = document.createElement('div');
+ item.className = `report-item ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+ let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+ let userChoiceText = userChoice !== undefined ? formatOptionText(q.options[userChoice]) : 'Δεν απαντήθηκε';
+ let correctChoiceText = formatOptionText(q.options[q.correct]);
+
+ let diffClass = "diff-basic";
+ if (q.difficulty === "medium") diffClass = "diff-medium";
+ if (q.difficulty === "advanced") diffClass = "diff-advanced";
+
+ item.innerHTML = `
+ <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+ <div>
+ <span class="badge ${isCorrect ? 'badge-success' : 'badge-danger'}">
+ ${isCorrect ? '✅ ΣΩΣΤΟ' : '❌ ΛΑΘΟΣ'}
+ </span>
+ <strong>Ερώτηση ${idx + 1}:</strong> ${q.question}
+ </div>
+ <span class="diff-badge ${diffClass}">${q.difficultyText}</span>
+ </div>
+ ${codeHTML}
+ <div style="margin: 8px 0; font-size: 0.95rem;">
+ <strong>Η απάντησή σας:</strong> <div style="color: ${isCorrect ? 'var(--olive)' : 'var(--wrong-border)'}; font-weight: 600;">${userChoiceText}</div>
+ ${!isCorrect ? `<strong>Σωστή απάντηση:</strong> <div style="color: var(--olive); font-weight: 600;">${correctChoiceText}</div>` : ''}
+ </div>
+ <div style="font-size: 0.9rem; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 6px; margin-top: 6px;">
+ <strong>Τεκμηρίωση / Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}
+ </div>
+ `;
+
+ reportList.appendChild(item);
+ });
+
+ const percentage = Math.round((score / questionsData.length) * 100);
+
+ document.getElementById('report-student-name').innerText = `Μαθητής/τρια: ${studentName}`;
+ document.getElementById('report-date').innerText = `Ημερομηνία & Ώρα: ${new Date().toLocaleString('el-GR')}`;
+ document.getElementById('report-score').innerText = `${score} / ${questionsData.length}`;
+ document.getElementById('report-percentage').innerText = `Ποσοστό Επιτυχίας: ${percentage}%`;
+
+ // Pedagogical Comment
+ let comment = '';
+ if (percentage >= 90) {
+ comment = '🌟 Εξαιρετική επίδοση! Έχετε κατανοήσει πλήρως τα Υποπρογράμματα, τις Δυναμικές Δομές Δεδομένων (Στοίβα, Ουρά, Λίστες, BST, Γράφους) και τις αρχές του Αντικειμενοστραφούς Προγραμματισμού (OOP).';
+ } else if (percentage >= 75) {
+ comment = '👏 Πολύ καλή προσπάθεια! Έχετε γερές βάσεις στα υποπρογράμματα και τη μεταβίβαση παραμέτρων. Κάντε μια μικρή επανεξέταση στην υπερκάλυψη μεθόδων (overriding) και τις προσπελάσεις συνδεδεμένων λιστών.';
+ } else if (percentage >= 50) {
+ comment = '👍 Ικανοποιητική παρουσία. Χρειάζεται περισσότερη εξάσκηση στις ερωτήσεις προχωρημένου επιπέδου (μεταβίβαση κατ\' αναφορά, Trace Tables και θεωρία γράφων).';
+ } else {
+ comment = '📚 Χρειάζεται συστηματική επανάληψη στη θεωρία της 24ης εβδομάδας (Υποπρογράμματα, Δυναμικές Δομές & OOP), μελέτη του Φύλλου Εργασίας και επιπλέον εξάσκηση σε συνδυαστικά θέματα Πανελλαδικών.';
+ }
+ document.getElementById('report-comment').innerText = comment;
+
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+ document.getElementById('report-screen').style.display = 'none';
+ document.getElementById('start-screen').style.display = 'block';
+ window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHTML(str) {
+ return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+</script>
+
+</body>
+</html>

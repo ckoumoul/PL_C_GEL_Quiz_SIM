@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Προσομοιωτής Στοίβας & Ουράς - Πληροφορική Γ΄ Λυκείου</title>
+  <style>
+    :root {
+      --bg-main: #FBF9F5;
+      --card-bg: #FFFFFF;
+      --accent-sage: #5A7361;
+      --accent-sage-hover: #485C4E;
+      --accent-terracotta: #C86A4B;
+      --accent-terracotta-hover: #B0573A;
+      --text-dark: #2C2A29;
+      --text-muted: #6E6A66;
+      --border-color: #E5E0D8;
+      --sand-light: #F2EFE9;
+      --danger-color: #B84A39;
+      --warning-color: #D97724;
+      --success-color: #3B7A57;
+      --shadow-sm: 0 4px 12px rgba(61, 58, 54, 0.06);
+      --shadow-md: 0 8px 24px rgba(61, 58, 54, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* HEADER & NAVIGATION */
+    header {
+      width: 100%;
+      max-width: 960px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      background-color: var(--sand-light);
+      border: 1px solid var(--border-color);
+      color: var(--text-dark);
+      padding: 12px 28px;
+      border-radius: 30px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .tab-btn:hover {
+      background-color: var(--border-color);
+    }
+
+    .tab-btn.active {
+      background-color: var(--accent-sage);
+      color: #FFFFFF;
+      border-color: var(--accent-sage);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* MAIN CONTAINER */
+    .main-container {
+      width: 100%;
+      max-width: 960px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+    }
+
+    .view-section {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .view-section.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      color: var(--accent-sage);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 25px;
+    }
+
+    /* CONTROLS BAR */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      background-color: var(--bg-main);
+      padding: 16px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .input-group label {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    input[type="text"] {
+      padding: 10px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      width: 130px;
+      outline: none;
+      background: #FFF;
+      color: var(--text-dark);
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--accent-sage);
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-push, .btn-enqueue {
+      background-color: var(--accent-sage);
+      color: #FFF;
+    }
+
+    .btn-push:hover, .btn-enqueue:hover {
+      background-color: var(--accent-sage-hover);
+    }
+
+    .btn-pop, .btn-dequeue {
+      background-color: var(--accent-terracotta);
+      color: #FFF;
+    }
+
+    .btn-pop:hover, .btn-dequeue:hover {
+      background-color: var(--accent-terracotta-hover);
+    }
+
+    .btn-secondary {
+      background-color: var(--sand-light);
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--border-color);
+    }
+
+    /* STATUS ALERT BOX */
+    .status-box {
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 25px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background-color: var(--sand-light);
+      border-left: 4px solid var(--accent-sage);
+      transition: all 0.3s ease;
+    }
+
+    .status-box.error {
+      background-color: #FDF2F0;
+      border-left-color: var(--danger-color);
+      color: var(--danger-color);
+    }
+
+    .status-box.warning {
+      background-color: #FFF9F2;
+      border-left-color: var(--warning-color);
+      color: var(--warning-color);
+    }
+
+    .status-box.success {
+      background-color: #F2F8F4;
+      border-left-color: var(--success-color);
+      color: var(--success-color);
+    }
+
+    /* VISUALIZATION CANVAS */
+    .visualizer-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      min-height: 320px;
+      padding: 20px;
+      background-color: var(--bg-main);
+      border-radius: 12px;
+      border: 1px dashed var(--border-color);
+      position: relative;
+    }
+
+    /* STACK VISUALIZATION */
+    .stack-container {
+      display: flex;
+      flex-direction: column-reverse;
+      width: 220px;
+      min-height: 260px;
+      border: 3px solid var(--accent-sage);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      padding: 6px;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.7);
+      position: relative;
+    }
+
+    .stack-element {
+      height: 44px;
+      background-color: var(--accent-sage);
+      color: #FFF;
+      font-weight: 700;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      font-size: 1rem;
+      box-shadow: var(--shadow-sm);
+      animation: slideInDown 0.35s ease;
+      position: relative;
+    }
+
+    @keyframes slideInDown {
+      from { transform: translateY(-40px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .stack-element.popping {
+      animation: slideOutUp 0.35s forwards;
+    }
+
+    @keyframes slideOutUp {
+      to { transform: translateY(-50px); opacity: 0; }
+    }
+
+    .index-badge {
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.25);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* QUEUE VISUALIZATION */
+    .queue-wrapper-horizontal {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      gap: 15px;
+    }
+
+    .queue-container {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      border-top: 3px solid var(--accent-terracotta);
+      border-bottom: 3px solid var(--accent-terracotta);
+      background: rgba(255, 255, 255, 0.7);
+      min-height: 75px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .queue-slot {
+      width: 75px;
+      height: 55px;
+      border: 1px dashed var(--border-color);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      background: #FFF;
+    }
+
+    .queue-element {
+      width: 100%;
+      height: 100%;
+      background-color: var(--accent-terracotta);
+      color: #FFF;
+      font-weight: 700;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      animation: fadeInScale 0.3s ease;
+    }
+
+    @keyframes fadeInScale {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .slot-index {
+      position: absolute;
+      bottom: -22px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* POINTER LABELS */
+    .pointer-label {
+      position: absolute;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pointer-top {
+      background-color: var(--accent-sage);
+      color: #FFF;
+      right: -100px;
+    }
+
+    .pointer-front {
+      background-color: var(--accent-terracotta);
+      color: #FFF;
+      top: -30px;
+    }
+
+    .pointer-rear {
+      background-color: var(--accent-sage);
+      color: #FFF;
+      bottom: -45px;
+    }
+
+    /* INFO FOOTER */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .info-card {
+      background: var(--bg-main);
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .info-card h4 {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-card span {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Προσομοιωτής Δομών Δεδομένων</h1>
+    <p>Διαδραστική οπτικοποίηση Στοίβας (LIFO) & Ουράς (FIFO) – Πληροφορική Γ΄ Λυκείου</p>
+    
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('stack')">📚 Στοίβα (Stack)</button>
+      <button class="tab-btn" onclick="switchTab('queue')">🚶‍♂️ Ουρά (Queue)</button>
+    </div>
+  </header>
+
+  <div class="main-container">
+    
+    <!-- STACK SECTION -->
+    <section id="stack-section" class="view-section active">
+      <div class="section-title">
+        <span>📚</span> Στοίβα (Stack) – Αρχή LIFO (Last-In, First-Out)
+      </div>
+      <div class="section-subtitle">
+        Το τελευταίο στοιχείο που εισάγεται είναι το πρώτο που εξάγεται. Διαχείριση μέσω του δείκτη <strong>top</strong>.
+      </div>
+
+      <div class="controls-bar">
+        <div class="input-group">
+          <label for="stack-input">Στοιχείο:</label>
+          <input type="text" id="stack-input" value="A" maxlength="6" autocomplete="off">
+        </div>
+        <button class="btn btn-push" onclick="pushStack()">⬇️ Ώθηση (Push)</button>
+        <button class="btn btn-pop" onclick="popStack()">⬆️ Απώθηση (Pop)</button>
+        <button class="btn btn-secondary" onclick="resetStack()">🔄 Επαναφορά</button>
+      </div>
+
+      <div id="stack-status" class="status-box success">
+        ℹ️ Η Στοίβα είναι αρχικοποιημένη και άδεια (top = 0).
+      </div>
+
+      <div class="visualizer-wrapper">
+        <div id="stack-container" class="stack-container">
+          <!-- Stack elements rendered here dynamically -->
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h4>Δείκτης top</h4>
+          <span id="stack-top-val">0</span>
+        </div>
+        <div class="info-card">
+          <h4>Μέγιστο Μέγεθος (N)</h4>
+          <span>5</span>
+        </div>
+        <div class="info-card">
+          <h4>Κατάσταση</h4>
+          <span id="stack-state-text">Άδεια</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUEUE SECTION -->
+    <section id="queue-section" class="view-section">
+      <div class="section-title">
+        <span>🚶‍♂️</span> Ουρά (Queue) – Αρχή FIFO (First-In, First-Out)
+      </div>
+      <div class="section-subtitle">
+        Το πρώτο στοιχείο που εισάγεται είναι το πρώτο που εξάγεται. Διαχείριση μέσω των δεικτών <strong>front</strong> & <strong>rear</strong>.
+      </div>
+
+      <div class="controls-bar">
+        <div class="input-group">
+          <label for="queue-input">Στοιχείο:</label>
+          <input type="text" id="queue-input" value="10" maxlength="6" autocomplete="off">
+        </div>
+        <button class="btn btn-enqueue" onclick="enqueueQueue()">➡️ Εισαγωγή (Enqueue)</button>
+        <button class="btn btn-dequeue" onclick="dequeueQueue()">⬅️ Εξαγωγή (Dequeue)</button>
+        <button class="btn btn-secondary" onclick="shiftQueue()">↔️ Ολίσθηση (Shift)</button>
+        <button class="btn btn-secondary" onclick="resetQueue()">🔄 Επαναφορά</button>
+      </div>
+
+      <div id="queue-status" class="status-box success">
+        ℹ️ Η Ουρά είναι αρχικοποιημένη και άδεια (front = 0, rear = 0).
+      </div>
+
+      <div class="visualizer-wrapper">
+        <div class="queue-wrapper-horizontal">
+          <div id="queue-container" class="queue-container">
+            <!-- Queue slots rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <h4>Δείκτης front</h4>
+          <span id="queue-front-val">0</span>
+        </div>
+        <div class="info-card">
+          <h4>Δείκτης rear</h4>
+          <span id="queue-rear-val">0</span>
+        </div>
+        <div class="info-card">
+          <h4>Μέγιστο Μέγεθος (N)</h4>
+          <span>5</span>
+        </div>
+        <div class="info-card">
+          <h4>Κατάσταση</h4>
+          <span id="queue-state-text">Άδεια</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // GLOBAL CONSTANTS
+    const STACK_MAX = 5;
+    const QUEUE_MAX = 5;
+
+    // STACK STATE
+    let stackData = [];
+    let topPtr = 0;
+
+    // QUEUE STATE
+    let queueData = [null, null, null, null, null];
+    let frontPtr = 0;
+    let rearPtr = 0;
+
+    // NAVIGATION
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.view-section').forEach(sec => sec.classList.remove('active'));
+
+      if (tab === 'stack') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('stack-section').classList.add('active');
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('queue-section').classList.add('active');
+      }
+    }
+
+    // --- STACK LOGIC ---
+    function renderStack() {
+      const container = document.getElementById('stack-container');
+      container.innerHTML = '';
+
+      stackData.forEach((val, idx) => {
+        const el = document.createElement('div');
+        el.className = 'stack-element';
+        el.innerHTML = `<span>${val}</span> <span class="index-badge">Θέση ${idx + 1}</span>`;
+        
+        if (idx === topPtr - 1) {
+          const pointer = document.createElement('div');
+          pointer.className = 'pointer-label pointer-top';
+          pointer.innerHTML = '⬅️ top = ' + topPtr;
+          el.appendChild(pointer);
+        }
+        
+        container.appendChild(el);
+      });
+
+      document.getElementById('stack-top-val').innerText = topPtr;
+      
+      const stateText = document.getElementById('stack-state-text');
+      if (topPtr === 0) stateText.innerText = 'Άδεια';
+      else if (topPtr === STACK_MAX) stateText.innerText = 'Γεμάτη';
+      else stateText.innerText = `${topPtr} / ${STACK_MAX} Στοιχεία`;
+    }
+
+    function setStackStatus(msg, type = 'success') {
+      const box = document.getElementById('stack-status');
+      box.className = `status-box ${type}`;
+      box.innerHTML = msg;
+    }
+
+    function pushStack() {
+      const input = document.getElementById('stack-input');
+      const val = input.value.trim() || 'X';
+
+      if (topPtr >= STACK_MAX) {
+        setStackStatus('⚠️ <strong>ΥΠΕΡΧΕΙΛΙΣΗ (Overflow)!</strong> Η Στοίβα είναι γεμάτη (top = N). Δεν μπορεί να γίνει Ώθηση.', 'error');
+        return;
+      }
+
+      topPtr++;
+      stackData.push(val);
+      renderStack();
+      setStackStatus(`✅ <strong>Ώθηση (Push):</strong> Το στοιχείο "<strong>${val}</strong>" τοποθετήθηκε στη θέση <strong>${topPtr}</strong> (top = ${topPtr}).`, 'success');
+
+      // Auto-increment default value for ease of use
+      if (!isNaN(val)) input.value = parseInt(val) + 10;
+      else input.value = String.fromCharCode(val.charCodeAt(0) + 1);
+    }
+
+    function popStack() {
+      if (topPtr === 0) {
+        setStackStatus('⚠️ <strong>ΥΠΟΧΕΙΛΙΣΗ (Underflow)!</strong> Η Στοίβα είναι άδεια (top = 0). Δεν μπορεί να γίνει Απώθηση.', 'error');
+        return;
+      }
+
+      const poppedVal = stackData.pop();
+      topPtr--;
+      renderStack();
+      setStackStatus(`🗑️ <strong>Απώθηση (Pop):</strong> Αφαιρέθηκε το στοιχείο "<strong>${poppedVal}</strong>". Νέα τιμή top = <strong>${topPtr}</strong>.`, 'warning');
+    }
+
+    function resetStack() {
+      stackData = [];
+      topPtr = 0;
+      renderStack();
+      setStackStatus('ℹ️ Η Στοίβα επαναφέρθηκε στην αρχική κενή κατάσταση (top = 0).', 'success');
+    }
+
+    // --- QUEUE LOGIC ---
+    function renderQueue() {
+      const container = document.getElementById('queue-container');
+      container.innerHTML = '';
+
+      for (let i = 0; i < QUEUE_MAX; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'queue-slot';
+
+        const idxLabel = document.createElement('div');
+        idxLabel.className = 'slot-index';
+        idxLabel.innerText = `[${i + 1}]`;
+        slot.appendChild(idxLabel);
+
+        const val = queueData[i];
+        if (val !== null) {
+          const el = document.createElement('div');
+          el.className = 'queue-element';
+          el.innerText = val;
+          slot.appendChild(el);
+        }
+
+        // Pointer Labels
+        if (frontPtr > 0 && i === frontPtr - 1) {
+          const fPtr = document.createElement('div');
+          fPtr.className = 'pointer-label pointer-front';
+          fPtr.innerText = 'front = ' + frontPtr;
+          slot.appendChild(fPtr);
+        }
+
+        if (rearPtr > 0 && i === rearPtr - 1) {
+          const rPtr = document.createElement('div');
+          rPtr.className = 'pointer-label pointer-rear';
+          rPtr.innerText = 'rear = ' + rearPtr;
+          slot.appendChild(rPtr);
+        }
+
+        container.appendChild(slot);
+      }
+
+      document.getElementById('queue-front-val').innerText = frontPtr;
+      document.getElementById('queue-rear-val').innerText = rearPtr;
+
+      const stateText = document.getElementById('queue-state-text');
+      if (frontPtr === 0 && rearPtr === 0) stateText.innerText = 'Άδεια';
+      else if (rearPtr === QUEUE_MAX && frontPtr === 1) stateText.innerText = 'Γεμάτη';
+      else if (rearPtr === QUEUE_MAX && frontPtr > 1) stateText.innerText = 'Ψευδές Γέμισμα';
+      else stateText.innerText = 'Ενεργή';
+    }
+
+    function setQueueStatus(msg, type = 'success') {
+      const box = document.getElementById('queue-status');
+      box.className = `status-box ${type}`;
+      box.innerHTML = msg;
+    }
+
+    function enqueueQueue() {
+      const input = document.getElementById('queue-input');
+      const val = input.value.trim() || '10';
+
+      if (rearPtr === QUEUE_MAX) {
+        if (frontPtr > 1) {
+          setQueueStatus('⚠️ <strong>ΨΕΥΔΕΣ ΓΕΜΙΣΜΑ!</strong> Ο δείκτης rear έφτασε στο τέλος (rear = N), αλλά υπάρχουν κενές θέσεις στην αρχή. Απαιτείται <strong>Ολίσθηση (Shift)</strong>.', 'warning');
+        } else {
+          setQueueStatus('⚠️ <strong>ΥΠΕΡΧΕΙΛΙΣΗ (Overflow)!</strong> Η Ουρά είναι πλήρως γεμάτη (rear = N, front = 1).', 'error');
+        }
+        return;
+      }
+
+      if (frontPtr === 0) frontPtr = 1;
+      rearPtr++;
+      queueData[rearPtr - 1] = val;
+
+      renderQueue();
+      setQueueStatus(`✅ <strong>Εισαγωγή (Enqueue):</strong> Το στοιχείο "<strong>${val}</strong>" τοποθετήθηκε στη θέση <strong>${rearPtr}</strong> (rear = ${rearPtr}, front = ${frontPtr}).`, 'success');
+
+      if (!isNaN(val)) input.value = parseInt(val) + 10;
+      else input.value = String.fromCharCode(val.charCodeAt(0) + 1);
+    }
+
+    function dequeueQueue() {
+      if (frontPtr === 0) {
+        setQueueStatus('⚠️ <strong>ΥΠΟΧΕΙΛΙΣΗ (Underflow)!</strong> Η Ουρά είναι άδεια (front = 0). Δεν μπορεί να γίνει Εξαγωγή.', 'error');
+        return;
+      }
+
+      const dequeuedVal = queueData[frontPtr - 1];
+      queueData[frontPtr - 1] = null;
+
+      if (frontPtr === rearPtr) {
+        // Queue becomes empty
+        frontPtr = 0;
+        rearPtr = 0;
+        renderQueue();
+        setQueueStatus(`🗑️ <strong>Εξαγωγή (Dequeue):</strong> Αφαιρέθηκε το τελευταίο στοιχείο "<strong>${dequeuedVal}</strong>". Η Ουρά είναι πλέον άδεια (front = 0, rear = 0).`, 'warning');
+      } else {
+        frontPtr++;
+        renderQueue();
+        setQueueStatus(`🗑️ <strong>Εξαγωγή (Dequeue):</strong> Αφαιρέθηκε το στοιχείο "<strong>${dequeuedVal}</strong>". Νέος δείκτης front = <strong>${frontPtr}</strong>.`, 'warning');
+      }
+    }
+
+    function shiftQueue() {
+      if (frontPtr <= 1) {
+        setQueueStatus('ℹ️ <strong>Δεν απαιτείται Ολίσθηση:</strong> Η ουρά είναι άδεια ή τα στοιχεία βρίσκονται ήδη στην αρχή του πίνακα (front ≤ 1).', 'warning');
+        return;
+      }
+
+      const activeCount = rearPtr - frontPtr + 1;
+      const newQueue = [null, null, null, null, null];
+
+      let newIdx = 0;
+      for (let i = frontPtr - 1; i < rearPtr; i++) {
+        newQueue[newIdx] = queueData[i];
+        newIdx++;
+      }
+
+      queueData = newQueue;
+      frontPtr = 1;
+      rearPtr = activeCount;
+
+      renderQueue();
+      setQueueStatus(`↔️ <strong>Ολίσθηση (Shift) ολοκληρώθηκε:</strong> Τα στοιχεία μετατοπίστηκαν στην αρχή του πίνακα. Νέες τιμές: front = <strong>1</strong>, rear = <strong>${rearPtr}</strong>.`, 'success');
+    }
+
+    function resetQueue() {
+      queueData = [null, null, null, null, null];
+      frontPtr = 0;
+      rearPtr = 0;
+      renderQueue();
+      setQueueStatus('ℹ️ Η Ουρά επαναφέρθηκε στην αρχική κενή κατάσταση (front = 0, rear = 0).', 'success');
+    }
+
+    // INITIAL RENDER
+    renderStack();
+    renderQueue();
+  </script>
+</body>
+</html

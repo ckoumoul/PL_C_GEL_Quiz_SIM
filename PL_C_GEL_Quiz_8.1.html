@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Εμπέδωσης & Αξιολόγησης - 8η Εβδομάδα (ΑΕΠΠ Γ΄ Λυκείου)</title>
+  <style>
+    /* =================================================================
+       EARTH TONES PALETTE & GLOBAL STYLES (UI/UX)
+       Background: #f7f4ef | Terracotta: #7a4b29 | Olive: #4e6e52
+       Sand/Ochre: #d4b886 | Sand Light: #eee6d8 | Dark Text: #3a322b
+    ================================================================= */
+    :root {
+      --bg-color: #f7f4ef;
+      --card-bg: #ffffff;
+      --terracotta: #7a4b29;
+      --terracotta-hover: #633b1f;
+      --olive: #4e6e52;
+      --olive-hover: #3d5740;
+      --sand-ochre: #d4b886;
+      --sand-light: #eee6d8;
+      --text-dark: #3a322b;
+      --text-muted: #6c635b;
+      --border-color: #e2d9cd;
+      
+      --correct-bg: #eaf2eb;
+      --correct-border: #4e6e52;
+      --correct-text: #2d4530;
+      
+      --incorrect-bg: #f9ebea;
+      --incorrect-border: #a93226;
+      --incorrect-text: #78281f;
+
+      --hint-bg: #fdf8ec;
+      --hint-border: #d4b886;
+      --hint-text: #6e572e;
+
+      --shadow-sm: 0 4px 10px rgba(58, 50, 43, 0.05);
+      --shadow-md: 0 8px 24px rgba(58, 50, 43, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 15px;
+    }
+
+    /* HEADER */
+    header {
+      width: 100%;
+      max-width: 860px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--terracotta);
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* APP CONTAINER */
+    .app-card {
+      width: 100%;
+      max-width: 860px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    /* SCREENS SWITCHING */
+    .screen {
+      display: none;
+      animation: fadeIn 0.35s ease-in-out;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* START SCREEN */
+    .welcome-title {
+      font-size: 1.4rem;
+      color: var(--terracotta);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .input-section {
+      margin-bottom: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-section label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+    }
+
+    .input-section input {
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 1rem;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .input-section input:focus {
+      border-color: var(--terracotta);
+    }
+
+    .mode-select-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-dark);
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+
+    @media (max-width: 600px) {
+      .mode-grid { grid-template-columns: 1fr; }
+    }
+
+    .mode-card {
+      border: 2px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+      cursor: pointer;
+      background: var(--bg-color);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mode-card:hover {
+      border-color: var(--sand-ochre);
+      transform: translateY(-2px);
+    }
+
+    .mode-card.selected {
+      border-color: var(--olive);
+      background-color: #f0f4f1;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mode-card h3 {
+      font-size: 1.1rem;
+      color: var(--olive);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mode-card.test-mode h3 {
+      color: var(--terracotta);
+    }
+
+    .mode-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--terracotta);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .start-btn:hover {
+      background-color: var(--terracotta-hover);
+    }
+
+    /* COMMON QUIZ UI & HEADER BARS */
+    .quiz-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .student-badge {
+      background-color: var(--sand-light);
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: var(--terracotta);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background-color: var(--sand-light);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 25px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background-color: var(--olive);
+      transition: width 0.3s ease;
+    }
+
+    /* QUESTION CARD COMPONENTS */
+    .q-card-single {
+      margin-bottom: 20px;
+    }
+
+    .q-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      color: var(--text-dark);
+    }
+
+    /* DARK CODE SNIPPET BOX */
+    .code-box {
+      background-color: #2b2622;
+      color: #f7f4ef;
+      font-family: 'Consolas', 'Courier New', monospace;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--sand-ochre);
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .opt-btn {
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      line-height: 1.4;
+    }
+
+    .opt-btn:hover:not(:disabled) {
+      background-color: var(--sand-light);
+      border-color: var(--sand-ochre);
+    }
+
+    .opt-btn.selected {
+      border-color: var(--terracotta);
+      background-color: #fbf0e8;
+      font-weight: 600;
+    }
+
+    .opt-btn.correct {
+      background-color: var(--correct-bg) !important;
+      border-color: var(--correct-border) !important;
+      color: var(--correct-text) !important;
+      font-weight: 700;
+    }
+
+    .opt-btn.incorrect {
+      background-color: var(--incorrect-bg) !important;
+      border-color: var(--incorrect-border) !important;
+      color: var(--incorrect-text) !important;
+      font-weight: 700;
+    }
+
+    .opt-btn:disabled {
+      cursor: default;
+    }
+
+    /* HINT & EXPLANATION BOXES */
+    .hint-box {
+      display: none;
+      background-color: var(--hint-bg);
+      border-left: 4px solid var(--hint-border);
+      color: var(--hint-text);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .explanation-box {
+      display: none;
+      background-color: var(--sand-light);
+      border-left: 4px solid var(--olive);
+      color: var(--text-dark);
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    /* BUTTONS & FOOTER CONTROLS */
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      gap: 10px;
+    }
+
+    .btn-btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-olive {
+      background-color: var(--olive);
+      color: #fff;
+    }
+
+    .btn-olive:hover:not(:disabled) {
+      background-color: var(--olive-hover);
+    }
+
+    .btn-terracotta {
+      background-color: var(--terracotta);
+      color: #fff;
+    }
+
+    .btn-terracotta:hover:not(:disabled) {
+      background-color: var(--terracotta-hover);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-dark);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      background-color: var(--sand-light);
+    }
+
+    .btn-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* TEST MODE STYLES */
+    .test-questions-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-bottom: 25px;
+    }
+
+    .test-q-card {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      background-color: #fff;
+    }
+
+    /* REPORT / RESULTS SCREEN */
+    .report-header {
+      text-align: center;
+      padding: 20px;
+      background-color: var(--bg-color);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 25px;
+    }
+
+    .report-score {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--terracotta);
+      margin-bottom: 4px;
+    }
+
+    .report-pct {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--olive);
+      margin-bottom: 8px;
+    }
+
+    .pedagogical-comment {
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      font-style: italic;
+      margin-top: 6px;
+    }
+
+    .report-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    .report-section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--olive);
+      margin-bottom: 16px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--sand-light);
+    }
+
+    .report-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .report-item {
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background-color: #fff;
+    }
+
+    .report-item.is-correct {
+      border-left: 5px solid var(--correct-border);
+    }
+
+    .report-item.is-incorrect {
+      border-left: 5px solid var(--incorrect-border);
+    }
+
+    .report-item-title {
+      font-weight: 700;
+      font-size: 0.98rem;
+      margin-bottom: 10px;
+    }
+
+    .report-ans-row {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .report-ans-row.user-val {
+      color: var(--text-dark);
+    }
+
+    .report-ans-row.correct-val {
+      color: var(--correct-border);
+      font-weight: 600;
+    }
+
+    .report-justification {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border-color);
+      line-height: 1.45;
+    }
+
+    /* PRINT STYLES (@media print) */
+    @media print {
+      body {
+        background-color: #fff;
+        padding: 0;
+        color: #000;
+      }
+
+      .app-card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+
+      header, .action-row, .btn-btn, .mode-grid, .input-section {
+        display: none !important;
+      }
+
+      .report-screen {
+        display: block !important;
+      }
+
+      .report-item {
+        break-inside: avoid;
+        border: 1px solid #ccc;
+      }
+
+      .code-box {
+        background-color: #f0f0f0 !important;
+        color: #000 !important;
+        border-left: 3px solid #666 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Διαδραστικό Quiz Εμπέδωσης & Αξιολόγησης</h1>
+    <p>8η Εβδομάδα: Δισδιάστατοι Πίνακες & Επεξεργασίες (2D Arrays)</p>
+  </header>
+
+  <main class="app-card">
+
+    <!-- 1. START SCREEN -->
+    <section id="screen-start" class="screen active">
+      <h2 class="welcome-title">Καλώς ήρθατε στο Quiz 8ης Εβδομάδας</h2>
+      
+      <div class="input-section">
+        <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+        <input type="text" id="student-name" placeholder="π.χ. Ιωάννης Στεφάνου" autocomplete="off">
+      </div>
+
+      <div class="mode-select-title">Επιλέξτε Λειτουργία (Dual Mode):</div>
+      <div class="mode-grid">
+        <div class="mode-card selected" id="card-practice" onclick="selectMode('PRACTICE')">
+          <h3>🎮 Εκμάθηση & Εξάσκησης</h3>
+          <p>Βήμα-βήμα πλοήγηση. Άμεσο feedback και αναλυτική επεξήγηση μετά από κάθε ερώτηση πριν την επόμενη.</p>
+        </div>
+        <div class="mode-card test-mode" id="card-test" onclick="selectMode('TEST')">
+          <h3>📝 Προσομοίωση & Τεστ</h3>
+          <p>Εμφάνιση όλων των ερωτήσεων. Υποχρεωτική απάντηση σε όλες πριν την υποβολή και έκδοση τελικού Report.</p>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="startQuiz()">Έναρξη Quiz ➔</button>
+    </section>
+
+    <!-- 2. PRACTICE MODE SCREEN -->
+    <section id="screen-practice" class="screen">
+      <div class="quiz-top-bar">
+        <span class="student-badge" id="practice-student-name">Μαθητής</span>
+        <span id="practice-progress-text">Ερώτηση 1 από 15</span>
+      </div>
+
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="practice-progress-fill"></div>
+      </div>
+
+      <div class="q-card-single">
+        <div class="q-text" id="practice-q-text"></div>
+        <div id="practice-code-box" class="code-box" style="display:none;"></div>
+        
+        <div class="options-grid" id="practice-options"></div>
+
+        <div class="hint-box" id="practice-hint-box">
+          💡 <strong>Υπόδειξη:</strong> <span id="practice-hint-text"></span>
+        </div>
+
+        <div class="explanation-box" id="practice-exp-box">
+          📌 <strong>Αιτιολόγηση:</strong> <span id="practice-exp-text"></span>
+        </div>
+
+        <div class="action-row">
+          <button class="btn-btn btn-outline" id="practice-hint-btn" onclick="togglePracticeHint()">💡 Υπόδειξη</button>
+          <button class="btn-btn btn-olive" id="practice-next-btn" onclick="nextPracticeQuestion()" disabled>Επόμενη ➔</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. TEST MODE SCREEN -->
+    <section id="screen-test" class="screen">
+      <div class="quiz-top-bar">
+        <span class="student-badge" id="test-student-name">Μαθητής</span>
+        <span id="test-status-text">Απαντήθηκαν: 0 / 15</span>
+      </div>
+
+      <div class="test-questions-wrapper" id="test-questions-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="action-row" style="margin-top:20px; justify-content: flex-end;">
+        <button class="btn-btn btn-terracotta" onclick="submitTestMode()" style="padding:14px 24px; font-size:1rem;">
+          🚀 Υποβολή Τεστ & Έκδοση Αποτελεσμάτων
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. REPORT / RESULTS SCREEN -->
+    <section id="screen-report" class="screen">
+      <div class="report-header">
+        <div class="report-score" id="report-score-num">0 / 15</div>
+        <div class="report-pct" id="report-score-pct">0% Success</div>
+        <div class="pedagogical-comment" id="report-pedagogical"></div>
+        <div class="report-meta" id="report-meta-info"></div>
+      </div>
+
+      <div class="report-section-title">📋 Αναλυτική Αναφορά Απαντήσεων & Τεκμηριώσεων</div>
+      <div class="report-list" id="report-list-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="action-row">
+        <button class="btn-btn btn-outline" onclick="restartApp()">↻ Έναρξη από την αρχή</button>
+        <button class="btn-btn btn-olive" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* =================================================================
+       WEEK 8 QUESTIONS DATASET (15 High-Quality Pedagogical Questions)
+    ================================================================= */
+    const questionsData = [
+      {
+        id: 1,
+        question: "Έχει δηλωθεί ένας δισδιάστατος πίνακας `ΑΚΕΡΑΙΕΣ: Α[10, 5]` στη «ΓΛΩΣΣΑ». Τι αντιπροσωπεύουν οι αριθμοί 10 και 5;",
+        code: null,
+        options: [
+          "10 στήλες και 5 γραμμές",
+          "10 γραμμές και 5 στήλες",
+          "10 στοιχεία συνολικά με 5 διαστάσεις",
+          "5 γραμμές και 10 στήλες"
+        ],
+        correct: 1,
+        hint: "Στη «ΓΛΩΣΣΑ», κατά τη δήλωση δισδιάστατου πίνακα `A[M, N]`, ο πρώτος δείκτης αναφέρεται πάντα στις γραμμές και ο δεύτερος στις στήλες.",
+        explanation: "Στη δήλωση `Α[10, 5]`, ο πρώτος αριθμός (10) ορίζει το πλήθος των γραμμών και ο δεύτερος (5) το πλήθος των στηλών. Ο πίνακας έχει συνολικά 10 × 5 = 50 στοιχεία."
+      },
+      {
+        id: 2,
+        question: "Ποια από τις παρακάτω προσπελάσεις προκαλεί σφάλμα εκτέλεσης (Index Out of Bounds) σε έναν πίνακα `Α[10, 5]`;",
+        code: null,
+        options: [
+          "Α[10, 5]",
+          "Α[1, 1]",
+          "Α[5, 10]",
+          "Α[8, 4]"
+        ],
+        correct: 2,
+        hint: "Ελέγξτε ποιος δείκτης υπερβαίνει το μέγιστο όριο της αντίστοιχης διάστασης (γραμμή 1..10, στήλη 1..5).",
+        explanation: "Για τον πίνακα `Α[10, 5]`, ο δείκτης γραμμής πρέπει να είναι 1..10 και ο δείκτης στήλης 1..5. Στο `Α[5, 10]`, ο δεύτερος δείκτης (10) υπερβαίνει το μέγιστο όριο στηλών (5)."
+      },
+      {
+        id: 3,
+        question: "Πώς εκτελείται η προσπέλαση των στοιχείων ενός δισδιάστατου πίνακα `A[M, N]` ΚΑΤΑ ΓΡΑΜΜΕΣ;",
+        code: null,
+        options: [
+          "Ο εξωτερικός βρόχος ελέγχει τον δείκτη στήλης (j) και ο εσωτερικός τον δείκτη γραμμής (i)",
+          "Ο εξωτερικός βρόχος ελέγχει τον δείκτη γραμμής (i) και ο εσωτερικός τον δείκτη στήλης (j)",
+          "Με μία μόνο εντολή ΓΙΑ χωρίς εσωτερικό βρόχο",
+          "Με χρήση της δομής ΜΕΧΡΙΣ_ΟΤΟΥ αποκλειστικά"
+        ],
+        correct: 1,
+        hint: "Κατά γραμμές σημαίνει ότι σταθεροποιούμε την 1η γραμμή και διατρέχουμε όλες τις στήλες της, μετά τη 2η γραμμή κ.ο.κ.",
+        explanation: "Στην προσπέλαση κατά γραμμές, ο εξωτερικός βρόχος (`i`) σαρώνει τις γραμμές 1 έως M και για κάθε γραμμή ο εσωτερικός βρόχος (`j`) διατρέχει τις στήλες 1 έως N."
+      },
+      {
+        id: 4,
+        question: "Σε έναν τετραγωνικό πίνακα `A[N, N]`, ποια συνθήκη ικανοποιούν τα στοιχεία της ΚΥΡΙΑΣ διαγωνίου;",
+        code: null,
+        options: [
+          "i + j = N + 1",
+          "i = j",
+          "i < j",
+          "i > j"
+        ],
+        correct: 1,
+        hint: "Τα στοιχεία της κύριας διαγωνίου βρίσκονται στις θέσεις (1,1), (2,2), (3,3)...",
+        explanation: "Στην κύρια διαγώνιο ενός τετραγωνικού πίνακα, ο δείκτης γραμμής `i` ισούται πάντα με τον δείκτη στήλης `j` (`i = j`)."
+      },
+      {
+        id: 5,
+        question: "Σε έναν τετραγωνικό πίνακα `A[N, N]`, ποια συνθήκη ικανοποιούν τα στοιχεία της ΔΕΥΤΕΡΕΥΟΥΣΑΣ διαγωνίου;",
+        code: null,
+        options: [
+          "i = j",
+          "i + j = N + 1",
+          "i - j = 1",
+          "i * j = N"
+        ],
+        correct: 1,
+        hint: "Σε πίνακα 4x4, τα στοιχεία της δευτερεύουσας διαγωνίου είναι τα (1,4), (2,3), (3,2), (4,1). Τι παρατηρείτε στο άθροισμα των δεικτών;",
+        explanation: "Για κάθε στοιχείο της δευτερεύουσας διαγωνίου, το άθροισμα του δείκτη γραμμής `i` και του δείκτη στήλης `j` είναι σταθερό και ίσο με `N + 1` (`i + j = N + 1`)."
+      },
+      {
+        id: 6,
+        question: "Ποια συνθήκη ισχύει για τα στοιχεία που βρίσκονται ΑΝΩ από την κύρια διαγώνιο ενός τετραγωνικού πίνακα `A[N, N]`;",
+        code: null,
+        options: [
+          "i > j",
+          "i < j",
+          "i = j",
+          "i + j = N"
+        ],
+        correct: 1,
+        hint: "Εξετάστε τις θέσεις (1,2), (1,3), (2,3)... Συγκρίνετε τον δείκτη γραμμής i με τον δείκτη στήλης j.",
+        explanation: "Στα στοιχεία πάνω από την κύρια διαγώνιο, ο δείκτης γραμμής `i` είναι αυστηρά μικρότερος από τον δείκτη στήλης `j` (`i < j`)."
+      },
+      {
+        id: 7,
+        question: "Εξετάστε το παρακάτω τμήμα αλγορίθμου για πίνακα `A[2, 3]`:",
+        code: "S <- 0\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 2\n  ΓΙΑ j ΑΠΟ 1 ΜΕΧΡΙ 3\n    S <- S + A[i, j]\n  ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+        questionPost: "Τι υπολογίζει η μεταβλητή S;",
+        options: [
+          "Το άθροισμα των στοιχείων της 1ης γραμμής μόνο",
+          "Το άθροισμα των στοιχείων της κύριας διαγωνίου",
+          "Το συνολικό άθροισμα όλων των στοιχείων του πίνακα",
+          "Το άθροισμα των στοιχείων της 1ης στήλης μόνο"
+        ],
+        correct: 2,
+        hint: "Οι διπλοί βρόχοι διατρέχουν όλες τις γραμμές (1..2) και όλες τις στήλες (1..3).",
+        explanation: "Οι εμφωλευμένοι βρόχοι προσπελαύνουν κάθε στοιχείο `A[i, j]` του πίνακα 2x3 ακριβώς μία φορά, αθροίζοντάς τα όλα στη μεταβλητή `S`."
+      },
+      {
+        id: 8,
+        question: "Θέλουμε να υπολογίσουμε τα αθροίσματα κάθε γραμμής ενός πίνακα `A[M, N]` και να τα αποθηκεύσουμε σε έναν μονοδιάστατο πίνακα `ROW_SUM[M]`. Πού πρέπει να αρχικοποιείται το `sum <- 0`;",
+        code: null,
+        options: [
+          "Πριν από τον εξωτερικό βρόχο (πριν τη ΓΙΑ i)",
+          "Μέσα στον εξωτερικό βρόχο και πριν τον εσωτερικό (μετά τη ΓΙΑ i και πριν τη ΓΙΑ j)",
+          "Μέσα στον εσωτερικό βρόχο (μετά τη ΓΙΑ j)",
+          "Μετά το τέλος και των δύο βρόχων"
+        ],
+        correct: 1,
+        hint: "Το άθροισμα πρέπει να μηδενίζεται κάθε φορά που ξεκινάει μια νέα γραμμή `i`.",
+        explanation: "Για να υπολογιστεί ανεξάρτητα το άθροισμα κάθε γραμμής `i`, ο αθροιστής πρέπει να μηδενίζεται στην αρχή κάθε νέας γραμμής, δηλαδή αμέσως μετά την εξωτερική `ΓΙΑ i` και πριν την εσωτερική `ΓΙΑ j`."
+      },
+      {
+        id: 9,
+        question: "Πώς εκτελείται η προσπέλαση ενός δισδιάστατου πίνακα `A[M, N]` ΚΑΤΑ ΣΤΗΛΕΣ;",
+        code: null,
+        options: [
+          "Εξωτερικός βρόχος j ΑΠΟ 1 ΜΕΧΡΙ N | Εσωτερικός βρόχος i ΑΠΟ 1 ΜΕΧΡΙ M",
+          "Εξωτερικός βρόχος i ΑΠΟ 1 ΜΕΧΡΙ M | Εσωτερικός βρόχος j ΑΠΟ 1 ΜΕΧΡΙ N",
+          "Με μία μόνο εντολή ΔΙΑΒΑΣΕ A[M, N]",
+          "Εξωτερικός βρόχος i ΑΠΟ 1 ΜΕΧΡΙ N | Εσωτερικός βρόχος j ΑΠΟ 1 ΜΕΧΡΙ M"
+        ],
+        correct: 0,
+        hint: "Κατά στήλες σημαίνει ότι σταθεροποιούμε την 1η στήλη (j=1) και διατρέχουμε όλες τις γραμμές της (i=1..M), μετά τη 2η στήλη κ.ο.κ.",
+        explanation: "Στην προσπέλαση κατά στήλες, ο εξωτερικός βρόχος ελέγχει τον δείκτη στήλης `j` (1..N) και ο εσωτερικός διατρέχει τον δείκτη γραμμής `i` (1..M)."
+      },
+      {
+        id: 10,
+        question: "Επιθυμούμε να βρούμε τη μέγιστη τιμή σε έναν δισδιάστατο πίνακα `A[M, N]` και να κρατήσουμε τους δείκτες της θέσης της (`max_i`, `max_j`). Ποια είναι η ενδεδειγμένη αρχικοποίηση;",
+        code: null,
+        options: [
+          "max_val <- 0 | max_i <- 0 | max_j <- 0",
+          "max_val <- A[1, 1] | max_i <- 1 | max_j <- 1",
+          "max_val <- A[M, N] | max_i <- M | max_j <- N",
+          "max_val <- 9999 | max_i <- 1 | max_j <- 1"
+        ],
+        correct: 1,
+        hint: "Αρχικοποιούμε πάντα με το 1ο διαθέσιμο στοιχείο του πίνακα στην εγκυρότερη θέση (1, 1).",
+        explanation: "Αρχικοποιούμε το `max_val` με το πρώτο στοιχείο του πίνακα `A[1, 1]` και τους δείκτες θέσης `max_i <- 1`, `max_j <- 1`, διασφαλίζοντας σωστή λειτουργία ακόμη κι αν όλα τα στοιχεία είναι αρνητικά."
+      },
+      {
+        id: 11,
+        question: "Δίνεται ένας 2Δ πίνακας βαθμολογιών `B[20, 5]` (20 μαθητές, 5 μαθήματα) και ένας παράλληλος 1Δ πίνακας ονομάτων `ON[20]`. Ποιο στοιχείο αντιστοιχεί στη βαθμολογία του 3ου μαθητή στο 4ο μάθημα;",
+        code: null,
+        options: [
+          "B[4, 3]",
+          "B[3, 4]",
+          "ON[3, 4]",
+          "B[3, 5]"
+        ],
+        correct: 1,
+        hint: "Ο 1ος δείκτης είναι η γραμμή (μαθητής = 3) και ο 2ος δείκτης η στήλη (μάθημα = 4).",
+        explanation: "Ο μαθητής αντιστοιχεί στη γραμμή (`i = 3`) και το μάθημα στη στήλη (`j = 4`). Συνεπώς, η βαθμολογία του 3ου μαθητή στο 4ο μάθημα αποθηκεύεται στο `B[3, 4]`."
+      },
+      {
+        id: 12,
+        question: "Ποια συνθήκη ισχύει για τα στοιχεία που βρίσκονται ΚΑΤΩ από την κύρια διαγώνιο ενός τετραγωνικού πίνακα `A[N, N]`;",
+        code: null,
+        options: [
+          "i < j",
+          "i > j",
+          "i = j",
+          "i + j = N + 1"
+        ],
+        correct: 1,
+        hint: "Εξετάστε τις θέσεις (2,1), (3,1), (3,2)... Συγκρίνετε τον δείκτη γραμμής i με τον δείκτη στήλης j.",
+        explanation: "Στα στοιχεία κάτω από την κύρια διαγώνιο, ο δείκτης γραμμής `i` είναι αυστηρά μεγαλύτερος από τον δείκτη στήλης `j` (`i > j`)."
+      },
+      {
+        id: 13,
+        question: "Πόσα στοιχεία περιέχει συνολικά ένας δισδιάστατος πίνακας `A[M, N]`;",
+        code: null,
+        options: [
+          "M + N στοιχεία",
+          "M * N στοιχεία",
+          "2 * (M + N) στοιχεία",
+          "N^M στοιχεία"
+        ],
+        correct: 1,
+        hint: "Αν ένας πίνακας έχει 5 γραμμές και κάθε γραμμή έχει 4 στήλες (θέσεις), πόσα στοιχεία υπάρχουν συνολικά;",
+        explanation: "Το συνολικό πλήθος των στοιχείων ενός δισδιάστατου πίνακα ισούται με το γινόμενο των διαστάσεών του, δηλαδή `M * N` στοιχεία."
+      },
+      {
+        id: 14,
+        question: "Εξετάστε το παρακάτω τμήμα αλγορίθμου σε τετραγωνικό πίνακα `A[3, 3]`:",
+        code: "S <- 0\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 3\n  S <- S + A[i, i]\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+        questionPost: "Τι υπολογίζει η μεταβλητή S;",
+        options: [
+          "Το άθροισμα όλων των στοιχείων του πίνακα",
+          "Το άθροισμα των στοιχείων της κύριας διαγωνίου",
+          "Το άθροισμα των στοιχείων της 1ης γραμμής",
+          "Το άθροισμα των στοιχείων της δευτερεύουσας διαγωνίου"
+        ],
+        correct: 1,
+        hint: "Παρατηρήστε ότι προσπελαύνονται τα στοιχεία A[1,1], A[2,2], A[3,3] όπου ο δείκτης γραμμής ισούται με τον δείκτη στήλης.",
+        explanation: "Η προσπέλαση `A[i, i]` με έναν μόνο βρόχο `i` διατρέχει αποκλειστικά τα στοιχεία της κύριας διαγωνίου (`i = j`), υπολογίζοντας το άθροισμά τους."
+      },
+      {
+        id: 15,
+        question: "Για ποιο από τα παρακάτω προβλήματα είναι ΚΑΤΑΛΛΗΛΗ η χρήση ενός δισδιάστατου πίνακα;",
+        code: null,
+        options: [
+          "Αποθήκευση των ονομάτων των 30 μαθητών μιας τάξης",
+          "Αποθήκευση των ημερήσιων θερμοκρασιών 10 πόλεων για τις 7 ημέρες μιας εβδομάδας (πίνακας 10x7)",
+          "Υπολογισμός του μέσου όρου 5 αριθμών",
+          "Αποθήκευση του αποτελέσματος μιας μαθηματικής πράξης"
+        ],
+        correct: 1,
+        hint: "Αναζητήστε το πρόβλημα που περιγράφεται από δύο ανεξάρτητες διαστάσεις/κατηγορίες (πόλεις × ημέρες).",
+        explanation: "Η αποθήκευση δεδομένων δύο διαστάσεων (10 πόλεις × 7 ημέρες = 70 θερμοκρασίες) απαιτεί δισδιάστατο πίνακα `T[10, 7]`, όπου οι γραμμές εκπροσωπούν τις πόλεις και οι στήλες τις ημέρες."
+      }
+    ];
+
+    /* =================================================================
+       APP STATE MANAGEMENT
+    ================================================================= */
+    let selectedMode = 'PRACTICE'; // 'PRACTICE' or 'TEST'
+    let studentName = 'Ανώνυμος/η Μαθητής/τρια';
+    let currentPracticeIdx = 0;
+    let userAnswers = new Array(questionsData.length).fill(null);
+    let hintState = new Array(questionsData.length).fill(false);
+
+    /* =================================================================
+       NAVIGATION & MODE SELECTION
+    ================================================================= */
+    function selectMode(mode) {
+      selectedMode = mode;
+      document.getElementById('card-practice').classList.toggle('selected', mode === 'PRACTICE');
+      document.getElementById('card-test').classList.toggle('selected', mode === 'TEST');
+    }
+
+    function switchScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function startQuiz() {
+      const nameInput = document.getElementById('student-name').value.trim();
+      studentName = nameInput || 'Ανώνυμος/η Μαθητής/τρια';
+
+      // Reset states
+      currentPracticeIdx = 0;
+      userAnswers = new Array(questionsData.length).fill(null);
+      hintState = new Array(questionsData.length).fill(false);
+
+      if (selectedMode === 'PRACTICE') {
+        document.getElementById('practice-student-name').innerText = studentName;
+        renderPracticeQuestion();
+        switchScreen('screen-practice');
+      } else {
+        document.getElementById('test-student-name').innerText = studentName;
+        renderTestMode();
+        switchScreen('screen-test');
+      }
+    }
+
+    /* =================================================================
+       PRACTICE MODE LOGIC (Step-by-Step with Immediate Feedback)
+    ================================================================= */
+    function renderPracticeQuestion() {
+      const q = questionsData[currentPracticeIdx];
+      const total = questionsData.length;
+
+      // Update progress
+      document.getElementById('practice-progress-text').innerText = `Ερώτηση ${currentPracticeIdx + 1} από ${total}`;
+      const pct = Math.round(((currentPracticeIdx + 1) / total) * 100);
+      document.getElementById('practice-progress-fill').style.width = `${pct}%`;
+
+      // Text & Code Box
+      document.getElementById('practice-q-text').innerText = `${q.id}. ${q.question} ${q.questionPost || ''}`;
+      const codeBox = document.getElementById('practice-code-box');
+      if (q.code) {
+        codeBox.innerText = q.code;
+        codeBox.style.display = 'block';
+      } else {
+        codeBox.style.display = 'none';
+      }
+
+      // Options
+      const optsContainer = document.getElementById('practice-options');
+      optsContainer.innerHTML = '';
+      const answered = userAnswers[currentPracticeIdx] !== null;
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${optText}</span>`;
+
+        if (answered) {
+          btn.disabled = true;
+          if (idx === q.correct) {
+            btn.classList.add('correct');
+            btn.innerHTML += ` <span>✓ (Σωστό)</span>`;
+          } else if (idx === userAnswers[currentPracticeIdx]) {
+            btn.classList.add('incorrect');
+            btn.innerHTML += ` <span>✗ (Λάθος)</span>`;
+          }
+        } else {
+          btn.onclick = () => selectPracticeAnswer(idx);
+        }
+
+        optsContainer.appendChild(btn);
+      });
+
+      // Hint State
+      const hintBox = document.getElementById('practice-hint-box');
+      if (hintState[currentPracticeIdx]) {
+        document.getElementById('practice-hint-text').innerText = q.hint;
+        hintBox.style.display = 'block';
+      } else {
+        hintBox.style.display = 'none';
+      }
+
+      // Explanation State
+      const expBox = document.getElementById('practice-exp-box');
+      if (answered) {
+        document.getElementById('practice-exp-text').innerText = q.explanation;
+        expBox.style.display = 'block';
+      } else {
+        expBox.style.display = 'none';
+      }
+
+      // Next Button State
+      const nextBtn = document.getElementById('practice-next-btn');
+      nextBtn.disabled = !answered;
+      if (currentPracticeIdx === total - 1) {
+        nextBtn.innerText = 'Δείτε τα Αποτελέσματα 🏁';
+      } else {
+        nextBtn.innerText = 'Επόμενη ➔';
+      }
+    }
+
+    function selectPracticeAnswer(optIdx) {
+      userAnswers[currentPracticeIdx] = optIdx;
+      renderPracticeQuestion();
+    }
+
+    function togglePracticeHint() {
+      hintState[currentPracticeIdx] = !hintState[currentPracticeIdx];
+      renderPracticeQuestion();
+    }
+
+    function nextPracticeQuestion() {
+      if (currentPracticeIdx < questionsData.length - 1) {
+        currentPracticeIdx++;
+        renderPracticeQuestion();
+      } else {
+        generateReport();
+      }
+    }
+
+    /* =================================================================
+       TEST MODE LOGIC (Single Page - All Questions Rendered)
+    ================================================================= */
+    function renderTestMode() {
+      const container = document.getElementById('test-questions-container');
+      container.innerHTML = '';
+
+      questionsData.forEach((q, qIdx) => {
+        const card = document.createElement('div');
+        card.className = 'test-q-card';
+        card.id = `test-card-${qIdx}`;
+
+        let codeHtml = q.code ? `<div class="code-box">${q.code}</div>` : '';
+        let postHtml = q.questionPost ? `<div style="font-size:0.95rem; margin-bottom:12px; font-weight:600;">${q.questionPost}</div>` : '';
+
+        let optsHtml = '';
+        q.options.forEach((optText, oIdx) => {
+          const isSelected = userAnswers[qIdx] === oIdx;
+          optsHtml += `
+            <button class="opt-btn ${isSelected ? 'selected' : ''}" onclick="selectTestAnswer(${qIdx}, ${oIdx})">
+              <span>${String.fromCharCode(65 + oIdx)}. ${optText}</span>
+            </button>
+          `;
+        });
+
+        let hintHtml = `
+          <div class="hint-box" id="test-hint-${qIdx}">
+            💡 <strong>Υπόδειξη:</strong> ${q.hint}
+          </div>
+        `;
+
+        card.innerHTML = `
+          <div class="q-text">${q.id}. ${q.question}</div>
+          ${codeHtml}
+          ${postHtml}
+          <div class="options-grid">${optsHtml}</div>
+          ${hintHtml}
+          <div style="margin-top:10px;">
+            <button class="btn-btn btn-outline" style="font-size:0.82rem; padding:6px 12px;" onclick="toggleTestHint(${qIdx})">💡 Υπόδειξη</button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      updateTestStatusText();
+    }
+
+    function selectTestAnswer(qIdx, oIdx) {
+      userAnswers[qIdx] = oIdx;
+      renderTestMode();
+    }
+
+    function toggleTestHint(qIdx) {
+      const hintBox = document.getElementById(`test-hint-${qIdx}`);
+      if (hintBox.style.display === 'block') {
+        hintBox.style.display = 'none';
+      } else {
+        hintBox.style.display = 'block';
+      }
+    }
+
+    function updateTestStatusText() {
+      const answeredCount = userAnswers.filter(a => a !== null).length;
+      document.getElementById('test-status-text').innerText = `Απαντήθηκαν: ${answeredCount} / ${questionsData.length}`;
+    }
+
+    function submitTestMode() {
+      const unanswered = [];
+      userAnswers.forEach((ans, idx) => {
+        if (ans === null) unanswered.push(idx + 1);
+      });
+
+      if (unanswered.length > 0) {
+        alert(`⚠️ Πρέπει υποχρεωτικά να απαντήσετε σε όλες τις ερωτήσεις για να υποβάλετε το τεστ!\n\nΕκκρεμούν οι ερωτήσεις: ${unanswered.join(', ')}`);
+        const firstUnansweredCard = document.getElementById(`test-card-${unanswered[0] - 1}`);
+        if (firstUnansweredCard) {
+          firstUnansweredCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      generateReport();
+    }
+
+    /* =================================================================
+       REPORT GENERATION & FINAL RESULTS
+    ================================================================= */
+    function generateReport() {
+      let correctCount = 0;
+      questionsData.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) {
+          correctCount++;
+        }
+      });
+
+      const total = questionsData.length;
+      const pct = Math.round((correctCount / total) * 100);
+
+      document.getElementById('report-score-num').innerText = `${correctCount} / ${total}`;
+      document.getElementById('report-score-pct').innerText = `Ποσοστό Επιτυχίας: ${pct}%`;
+
+      // Pedagogical Comment
+      const commentEl = document.getElementById('report-pedagogical');
+      if (pct >= 90) {
+        commentEl.innerText = "🏆 ΑΡΙΣΤΑ! Έχετε κατανοήσει πλήρως τους Δισδιάστατους Πίνακες, τις προσπελάσεις κατά γραμμές/στήλες και τις ιδιότητες των διαγωνίων.";
+        commentEl.style.color = "var(--olive)";
+      } else if (pct >= 75) {
+        commentEl.innerText = "👍 ΠΟΛΥ ΚΑΛΑ! Έχετε πολύ καλή επαφή με την ύλη της 8ης εβδομάδας. Επισκοπήστε τις αιτιολογήσεις στις ερωτήσεις που χάσατε.";
+        commentEl.style.color = "var(--terracotta)";
+      } else if (pct >= 60) {
+        commentEl.innerText = "💡 ΚΑΛΑ! Χρειάζεται λίγη επιπλέον εξάσκηση στις συνθήκες των διαγωνίων (i=j, i+j=N+1) και στις προσπελάσεις κατά στήλες.";
+        commentEl.style.color = "#a57428";
+      } else {
+        commentEl.innerText = "⚠️ ΧΡΕΙΑΖΕΤΑΙ ΕΠΑΝΑΛΗΨΗ! Συνιστάται προσεκτική μελέτη της Ενότητας 9.3 του σχολικού βιβλίου και ξανά εκτέλεση του quiz.";
+        commentEl.style.color = "var(--incorrect-text)";
+      }
+
+      // Metadata Info (Name + Timestamp)
+      const now = new Date();
+      const timeStr = now.toLocaleString('el-GR', { dateStyle: 'full', timeStyle: 'short' });
+      document.getElementById('report-meta-info').innerText = `Μαθητής/τρια: ${studentName}  |  Ημερομηνία/Ώρα: ${timeStr}  |  Λειτουργία: ${selectedMode === 'PRACTICE' ? 'Εκμάθηση' : 'Προσομοίωση'}`;
+
+      // Detailed Questions List
+      const listContainer = document.getElementById('report-list-container');
+      listContainer.innerHTML = '';
+
+      questionsData.forEach((q, idx) => {
+        const uAns = userAnswers[idx];
+        const isCorrect = uAns === q.correct;
+
+        const item = document.createElement('div');
+        item.className = `report-item ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+        let codeHtml = q.code ? `<div class="code-box" style="font-size:0.85rem; padding:10px; margin:8px 0;">${q.code}</div>` : '';
+        let uText = uAns !== null ? `${String.fromCharCode(65 + uAns)}. ${q.options[uAns]}` : 'Δεν απαντήθηκε';
+        let cText = `${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}`;
+
+        item.innerHTML = `
+          <div class="report-item-title">${q.id}. ${q.question} ${isCorrect ? '<span style="color:var(--correct-border);">✓ (Σωστό)</span>' : '<span style="color:var(--incorrect-border);">✗ (Λάθος)</span>'}</div>
+          ${codeHtml}
+          <div class="report-ans-row user-val"><strong>Η απάντησή σας:</strong> ${uText}</div>
+          ${!isCorrect ? `<div class="report-ans-row correct-val"><strong>Σωστή απάντηση:</strong> ${cText}</div>` : ''}
+          <div class="report-justification">📌 <strong>Πλήρης Αιτιολογία:</strong> ${q.explanation}</div>
+        `;
+
+        listContainer.appendChild(item);
+      });
+
+      switchScreen('screen-report');
+    }
+
+    function restartApp() {
+      document.getElementById('student-name').value = '';
+      selectMode('PRACTICE');
+      switchScreen('screen-start');
+    }
+  </script>
+</body>
+</html>

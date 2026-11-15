@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz Εμπέδωσης & Αξιολόγησης - 5η Εβδομάδα (ΑΕΠΠ Γ΄ Λυκείου)</title>
+  <style>
+    /* =================================================================
+       EARTH TONES PALETTE & GLOBAL STYLES (UI/UX)
+       Background: #f7f4ef | Terracotta: #7a4b29 | Olive: #4e6e52
+       Sand/Ochre: #d4b886 | Sand Light: #eee6d8 | Dark Text: #3a322b
+    ================================================================= */
+    :root {
+      --bg-color: #f7f4ef;
+      --card-bg: #ffffff;
+      --terracotta: #7a4b29;
+      --terracotta-hover: #633b1f;
+      --olive: #4e6e52;
+      --olive-hover: #3d5740;
+      --sand-ochre: #d4b886;
+      --sand-light: #eee6d8;
+      --text-dark: #3a322b;
+      --text-muted: #6c635b;
+      --border-color: #e2d9cd;
+      
+      --correct-bg: #eaf2eb;
+      --correct-border: #4e6e52;
+      --correct-text: #2d4530;
+      
+      --incorrect-bg: #f9ebea;
+      --incorrect-border: #a93226;
+      --incorrect-text: #78281f;
+
+      --hint-bg: #fdf8ec;
+      --hint-border: #d4b886;
+      --hint-text: #6e572e;
+
+      --shadow-sm: 0 4px 10px rgba(58, 50, 43, 0.05);
+      --shadow-md: 0 8px 24px rgba(58, 50, 43, 0.09);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 15px;
+    }
+
+    /* HEADER */
+    header {
+      width: 100%;
+      max-width: 860px;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--terracotta);
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* APP CONTAINER */
+    .app-card {
+      width: 100%;
+      max-width: 860px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: var(--shadow-md);
+      position: relative;
+    }
+
+    /* SCREENS SWITCHING */
+    .screen {
+      display: none;
+      animation: fadeIn 0.35s ease-in-out;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* START SCREEN */
+    .welcome-title {
+      font-size: 1.4rem;
+      color: var(--terracotta);
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .input-section {
+      margin-bottom: 25px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .input-section label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+    }
+
+    .input-section input {
+      padding: 12px 16px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 1rem;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .input-section input:focus {
+      border-color: var(--terracotta);
+    }
+
+    .mode-select-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--text-dark);
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 25px;
+    }
+
+    @media (max-width: 600px) {
+      .mode-grid { grid-template-columns: 1fr; }
+    }
+
+    .mode-card {
+      border: 2px solid var(--border-color);
+      border-radius: 14px;
+      padding: 20px;
+      cursor: pointer;
+      background: var(--bg-color);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mode-card:hover {
+      border-color: var(--sand-ochre);
+      transform: translateY(-2px);
+    }
+
+    .mode-card.selected {
+      border-color: var(--olive);
+      background-color: #f0f4f1;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mode-card h3 {
+      font-size: 1.1rem;
+      color: var(--olive);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mode-card.test-mode h3 {
+      color: var(--terracotta);
+    }
+
+    .mode-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .start-btn {
+      width: 100%;
+      padding: 14px;
+      background-color: var(--terracotta);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .start-btn:hover {
+      background-color: var(--terracotta-hover);
+    }
+
+    /* COMMON QUIZ UI & HEADER BARS */
+    .quiz-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 15px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .student-badge {
+      background-color: var(--sand-light);
+      padding: 6px 12px;
+      border-radius: 20px;
+      color: var(--terracotta);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background-color: var(--sand-light);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 25px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background-color: var(--olive);
+      transition: width 0.3s ease;
+    }
+
+    /* QUESTION CARD COMPONENTS */
+    .q-card-single {
+      margin-bottom: 20px;
+    }
+
+    .q-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      line-height: 1.5;
+      margin-bottom: 14px;
+      color: var(--text-dark);
+    }
+
+    /* DARK CODE SNIPPET BOX */
+    .code-box {
+      background-color: #2b2622;
+      color: #f7f4ef;
+      font-family: 'Consolas', 'Courier New', monospace;
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      margin-bottom: 16px;
+      border-left: 4px solid var(--sand-ochre);
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .opt-btn {
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      line-height: 1.4;
+    }
+
+    .opt-btn:hover:not(:disabled) {
+      background-color: var(--sand-light);
+      border-color: var(--sand-ochre);
+    }
+
+    .opt-btn.selected {
+      border-color: var(--terracotta);
+      background-color: #fbf0e8;
+      font-weight: 600;
+    }
+
+    .opt-btn.correct {
+      background-color: var(--correct-bg) !important;
+      border-color: var(--correct-border) !important;
+      color: var(--correct-text) !important;
+      font-weight: 700;
+    }
+
+    .opt-btn.incorrect {
+      background-color: var(--incorrect-bg) !important;
+      border-color: var(--incorrect-border) !important;
+      color: var(--incorrect-text) !important;
+      font-weight: 700;
+    }
+
+    .opt-btn:disabled {
+      cursor: default;
+    }
+
+    /* HINT & EXPLANATION BOXES */
+    .hint-box {
+      display: none;
+      background-color: var(--hint-bg);
+      border-left: 4px solid var(--hint-border);
+      color: var(--hint-text);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .explanation-box {
+      display: none;
+      background-color: var(--sand-light);
+      border-left: 4px solid var(--olive);
+      color: var(--text-dark);
+      padding: 14px 18px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    /* BUTTONS & FOOTER CONTROLS */
+    .action-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      gap: 10px;
+    }
+
+    .btn-btn {
+      padding: 10px 18px;
+      border-radius: 8px;
+      border: none;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-olive {
+      background-color: var(--olive);
+      color: #fff;
+    }
+
+    .btn-olive:hover:not(:disabled) {
+      background-color: var(--olive-hover);
+    }
+
+    .btn-terracotta {
+      background-color: var(--terracotta);
+      color: #fff;
+    }
+
+    .btn-terracotta:hover:not(:disabled) {
+      background-color: var(--terracotta-hover);
+    }
+
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-dark);
+    }
+
+    .btn-outline:hover:not(:disabled) {
+      background-color: var(--sand-light);
+    }
+
+    .btn-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* TEST MODE STYLES */
+    .test-questions-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+      margin-bottom: 25px;
+    }
+
+    .test-q-card {
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      background-color: #fff;
+    }
+
+    /* REPORT / RESULTS SCREEN */
+    .report-header {
+      text-align: center;
+      padding: 20px;
+      background-color: var(--bg-color);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      margin-bottom: 25px;
+    }
+
+    .report-score {
+      font-size: 2.8rem;
+      font-weight: 800;
+      color: var(--terracotta);
+      margin-bottom: 4px;
+    }
+
+    .report-pct {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--olive);
+      margin-bottom: 8px;
+    }
+
+    .pedagogical-comment {
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      font-style: italic;
+      margin-top: 6px;
+    }
+
+    .report-meta {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    .report-section-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--olive);
+      margin-bottom: 16px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--sand-light);
+    }
+
+    .report-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 30px;
+    }
+
+    .report-item {
+      padding: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background-color: #fff;
+    }
+
+    .report-item.is-correct {
+      border-left: 5px solid var(--correct-border);
+    }
+
+    .report-item.is-incorrect {
+      border-left: 5px solid var(--incorrect-border);
+    }
+
+    .report-item-title {
+      font-weight: 700;
+      font-size: 0.98rem;
+      margin-bottom: 10px;
+    }
+
+    .report-ans-row {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .report-ans-row.user-val {
+      color: var(--text-dark);
+    }
+
+    .report-ans-row.correct-val {
+      color: var(--correct-border);
+      font-weight: 600;
+    }
+
+    .report-justification {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border-color);
+      line-height: 1.45;
+    }
+
+    /* PRINT STYLES (@media print) */
+    @media print {
+      body {
+        background-color: #fff;
+        padding: 0;
+        color: #000;
+      }
+
+      .app-card {
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        max-width: 100%;
+      }
+
+      header, .action-row, .btn-btn, .mode-grid, .input-section {
+        display: none !important;
+      }
+
+      .report-screen {
+        display: block !important;
+      }
+
+      .report-item {
+        break-inside: avoid;
+        border: 1px solid #ccc;
+      }
+
+      .code-box {
+        background-color: #f0f0f0 !important;
+        color: #000 !important;
+        border-left: 3px solid #666 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Διαδραστικό Quiz Εμπέδωσης & Αξιολόγησης</h1>
+    <p>5η Εβδομάδα: Μέθοδος «Διαίρει και Βασίλευε» & Εισαγωγή στις Δομές Δεδομένων</p>
+  </header>
+
+  <main class="app-card">
+
+    <!-- 1. START SCREEN -->
+    <section id="screen-start" class="screen active">
+      <h2 class="welcome-title">Καλώς ήρθατε στο Quiz 5ης Εβδομάδας</h2>
+      
+      <div class="input-section">
+        <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+        <input type="text" id="student-name" placeholder="π.χ. Γεώργιος Αλεξίου" autocomplete="off">
+      </div>
+
+      <div class="mode-select-title">Επιλέξτε Λειτουργία (Dual Mode):</div>
+      <div class="mode-grid">
+        <div class="mode-card selected" id="card-practice" onclick="selectMode('PRACTICE')">
+          <h3>🎮 Εκμάθηση & Εξάσκησης</h3>
+          <p>Βήμα-βήμα πλοήγηση. Άμεσο feedback και αναλυτική επεξήγηση μετά από κάθε ερώτηση πριν την επόμενη.</p>
+        </div>
+        <div class="mode-card test-mode" id="card-test" onclick="selectMode('TEST')">
+          <h3>📝 Προσομοίωση & Τεστ</h3>
+          <p>Εμφάνιση όλων των ερωτήσεων. Υποχρεωτική απάντηση σε όλες πριν την υποβολή και έκδοση τελικού Report.</p>
+        </div>
+      </div>
+
+      <button class="start-btn" onclick="startQuiz()">Έναρξη Quiz ➔</button>
+    </section>
+
+    <!-- 2. PRACTICE MODE SCREEN -->
+    <section id="screen-practice" class="screen">
+      <div class="quiz-top-bar">
+        <span class="student-badge" id="practice-student-name">Μαθητής</span>
+        <span id="practice-progress-text">Ερώτηση 1 από 15</span>
+      </div>
+
+      <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="practice-progress-fill"></div>
+      </div>
+
+      <div class="q-card-single">
+        <div class="q-text" id="practice-q-text"></div>
+        <div id="practice-code-box" class="code-box" style="display:none;"></div>
+        
+        <div class="options-grid" id="practice-options"></div>
+
+        <div class="hint-box" id="practice-hint-box">
+          💡 <strong>Υπόδειξη:</strong> <span id="practice-hint-text"></span>
+        </div>
+
+        <div class="explanation-box" id="practice-exp-box">
+          📌 <strong>Αιτιολόγηση:</strong> <span id="practice-exp-text"></span>
+        </div>
+
+        <div class="action-row">
+          <button class="btn-btn btn-outline" id="practice-hint-btn" onclick="togglePracticeHint()">💡 Υπόδειξη</button>
+          <button class="btn-btn btn-olive" id="practice-next-btn" onclick="nextPracticeQuestion()" disabled>Επόμενη ➔</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. TEST MODE SCREEN -->
+    <section id="screen-test" class="screen">
+      <div class="quiz-top-bar">
+        <span class="student-badge" id="test-student-name">Μαθητής</span>
+        <span id="test-status-text">Απαντήθηκαν: 0 / 15</span>
+      </div>
+
+      <div class="test-questions-wrapper" id="test-questions-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="action-row" style="margin-top:20px; justify-content: flex-end;">
+        <button class="btn-btn btn-terracotta" onclick="submitTestMode()" style="padding:14px 24px; font-size:1rem;">
+          🚀 Υποβολή Τεστ & Έκδοση Αποτελεσμάτων
+        </button>
+      </div>
+    </section>
+
+    <!-- 4. REPORT / RESULTS SCREEN -->
+    <section id="screen-report" class="screen">
+      <div class="report-header">
+        <div class="report-score" id="report-score-num">0 / 15</div>
+        <div class="report-pct" id="report-score-pct">0% Success</div>
+        <div class="pedagogical-comment" id="report-pedagogical"></div>
+        <div class="report-meta" id="report-meta-info"></div>
+      </div>
+
+      <div class="report-section-title">📋 Αναλυτική Αναφορά Απαντήσεων & Τεκμηριώσεων</div>
+      <div class="report-list" id="report-list-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="action-row">
+        <button class="btn-btn btn-outline" onclick="restartApp()">↻ Έναρξη από την αρχή</button>
+        <button class="btn-btn btn-olive" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* =================================================================
+       WEEK 5 QUESTIONS DATASET (15 High-Quality Pedagogical Questions)
+    ================================================================= */
+    const questionsData = [
+      {
+        id: 1,
+        question: "Ποια είναι τα τρία θεμελιώδη βήματα της μεθόδου σχεδίασης αλγορίθμων «Διαίρει και Βασίλευε»;",
+        code: null,
+        options: [
+          "Εισαγωγή, Επεξεργασία, Έξοδος",
+          "Διάσπαση (Διαίρεση), Επίλυση (Βασίλευε), Σύνθεση (Combine)",
+          "Ταξινόμηση, Αναζήτηση, Εκτύπωση",
+          "Αρχικοποίηση, Επανάληψη, Τερματισμός"
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε πώς αναλύεται ένα μεγάλο πρόβλημα σε μικρότερα υποπροβλήματα και πώς συντίθενται οι μερικές λύσεις.",
+        explanation: "Η μέθοδος περιλαμβάνει: 1) Διάσπαση του αρχικού προβλήματος σε μικρότερα υποπροβλήματα, 2) Επίλυση των υποπροβλημάτων, 3) Σύνθεση των μερικών λύσεων για την παραγωγή της συνολικής λύσης."
+      },
+      {
+        id: 2,
+        question: "Ποιος από τους παρακάτω αλγόριθμους αποτελεί χαρακτηριστικό παράδειγμα εφαρμογής της μεθόδου «Διαίρει και Βασίλευε»;",
+        code: null,
+        options: [
+          "Σειριακή αναζήτηση (Sequential Search)",
+          "Δυαδική αναζήτηση (Binary Search)",
+          "Ταξινόμηση φυσαλίδας (Bubble Sort)",
+          "Υπολογισμός αθροίσματος στοιχείων πίνακα"
+        ],
+        correct: 1,
+        hint: "Ποιος αλγόριθμος υποδιπλασιάζει το εύρος αναζήτησης σε κάθε βήμα απορρίπτοντας το μισό πίνακα;",
+        explanation: "Η Δυαδική Αναζήτηση ακολουθεί τη φιλοσοφία «Διαίρει και Βασίλευε», καθώς υποδιαιρεί το διάστημα αναζήτησης στο μισό σε κάθε βήμα."
+      },
+      {
+        id: 3,
+        question: "Ποια είναι η αυστηρή προϋπόθεση για την εφαρμογή του αλγορίθμου της Δυαδικής Αναζήτησης σε έναν πίνακα;",
+        code: null,
+        options: [
+          "Ο πίνακας να περιέχει μόνο θετικούς ακέραιους αριθμούς",
+          "Ο πίνακας να είναι αυστηρά ταξινομημένος",
+          "Ο πίνακας να έχει μέγεθος τουλάχιστον 100 στοιχείων",
+          "Τα στοιχεία του πίνακα να είναι όλα διαφορετικά μεταξύ τους"
+        ],
+        correct: 1,
+        hint: "Χωρίς ποια διάταξη στοιχείων είναι αδύνατον να αποφασίσουμε αν το ζητούμενο βρίσκεται στο αριστερό ή δεξί μισό;",
+        explanation: "Απαραίτητη προϋπόθεση για τη δυαδική αναζήτηση είναι τα στοιχεία του πίνακα να είναι προ-ταξινομημένα (σε αύξουσα ή φθίνουσα σειρά)."
+      },
+      {
+        id: 4,
+        question: "Στη Δυαδική Αναζήτηση σε ταξινομημένο πίνακα 100 στοιχείων, πόσες συγκρίσεις απαιτούνται το πολύ (στη χειρότερη περίπτωση);",
+        code: null,
+        options: [
+          "100 συγκρίσεις",
+          "50 συγκρίσεις",
+          "7 συγκρίσεις (εφόσον 2^7 = 128 > 100)",
+          "1 σύγκριση"
+        ],
+        correct: 2,
+        hint: "Υπολογίστε πόσες φορές μπορεί να υποδιπλασιαστεί το 100 μέχρι να φτάσει στο 1 (λογαριθμική πολυπλοκότητα).",
+        explanation: "Η πολυπλοκότητα της δυαδικής αναζήτησης είναι O(log₂N). Για N=100 απαιτούνται το πολύ 7 συγκρίσεις, διότι 2^6 = 64 < 100 < 128 = 2^7."
+      },
+      {
+        id: 5,
+        question: "Τι ορίζεται ως «Δεδομένο» (Data) στην Πληροφορική;",
+        code: null,
+        options: [
+          "Η επεξεργασμένη και αξιοποιήσιμη γνώση",
+          "Οποιαδήποτε ακατέργαστη αναπαράσταση γεγονότων ή εννοιών κατάλληλη για επεξεργασία",
+          "Το τελικό αποτέλεσμα που εμφανίζεται στην οθόνη",
+          "Η εντολή εκτέλεσης ενός προγράμματος"
+        ],
+        correct: 1,
+        hint: "Διακρίνετε τα ακατέργαστα στοιχεία εισόδου από την επεξεργασμένη «Πληροφορία».",
+        explanation: "Δεδομένα είναι τα ακατέργαστα στοιχεία (γεγονότα, αριθμοί, σύμβολα). Όταν υποβληθούν σε επεξεργασία από τον υπολογιστή, παράγουν την Πληροφορία."
+      },
+      {
+        id: 6,
+        question: "Ποια είναι η βασική διαφορά μεταξύ Στατικών και Δυναμικών Δομών Δεδομένων;",
+        code: null,
+        options: [
+          "Οι στατικές δομές αποθηκεύουν μόνο αριθμούς, ενώ οι δυναμικές μόνο αλφαριθμητικά",
+          "Οι στατικές δομές έχουν σταθερό μέγεθος που δηλώνεται κατά τη μεταγλώττιση, ενώ οι δυναμικές προσαρμόζουν το μέγεθός τους κατά την εκτέλεση",
+          "Οι στατικές δομές αποθηκεύονται στη μνήμη ROM, ενώ οι δυναμικές στη μνήμη RAM",
+          "Οι στατικές δομές δεν υποστηρίζουν την εντολή αναζήτησης"
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε πότε δεσμεύεται η μνήμη και αν το μέγεθος της δομής μπορεί να μεταβληθεί κατά την εκτέλεση.",
+        explanation: "Οι στατικές δομές (π.χ. Πίνακες) έχουν σταθερό μέγεθος καθορισμένο στη δήλωση. Οι δυναμικές δομές (π.χ. Συνδεδεμένες Λίστες) δεσμεύουν/αποδεσμεύουν μνήμη δυναμικά κατά την εκτέλεση."
+      },
+      {
+        id: 7,
+        question: "Ποια από τις παρακάτω Δομές Δεδομένων θεωρείται ΓΡΑΜΜΙΚΗ (Linear);",
+        code: null,
+        options: [
+          "Δένδρο (Tree)",
+          "Γράφος (Graph)",
+          "Μονοδιάστατος Πίνακας (Array)",
+          "Δυαδικό Δένδρο Αναζήτησης (BST)"
+        ],
+        correct: 2,
+        hint: "Στις γραμμικές δομές κάθε στοιχείο (εκτός από το πρώτο και το τελευταίο) έχει έναν προηγούμενο και έναν επόμενο γείτονα.",
+        explanation: "Ο Μονοδιάστατος Πίνακας, η Στοίβα και η Ουρά είναι γραμμικές δομές. Τα Δένδρα και οι Γράφοι είναι μη γραμμικές (ιεραρχικές/δικτυακές) δομές."
+      },
+      {
+        id: 8,
+        question: "Ποια βασική λειτουργία επί των δομών δεδομένων αναφέρεται στην προσπέλαση και εξέταση όλων των στοιχείων της δομής ακριβώς μία φορά;",
+        code: null,
+        options: [
+          "Ταξινόμηση",
+          "Διάσχιση (Traversal)",
+          "Συγχώνευση (Merging)",
+          "Διαγραφή"
+        ],
+        correct: 1,
+        hint: "Πρόκειται για την προσπέλαση κάθε κόμβου/στοιχείου της δομής με σκοπό π.χ. την εκτύπωση ή την επεξεργασία του.",
+        explanation: "Διάσχιση (Traversal) είναι η λειτουργία κατά την οποία προσπελαύνονται όλα τα στοιχεία μιας δομής δεδομένων διαδοχικά, ακριβώς μία φορά."
+      },
+      {
+        id: 9,
+        question: "Ποια λειτουργία συνενώνει δύο ή περισσότερες δομές δεδομένων σε μία ενιαία δομή;",
+        code: null,
+        options: [
+          "Διάσχιση",
+          "Αναζήτηση",
+          "Συγχώνευση (Merging)",
+          "Ενθυλάκωση"
+        ],
+        correct: 2,
+        hint: "Σκεφτείτε τη λειτουργία που παίρνει π.χ. δύο ταξινομημένους πίνακες και δημιουργεί έναν τρίτο ταξινομημένο πίνακα.",
+        explanation: "Συγχώνευση (Merging) είναι η διαδικασία συνένωσης δύο ή περισσότερων δομών δεδομένων (συχνά ταξινομημένων) σε μία νέα ενιαία δομή."
+      },
+      {
+        id: 10,
+        question: "Εξετάστε το παρακάτω τμήμα αλγορίθμου Δυαδικής Αναζήτησης σε πίνακα A[10]:",
+        code: "low <- 1\nhigh <- 10\ntarget <- 25\nmid <- (low + high) DIV 2",
+        questionPost: "Ποια θα είναι η τιμή της μεταβλητής mid στην πρώτη επανάληψη;",
+        options: [
+          "1",
+          "5",
+          "10",
+          "5.5"
+        ],
+        correct: 1,
+        hint: "Εκτελέστε την ακέραια διαίρεση: (1 + 10) DIV 2 = 11 DIV 2.",
+        explanation: "Η ακέραια διαίρεση `11 DIV 2` επιστρέφει το ακέραιο μέρος, δηλαδή `5`. Άρα `mid = 5` στην πρώτη σύγκριση."
+      },
+      {
+        id: 11,
+        question: "Στις Στατικές Δομές Δεδομένων (όπως οι Πίνακες στη «ΓΛΩΣΣΑ»), τα στοιχεία αποθηκεύονται στη μνήμη RAM σε:",
+        code: null,
+        options: [
+          "Διάσπαρτες, μη συνεχόμενες θέσεις μνήμης",
+          "Συνεχόμενες (διαδοχικές) θέσεις μνήμης",
+          "Εξωτερική δευτερεύουσα μνήμη (σκληρό δίσκο)",
+          "Δυναμικά κατανεμημένες διευθύνσεις μέσω δεικτών"
+        ],
+        correct: 1,
+        hint: "Αυτή η ιδιότητα επιτρέπει την τυχαία/άμεση προσπέλαση μέσω του δείκτη `A[i]`.",
+        explanation: "Στους πίνακες τα στοιχεία καταλαμβάνουν συνεχόμενες (διαδοχικές) θέσεις μνήμης RAM, γεγονός που επιτρέπει την άμεση/τυχαία προσπέλαση σε οποιοδήποτε στοιχείο."
+      },
+      {
+        id: 12,
+        question: "Τι ονομάζουμε «Αφαιρετικό Τύπο Δεδομένων» (Abstract Data Type - ADT);",
+        code: null,
+        options: [
+          "Ένα μαθηματικό μοντέλο δομής μαζί με το σύνολο των επιτρεπτών λειτουργιών πάνω σε αυτήν, ανεξάρτητα από την υλοποίησή της",
+          "Έναν τύπο μεταβλητής που δεν καταλαμβάνει χώρο στη μνήμη",
+          "Μια συνάρτηση που επιστρέφει λογική τιμή",
+          "Έναν πίνακα που δεν έχει δηλωθεί στη «ΓΛΩΣΣΑ»"
+        ],
+        correct: 0,
+        hint: "Ορίζει ΤΙ κάνει η δομή και ποιες λειτουργίες επιτρέπονται, χωρίς να δεσμεύεται από το ΠΩΣ υλοποιείται στον κώδικα.",
+        explanation: "Ο Αφαιρετικός Τύπος Δεδομένων (ΑΤΔ) καθορίζει τη λογική συμπεριφορά της δομής και τις διαθέσιμες λειτουργίες (π.χ. Push/Pop στη Στοίβα), διαχωρίζοντάς την από τις λεπτομέρειες υλοποίησης."
+      },
+      {
+        id: 13,
+        question: "Ποια σκοπιά μελέτης των δομών δεδομένων εστιάζει στον τρόπο με τον οποίο οι δομές αποθηκεύονται στη φυσική κύρια μνήμη;",
+        code: null,
+        options: [
+          "Λογική σκοπιά (Logical abstraction)",
+          "Φυσική σκοπιά (Physical / Storage structure)",
+          "Γραφική σκοπιά",
+          "Λειτουργική σκοπιά"
+        ],
+        correct: 1,
+        hint: "Διακρίνετε τη λογική θεώρηση του προγραμματιστή από τη φυσική αποθήκευση στο υλικό (hardware).",
+        explanation: "Η Φυσική Σκοπιά εξετάζει τον πραγματικό τρόπο αναπαράστασης και αποθήκευσης των δεδομένων στις διευθύνσεις της κύριας μνήμης του υπολογιστή."
+      },
+      {
+        id: 14,
+        question: "Εξετάστε τον ταξινομημένο πίνακα 8 στοιχείων `A = [3, 8, 12, 18, 25, 31, 42, 50]`. Αναζητούμε την τιμή 18 με Δυαδική Αναζήτηση. Ποιο στοιχείο θα συγκριθεί ΠΡΩΤΟ;",
+        code: null,
+        options: [
+          "Το στοιχείο 3 (1η θέση)",
+          "Το στοιχείο 18 (4η θέση)",
+          "Το στοιχείο 25 (5η θέση)",
+          "Το στοιχείο 50 (8η θέση)"
+        ],
+        correct: 1,
+        hint: "Υπολογίστε το μεσαίο δείκτη: low = 1, high = 8 -> mid = (1 + 8) DIV 2 = 4.",
+        explanation: "low = 1, high = 8 -> mid = (1 + 8) DIV 2 = 4. Το στοιχείο στην 4η θέση είναι το A[4] = 18. Εφόσον A[4] == target (18), ο αλγόριθμος το εντοπίζει αμέσως στην 1η σύγκριση!"
+      },
+      {
+        id: 15,
+        question: "Ποιο είναι το κύριο πλεονέκτημα της μεθόδου σχεδίασης «Διαίρει και Βασίλευε»;",
+        code: null,
+        options: [
+          "Μειώνει τον απαιτούμενο αποθηκευτικό χώρο στη μνήμη ROM",
+          "Επιτρέπει την επίλυση μεγάλων και σύνθετων προβλημάτων διασπώντας τα σε μικρότερα, ανεξάρτητα και ευκολότερα επιλύσιμα υποπροβλήματα",
+          "Καταργεί τη χρήση μεταβλητών και δομών επανάληψης",
+          "Εγγυάται ότι δεν θα υπάρξουν ποτέ συντακτικά λάθη"
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε πώς η απλοποίηση των υποπροβλημάτων καθιστά δυνατή τη διαχείριση πολύπλοκων αλγορίθμων.",
+        explanation: "Η μέθοδος «Διαίρει και Βασίλευε» επιτρέπει τη διαχείριση πολύπλοκων προβλημάτων μειώνοντας την πολυπλοκότητα μέσω της κατάτμησης σε απλούστερα αυτόνομα υποπροβλήματα."
+      }
+    ];
+
+    /* =================================================================
+       APP STATE MANAGEMENT
+    ================================================================= */
+    let selectedMode = 'PRACTICE'; // 'PRACTICE' or 'TEST'
+    let studentName = 'Ανώνυμος/η Μαθητής/τρια';
+    let currentPracticeIdx = 0;
+    let userAnswers = new Array(questionsData.length).fill(null);
+    let hintState = new Array(questionsData.length).fill(false);
+
+    /* =================================================================
+       NAVIGATION & MODE SELECTION
+    ================================================================= */
+    function selectMode(mode) {
+      selectedMode = mode;
+      document.getElementById('card-practice').classList.toggle('selected', mode === 'PRACTICE');
+      document.getElementById('card-test').classList.toggle('selected', mode === 'TEST');
+    }
+
+    function switchScreen(screenId) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(screenId).classList.add('active');
+      window.scrollTo(0, 0);
+    }
+
+    function startQuiz() {
+      const nameInput = document.getElementById('student-name').value.trim();
+      studentName = nameInput || 'Ανώνυμος/η Μαθητής/τρια';
+
+      // Reset states
+      currentPracticeIdx = 0;
+      userAnswers = new Array(questionsData.length).fill(null);
+      hintState = new Array(questionsData.length).fill(false);
+
+      if (selectedMode === 'PRACTICE') {
+        document.getElementById('practice-student-name').innerText = studentName;
+        renderPracticeQuestion();
+        switchScreen('screen-practice');
+      } else {
+        document.getElementById('test-student-name').innerText = studentName;
+        renderTestMode();
+        switchScreen('screen-test');
+      }
+    }
+
+    /* =================================================================
+       PRACTICE MODE LOGIC (Step-by-Step with Immediate Feedback)
+    ================================================================= */
+    function renderPracticeQuestion() {
+      const q = questionsData[currentPracticeIdx];
+      const total = questionsData.length;
+
+      // Update progress
+      document.getElementById('practice-progress-text').innerText = `Ερώτηση ${currentPracticeIdx + 1} από ${total}`;
+      const pct = Math.round(((currentPracticeIdx + 1) / total) * 100);
+      document.getElementById('practice-progress-fill').style.width = `${pct}%`;
+
+      // Text & Code Box
+      document.getElementById('practice-q-text').innerText = `${q.id}. ${q.question} ${q.questionPost || ''}`;
+      const codeBox = document.getElementById('practice-code-box');
+      if (q.code) {
+        codeBox.innerText = q.code;
+        codeBox.style.display = 'block';
+      } else {
+        codeBox.style.display = 'none';
+      }
+
+      // Options
+      const optsContainer = document.getElementById('practice-options');
+      optsContainer.innerHTML = '';
+      const answered = userAnswers[currentPracticeIdx] !== null;
+
+      q.options.forEach((optText, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${optText}</span>`;
+
+        if (answered) {
+          btn.disabled = true;
+          if (idx === q.correct) {
+            btn.classList.add('correct');
+            btn.innerHTML += ` <span>✓ (Σωστό)</span>`;
+          } else if (idx === userAnswers[currentPracticeIdx]) {
+            btn.classList.add('incorrect');
+            btn.innerHTML += ` <span>✗ (Λάθος)</span>`;
+          }
+        } else {
+          btn.onclick = () => selectPracticeAnswer(idx);
+        }
+
+        optsContainer.appendChild(btn);
+      });
+
+      // Hint State
+      const hintBox = document.getElementById('practice-hint-box');
+      if (hintState[currentPracticeIdx]) {
+        document.getElementById('practice-hint-text').innerText = q.hint;
+        hintBox.style.display = 'block';
+      } else {
+        hintBox.style.display = 'none';
+      }
+
+      // Explanation State
+      const expBox = document.getElementById('practice-exp-box');
+      if (answered) {
+        document.getElementById('practice-exp-text').innerText = q.explanation;
+        expBox.style.display = 'block';
+      } else {
+        expBox.style.display = 'none';
+      }
+
+      // Next Button State
+      const nextBtn = document.getElementById('practice-next-btn');
+      nextBtn.disabled = !answered;
+      if (currentPracticeIdx === total - 1) {
+        nextBtn.innerText = 'Δείτε τα Αποτελέσματα 🏁';
+      } else {
+        nextBtn.innerText = 'Επόμενη ➔';
+      }
+    }
+
+    function selectPracticeAnswer(optIdx) {
+      userAnswers[currentPracticeIdx] = optIdx;
+      renderPracticeQuestion();
+    }
+
+    function togglePracticeHint() {
+      hintState[currentPracticeIdx] = !hintState[currentPracticeIdx];
+      renderPracticeQuestion();
+    }
+
+    function nextPracticeQuestion() {
+      if (currentPracticeIdx < questionsData.length - 1) {
+        currentPracticeIdx++;
+        renderPracticeQuestion();
+      } else {
+        generateReport();
+      }
+    }
+
+    /* =================================================================
+       TEST MODE LOGIC (Single Page - All Questions Rendered)
+    ================================================================= */
+    function renderTestMode() {
+      const container = document.getElementById('test-questions-container');
+      container.innerHTML = '';
+
+      questionsData.forEach((q, qIdx) => {
+        const card = document.createElement('div');
+        card.className = 'test-q-card';
+        card.id = `test-card-${qIdx}`;
+
+        let codeHtml = q.code ? `<div class="code-box">${q.code}</div>` : '';
+        let postHtml = q.questionPost ? `<div style="font-size:0.95rem; margin-bottom:12px; font-weight:600;">${q.questionPost}</div>` : '';
+
+        let optsHtml = '';
+        q.options.forEach((optText, oIdx) => {
+          const isSelected = userAnswers[qIdx] === oIdx;
+          optsHtml += `
+            <button class="opt-btn ${isSelected ? 'selected' : ''}" onclick="selectTestAnswer(${qIdx}, ${oIdx})">
+              <span>${String.fromCharCode(65 + oIdx)}. ${optText}</span>
+            </button>
+          `;
+        });
+
+        let hintHtml = `
+          <div class="hint-box" id="test-hint-${qIdx}">
+            💡 <strong>Υπόδειξη:</strong> ${q.hint}
+          </div>
+        `;
+
+        card.innerHTML = `
+          <div class="q-text">${q.id}. ${q.question}</div>
+          ${codeHtml}
+          ${postHtml}
+          <div class="options-grid">${optsHtml}</div>
+          ${hintHtml}
+          <div style="margin-top:10px;">
+            <button class="btn-btn btn-outline" style="font-size:0.82rem; padding:6px 12px;" onclick="toggleTestHint(${qIdx})">💡 Υπόδειξη</button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+
+      updateTestStatusText();
+    }
+
+    function selectTestAnswer(qIdx, oIdx) {
+      userAnswers[qIdx] = oIdx;
+      renderTestMode();
+    }
+
+    function toggleTestHint(qIdx) {
+      const hintBox = document.getElementById(`test-hint-${qIdx}`);
+      if (hintBox.style.display === 'block') {
+        hintBox.style.display = 'none';
+      } else {
+        hintBox.style.display = 'block';
+      }
+    }
+
+    function updateTestStatusText() {
+      const answeredCount = userAnswers.filter(a => a !== null).length;
+      document.getElementById('test-status-text').innerText = `Απαντήθηκαν: ${answeredCount} / ${questionsData.length}`;
+    }
+
+    function submitTestMode() {
+      const unanswered = [];
+      userAnswers.forEach((ans, idx) => {
+        if (ans === null) unanswered.push(idx + 1);
+      });
+
+      if (unanswered.length > 0) {
+        alert(`⚠️ Πρέπει υποχρεωτικά να απαντήσετε σε όλες τις ερωτήσεις για να υποβάλετε το τεστ!\n\nΕκκρεμούν οι ερωτήσεις: ${unanswered.join(', ')}`);
+        // Scroll to first unanswered
+        const firstUnansweredCard = document.getElementById(`test-card-${unanswered[0] - 1}`);
+        if (firstUnansweredCard) {
+          firstUnansweredCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      generateReport();
+    }
+
+    /* =================================================================
+       REPORT GENERATION & FINAL RESULTS
+    ================================================================= */
+    function generateReport() {
+      let correctCount = 0;
+      questionsData.forEach((q, idx) => {
+        if (userAnswers[idx] === q.correct) {
+          correctCount++;
+        }
+      });
+
+      const total = questionsData.length;
+      const pct = Math.round((correctCount / total) * 100);
+
+      document.getElementById('report-score-num').innerText = `${correctCount} / ${total}`;
+      document.getElementById('report-score-pct').innerText = `Ποσοστό Επιτυχίας: ${pct}%`;
+
+      // Pedagogical Comment
+      const commentEl = document.getElementById('report-pedagogical');
+      if (pct >= 90) {
+        commentEl.innerText = "🏆 ΑΡΙΣΤΑ! Έχετε κατανοήσει πλήρως τη μέθοδο «Διαίρει και Βασίλευε», τη Δυαδική Αναζήτηση και τις βασικές έννοιες των Δομών Δεδομένων.";
+        commentEl.style.color = "var(--olive)";
+      } else if (pct >= 75) {
+        commentEl.innerText = "👍 ΠΟΛΥ ΚΑΛΑ! Έχετε πολύ καλή επαφή με την ύλη της 5ης εβδομάδας. Επισκοπήστε τις αιτιολογήσεις στις ερωτήσεις που χάσατε.";
+        commentEl.style.color = "var(--terracotta)";
+      } else if (pct >= 60) {
+        commentEl.innerText = "💡 ΚΑΛΑ! Χρειάζεται λίγη επιπλέον εξάσκηση στους υπολογισμούς της Δυαδικής Αναζήτησης και στις διακρίσεις Στατικών/Δυναμικών Δομών.";
+        commentEl.style.color = "#a57428";
+      } else {
+        commentEl.innerText = "⚠️ ΧΡΕΙΑΖΕΤΑΙ ΕΠΑΝΑΛΗΨΗ! Συνιστάται προσεκτική μελέτη του θεωρητικού οδηγού της 5ης εβδομάδας και ξανά εκτέλεση του quiz.";
+        commentEl.style.color = "var(--incorrect-text)";
+      }
+
+      // Metadata Info (Name + Timestamp)
+      const now = new Date();
+      const timeStr = now.toLocaleString('el-GR', { dateStyle: 'full', timeStyle: 'short' });
+      document.getElementById('report-meta-info').innerText = `Μαθητής/τρια: ${studentName}  |  Ημερομηνία/Ώρα: ${timeStr}  |  Λειτουργία: ${selectedMode === 'PRACTICE' ? 'Εκμάθηση' : 'Προσομοίωση'}`;
+
+      // Detailed Questions List
+      const listContainer = document.getElementById('report-list-container');
+      listContainer.innerHTML = '';
+
+      questionsData.forEach((q, idx) => {
+        const uAns = userAnswers[idx];
+        const isCorrect = uAns === q.correct;
+
+        const item = document.createElement('div');
+        item.className = `report-item ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+        let codeHtml = q.code ? `<div class="code-box" style="font-size:0.85rem; padding:10px; margin:8px 0;">${q.code}</div>` : '';
+        let uText = uAns !== null ? `${String.fromCharCode(65 + uAns)}. ${q.options[uAns]}` : 'Δεν απαντήθηκε';
+        let cText = `${String.fromCharCode(65 + q.correct)}. ${q.options[q.correct]}`;
+
+        item.innerHTML = `
+          <div class="report-item-title">${q.id}. ${q.question} ${isCorrect ? '<span style="color:var(--correct-border);">✓ (Σωστό)</span>' : '<span style="color:var(--incorrect-border);">✗ (Λάθος)</span>'}</div>
+          ${codeHtml}
+          <div class="report-ans-row user-val"><strong>Η απάντησή σας:</strong> ${uText}</div>
+          ${!isCorrect ? `<div class="report-ans-row correct-val"><strong>Σωστή απάντηση:</strong> ${cText}</div>` : ''}
+          <div class="report-justification">📌 <strong>Πλήρης Αιτιολογία:</strong> ${q.explanation}</div>
+        `;
+
+        listContainer.appendChild(item);
+      });
+
+      switchScreen('screen-report');
+    }
+
+    function restartApp() {
+      document.getElementById('student-name').value = '';
+      selectMode('PRACTICE');
+      switchScreen('screen-start');
+    }
+  </script>
+</body>
+</html>

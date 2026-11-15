@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ) - Εβδομάδα 22: Ολοκλήρωση OOP & Σύνθετα Θέματα</title>
+    <style>
+        :root {
+            --bg-color: #f7f4ef;
+            --text-color: #3a322b;
+            --terracotta: #7a4b29;
+            --terracotta-hover: #61391e;
+            --olive: #4e6e52;
+            --olive-hover: #3c5640;
+            --sand: #d4b886;
+            --card-bg: #ffffff;
+            --dark-code-bg: #2d2621;
+            --dark-code-text: #f0e8df;
+            --correct-bg: #eaf3eb;
+            --correct-border: #4e6e52;
+            --wrong-bg: #fdf0ed;
+            --wrong-border: #a73c26;
+            --border-radius: 12px;
+            --shadow: 0 4px 15px rgba(58, 50, 43, 0.08);
+
+            /* Difficulty Badge Colors */
+            --diff-basic-bg: #4e6e52;
+            --diff-medium-bg: #b8977e;
+            --diff-advanced-bg: #c84b31;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding: 22px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            border-bottom: 4px solid var(--terracotta);
+        }
+
+        header h1 {
+            color: var(--terracotta);
+            font-size: 1.8rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            color: var(--olive);
+            font-weight: 600;
+            font-size: 1.05rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+            border: 1px solid rgba(212, 184, 134, 0.3);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--terracotta);
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--sand);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            color: var(--text-color);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--terracotta);
+        }
+
+        .mode-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .mode-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .mode-btn-card {
+            border: 2px solid var(--sand);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+            background: #fff;
+        }
+
+        .mode-btn-card:hover, .mode-btn-card.selected {
+            border-color: var(--terracotta);
+            background: #fcf8f3;
+            transform: translateY(-2px);
+        }
+
+        .mode-btn-card h3 {
+            color: var(--terracotta);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .mode-btn-card p {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: var(--terracotta);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn:hover {
+            background-color: var(--terracotta-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background-color: var(--olive);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--olive-hover);
+        }
+
+        .btn-hint {
+            background-color: transparent;
+            color: var(--terracotta);
+            border: 1px solid var(--terracotta);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            border-radius: 6px;
+        }
+
+        .btn-hint:hover {
+            background-color: rgba(122, 75, 41, 0.08);
+        }
+
+        /* Code Blocks */
+        pre code {
+            display: block;
+            background: var(--dark-code-bg);
+            color: var(--dark-code-text);
+            padding: 14px;
+            border-radius: 8px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.95rem;
+            overflow-x: auto;
+            margin: 12px 0;
+            border-left: 4px solid var(--sand);
+            white-space: pre;
+            line-height: 1.5;
+        }
+
+        /* Question Elements Header & Badges */
+        .question-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .question-number {
+            font-weight: 700;
+            color: var(--terracotta);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .diff-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #ffffff;
+            letter-spacing: 0.3px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .diff-basic {
+            background-color: var(--diff-basic-bg);
+        }
+
+        .diff-medium {
+            background-color: var(--diff-medium-bg);
+        }
+
+        .diff-advanced {
+            background-color: var(--diff-advanced-bg);
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .options-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1.5px solid #e0d8cd;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s;
+        }
+
+        .option-item:hover {
+            background-color: #fcf9f5;
+            border-color: var(--sand);
+        }
+
+        .option-item input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--terracotta);
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Hints & Feedback */
+        .hint-box {
+            display: none;
+            background: #fffdf7;
+            border-left: 4px solid var(--sand);
+            padding: 12px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-size: 0.95rem;
+            color: #554a3e;
+        }
+
+        .justification-box {
+            display: none;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .justification-box.correct {
+            background-color: var(--correct-bg);
+            border: 1px solid var(--correct-border);
+            color: #254229;
+        }
+
+        .justification-box.incorrect {
+            background-color: var(--wrong-bg);
+            border: 1px solid var(--wrong-border);
+            color: #641e10;
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0d8cd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: var(--olive);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Report Screen */
+        .report-header {
+            text-align: center;
+            border-bottom: 2px dashed var(--sand);
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-badge {
+            display: inline-block;
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--terracotta);
+            margin: 10px 0;
+        }
+
+        .pedagogical-comment {
+            background: #f4efe6;
+            padding: 15px;
+            border-radius: 8px;
+            font-style: italic;
+            color: var(--text-color);
+            margin-top: 10px;
+            border-left: 4px solid var(--olive);
+        }
+
+        .report-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #e0d8cd;
+        }
+
+        .report-item.is-correct {
+            border-left: 5px solid var(--olive);
+            background: #fcfdfe;
+        }
+
+        .report-item.is-incorrect {
+            border-left: 5px solid var(--wrong-border);
+            background: #fffcfc;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .badge-success { background-color: var(--olive); }
+        .badge-danger { background-color: var(--wrong-border); }
+
+        .actions-group {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .warning-msg {
+            color: var(--wrong-border);
+            font-weight: 600;
+            margin-top: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        /* Print Styles */
+        @media print {
+            body { background: #fff; color: #000; padding: 0; }
+            .container { max-width: 100%; }
+            .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+            .actions-group, .btn-hint, #start-screen, .progress-bar-container, .warning-msg { display: none !important; }
+            #report-screen { display: block !important; }
+            header { box-shadow: none; border-bottom: 2px solid #000; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Πληροφορική Γ΄ Λυκείου (ΑΕΠΠ)</h1>
+        <p>Εβδομάδα 22: Ολοκλήρωση Αντικειμενοστραφούς Προγραμματισμού & Σύνθετα Θέματα</p>
+    </header>
+
+    <!-- 1. ΑΡΧΙΚΗ ΟΘΟΝΗ -->
+    <div id="start-screen" class="card">
+        <h2 style="color: var(--terracotta); margin-bottom: 15px;">Διαδραστικό Quiz Αξιολόγησης</h2>
+        <p style="margin-bottom: 20px;">Εξετάστε τις γνώσεις σας στη σύνθεση Αντικειμενοστραφούς Προγραμματισμού (OOP) με Δομές Δεδομένων & Αλγόριθμους: Πίνακες Αντικειμένων, Ταξινόμηση/Αναζήτηση σε πεδία αντικειμένων, Πολυμορφισμό σε βρόχους, Στοίβα/Ουρά Αντικειμένων, Διαγράμματα Ιεραρχίας Θέματος Β1 και Σύνθετα Θέματα Πανελλαδικού Τύπου (Θέμα Γ & Θέμα Δ).</p>
+        
+        <div class="form-group">
+            <label for="student-name">Ονοματεπώνυμο Μαθητή/τριας:</label>
+            <input type="text" id="student-name" placeholder="Εισάγετε το ονοματεπώνυμό σας (Προαιρετικό)">
+        </div>
+
+        <div class="form-group">
+            <label>Επιλέξτε Λειτουργία:</label>
+            <div class="mode-selection">
+                <div class="mode-btn-card selected" onclick="selectMode('practice', this)">
+                    <h3>🎮 Εκμάθηση & Εξάσκησή</h3>
+                    <p>Βήμα-βήμα με άμεσο feedback & επεξήγηση σε κάθε ερώτηση.</p>
+                </div>
+                <div class="mode-btn-card" onclick="selectMode('exam', this)">
+                    <h3>📝 Προσομοίωση & Τεστ</h3>
+                    <p>Συγκεντρωτική απάντηση όλων των ερωτήσεων & τελικό Report.</p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px;">
+            <button class="btn" onclick="startQuiz()">Έναρξη Κουίζ ➔</button>
+        </div>
+    </div>
+
+    <!-- 2. ΟΘΟΝΗ ΕΡΩΤΗΣΕΩΝ -->
+    <div id="quiz-screen" style="display: none;">
+        <div class="progress-bar-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+
+        <div id="questions-wrapper"></div>
+
+        <div id="warning-msg" class="warning-msg">⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή!</div>
+
+        <div class="actions-group">
+            <button id="next-btn" class="btn" onclick="nextQuestion()" style="display: none;">Επόμενη Ερώτηση ➔</button>
+            <button id="submit-btn" class="btn btn-secondary" onclick="submitExam()" style="display: none;">Υποβολή Τεστ 🏁</button>
+        </div>
+    </div>
+
+    <!-- 3. ΟΘΟΝΗ ΑΠΟΤΕΛΕΣΜΑΤΩΝ / REPORT -->
+    <div id="report-screen" class="card" style="display: none;">
+        <div class="report-header">
+            <h2 style="color: var(--terracotta);">Αναφορά Επίδοσης Μαθητή</h2>
+            <p id="report-student-name" style="font-weight: bold; font-size: 1.1rem; margin-top: 5px;"></p>
+            <p id="report-date" style="font-size: 0.85rem; color: #666;"></p>
+            
+            <div id="report-score" class="score-badge">0 / 0</div>
+            <p id="report-percentage" style="font-weight: 600; font-size: 1.2rem; color: var(--olive);"></p>
+
+            <div id="report-comment" class="pedagogical-comment"></div>
+        </div>
+
+        <h3 style="color: var(--terracotta); margin-bottom: 15px;">Αναλυτική Επισκόπηση Ερωτήσεων</h3>
+        <div id="report-list"></div>
+
+        <div class="actions-group">
+            <button class="btn btn-secondary" onclick="window.print()">🖨️ Εκτύπωση / Αποθήκευση σε PDF</button>
+            <button class="btn" onclick="restartQuiz()">↻ Έναρξη από την αρχή</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// --- ΔΕΔΟΜΕΝΑ ΕΡΩΤΗΣΕΩΝ (ΕΒΔΟΜΑΔΑ 22: ΟΛΟΚΛΗΡΩΣΗ OOP & ΣΥΝΘΕΤΑ ΘΕΜΑΤΑ) ---
+const questionsData = [
+    {
+        id: 1,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Πώς ορίζεται ένας Πίνακας Αντικειμένων (Array of Objects) στη συνδυαστική χρήση OOP και Δομών Δεδομένων;",
+        code: null,
+        options: [
+            "Είναι ένας μονοδιάστατος πίνακας όπου κάθε στοιχείο του αποτελεί ένα αυτόνομο στιγμιότυπο (αντικείμενο) μιας συγκεκριμένης κλάσης.",
+            "Είναι ένας δισδιάστατος πίνακας που αποθηκεύει μόνο τους τίτλους των μεθόδων.",
+            "Είναι μια στοίβα που αποθηκεύει αποκλειστικά ακέραιες μεταβλητές.",
+            "Είναι ένας πίνακας που περιέχει μόνο τις υπερκλάσεις ενός προγράμματος."
+        ],
+        correct: 0,
+        hint: "Σκεφτείτε έναν πίνακα `Στόλος[10]` όπου κάθε θέση `Στόλος[i]` αποθηκεύει ένα αντικείμενο τύπου `Εργαζόμενος`.",
+        explanation: "Ο Πίνακας Αντικειμένων είναι μια σύνθετη δομή όπου κάθε θέση του πίνακα `A[i]` φιλοξενεί ένα πλήρες αντικείμενο μιας κλάσης, έχοντας πρόσβαση στις ιδιότητες και μεθόδους του."
+    },
+    {
+        id: 2,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Ποια είναι η ορθή σύνταξη για την προσπέλαση της ιδιότητας `όνομα` του i-οστού αντικειμένου ενός πίνακα αντικειμένων `Στόλος[10]`;",
+        code: null,
+        options: [
+            "Στόλος.όνομα[i]",
+            "Στόλος[i].όνομα",
+            "όνομα[i].Στόλος",
+            "Στόλος.όνομα"
+        ],
+        correct: 1,
+        hint: "Πρώτα προσπελαύνουμε το συγκεκριμένο αντικείμενο στον πίνακα με τον δείκτη `[i]` και μετά την ιδιότητά του με τον τελεστή τελεία (`.`).",
+        explanation: "Η ορθή σύνταξη είναι `Στόλος[i].όνομα`. Πρώτα επιλέγεται το i-οστό αντικείμενο από τον πίνακα `Στόλος[i]` και στη συνέχεια ο τελεστής τελεία (`.`) δίνει πρόσβαση στην ιδιότητα `όνομα`."
+    },
+    {
+        id: 3,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Πώς καλείται η μέθοδος `Υπολόγισε_Αμοιβή()` για το i-οστό αντικείμενο ενός πίνακα αντικειμένων `Εργαζόμενοι[10]`;",
+        code: null,
+        options: [
+            "αμοιβή <- Εργαζόμενοι.Υπολόγισε_Αμοιβή()[i]",
+            "αμοιβή <- Εργαζόμενοι[i].Υπολόγισε_Αμοιβή()",
+            "αμοιβή <- Υπολόγισε_Αμοιβή(Εργαζόμενοι[i])",
+            "αμοιβή <- Εργαζόμενοι.Υπολόγισε_Αμοιβή(i)"
+        ],
+        correct: 1,
+        hint: "Ο τελεστής τελεία εφαρμόζεται στο συγκεκριμένο αντικείμενο `Εργαζόμενοι[i]` ακολουθούμενος από το όνομα της μεθόδου.",
+        explanation: "Η κλήση της μεθόδου γίνεται με τη μορφή `αμοιβή <- Εργαζόμενοι[i].Υπολόγισε_Αμοιβή()`. Το αντικείμενο `Εργαζόμενοι[i]` εκτελεί τη δική του μέθοδο."
+    },
+    {
+        id: 4,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Ποιο από τα παρακάτω συνιστά ΛΟΓΙΚΟ ΣΦΑΛΜΑ κατά τη χρήση πίνακα αντικειμένων `Βιβλία[50]`;",
+        code: "! Προσπάθεια εμφάνισης τίτλου\nΓΡΑΨΕ Βιβλία.τίτλος",
+        options: [
+            "Δεν υπάρχει κανένα σφάλμα.",
+            "Παραλείφθηκε ο δείκτης πίνακα `[i]` (π.χ. `Βιβλία[i].τίτλος`), καθώς η μεταβλητή `Βιβλία` είναι ολόκληρος ο πίνακας και όχι ένα μεμονωμένο αντικείμενο.",
+            "Η εντολή ΓΡΑΨΕ δεν μπορεί να εμφανίσει αλφαριθμητικές ιδιότητες.",
+            "Η ιδιότητα τίτλος πρέπει να δηλωθεί ως πίνακας."
+        ],
+        correct: 1,
+        hint: "Μπορεί το πρόγραμμα να καταλάβει ποιου από τα 50 βιβλία τον τίτλο θέλουμε να τυπώσουμε χωρίς δείκτη;",
+        explanation: "Η αναγραφή `Βιβλία.τίτλος` είναι λανθασμένη διότι η μεταβλητή `Βιβλία` είναι συλλογή/πίνακας 50 αντικειμένων. Απαιτείται υποχρεωτικά δείκτης, π.χ. `Βιβλία[i].τίτλος`."
+    },
+    {
+        id: 5,
+        difficulty: "basic",
+        difficultyText: "Βασικό",
+        question: "Στον Αντικειμενοστραφή Προγραμματισμό, αν μια υποκλάση `Ηλεκτρικό_Αυτοκίνητο` κληρονομεί από την υπερκλάση `Όχημα`, μπορεί ένα αντικείμενο της υποκλάσης να αποθηκευτεί σε έναν πίνακα τύπου `Όχημα`;",
+        code: null,
+        options: [
+            "Όχι, ένας πίνακας μπορεί να αποθηκεύει μόνο αντικείμενα της ακριβούς κλάσης του.",
+            "Ναι, λόγω της σχέσης κληρονομικότητας (IS-A) και του Πολυμορφισμού, ένας πίνακας αντικειμένων της Υπερκλάσης μπορεί να αποθηκεύει αντικείμενα όλων των Υποκλάσεων της.",
+            "Ναι, αλλά μόνο αν το ηλεκτρικό αυτοκίνητο δεν έχει επιπλέον ιδιότητες.",
+            "Όχι, προκαλείται σφάλμα υπερχείλισης στη μνήμη."
+        ],
+        correct: 1,
+        hint: "Σκεφτείτε τη σχέση IS-A: Το Ηλεκτρικό Αυτοκίνητο ΕΙΝΑΙ Όχημα.",
+        explanation: "Λόγω της κληρονομικότητας και του πολυμορφισμού, ένας πίνακας αντικειμένων τύπου `Όχημα` μπορεί να αποθηκεύει τόσο απλά `Όχημα` όσο και αντικείμενα όλων των παράγωγων υποκλάσεων (π.χ. `Ηλεκτρικό_Αυτοκίνητο`, `Υβριδικό_Αυτοκίνητο`)."
+    },
+    {
+        id: 6,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Δίνεται ο πίνακας αντικειμένων `Προϊόντα[50]` με ιδιότητες `κωδικός`, `τιμή` και `τεμάχια`. Ποια συνθήκη στον αλγόριθμο φυσαλίδας (Bubble Sort) ταξινομεί τον πίνακα σε ΦΘΙΝΟΥΣΑ σειρά ως προς διαθέσιμα `τεμάχια`;",
+        code: "ΓΙΑ i ΑΠΟ 2 ΜΕΧΡΙ 50\n    ΓΙΑ j ΑΠΟ 50 ΜΕΧΡΙ i ΜΕ_ΒΗΜΑ -1\n        ΑΝ (........................................) ΤΟΤΕ\n            ! Αντιμετάθεση αντικειμένων\n            temp <- Προϊόντα[j - 1]\n            Προϊόντα[j - 1] <- Προϊόντα[j]\n            Προϊόντα[j] <- temp\n        ΤΕΛΟΣ_ΑΝ\n    ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+        options: [
+            "Προϊόντα[j - 1].τεμάχια < Προϊόντα[j].τεμάχια",
+            "Προϊόντα[j - 1].τεμάχια > Προϊόντα[j].τεμάχια",
+            "Προϊόντα[j - 1].τιμή < Προϊόντα[j].τιμή",
+            "Προϊόντα[j].τεμάχια < 0"
+        ],
+        correct: 0,
+        hint: "Στη φθίνουσα ταξινόμηση, αν το προηγούμενο στοιχείο είναι ΜΙΚΡΟΤΕΡΟ από το επόμενο, πρέπει να γίνει αντιμετάθεση.",
+        explanation: "Για φθίνουσα ταξινόμηση με τη φυσαλίδα, αν το προηγούμενο στοιχείο έχει μικρότερη τιμή στο πεδίο `τεμάχια` από το επόμενο (`Προϊόντα[j-1].τεμάχια < Προϊόντα[j].τεμάχια`), εκτελείται αντιμετάθεση των ολόκληρων αντικειμένων."
+    },
+    {
+        id: 7,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Κατά την αντιμετάθεση (swap) δύο στοιχείων σε έναν πίνακα αντικειμένων `A[10]` στη φάση της ταξινόμησης, τι συμβαίνει στις ιδιότητές τους;",
+        code: "temp <- A[j - 1]\nA[j - 1] <- A[j]\nA[j] <- temp",
+        options: [
+            "Πρέπει να αντιμετατεθεί ξεχωριστά κάθε ιδιότητα μία προς μία.",
+            "Αντιμετατίθενται τακτικά και αυτόματα ΟΛΕΣ οι ιδιότητες των αντικειμένων ταυτόχρονα, καθώς η μεταβλητή `temp` είναι τύπου της κλάσης και αντιγράφει ολόκληρο το αντικείμενο.",
+            "Αντιμετατίθεται μόνο η ιδιότητα που χρησιμοποιήθηκε στη συνθήκη της `ΑΝ` (π.χ. η τιμή).",
+            "Η αντιμετάθεση αντικειμένων απαγορεύεται στη Ψευδογλώσσα."
+        ],
+        correct: 1,
+        hint: "Η μεταβλητή `temp` είναι τύπου της Κλάσης. Τι αποθηκεύει όταν της εκχωρούμε το `A[j-1]`;",
+        explanation: "Όταν εκτελείται `temp <- A[j-1]`, ολόκληρο το αντικείμενο (με όλες τις ιδιότητές του) αντιγράφεται στη μεταβλητή `temp`. Έτσι η αντιμετάθεση αντικειμένων μεταφέρει αυτόματα όλα τα πεδία τους."
+    },
+    {
+        id: 8,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Δίνεται ο πίνακας αντικειμένων `Στόλος[10]` που περιέχει μείγμα αντικειμένων `Προγραμματιστής` (αμοιβή = μισθός + υπερωρίες*20) και `Διευθυντής` (αμοιβή = μισθός + bonus). Ποιο τμήμα αλγορίθμου υπολογίζει το συνολικό ποσό μισθοδοσίας;",
+        code: "συνολικό_κόστος <- 0\nΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 10\n    (....................................................)\n    συνολικό_κόστος <- συνολικό_κόστος + αμοιβή\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+        options: [
+            "αμοιβή <- Στόλος[i].Υπολόγισε_Αμοιβή()",
+            "αμοιβή <- Στόλος.Υπολόγισε_Αμοιβή(i)",
+            "ΑΝ i <= 5 ΤΟΤΕ αμοιβή <- μισθός + 20 ΑΛΛΙΩΣ αμοιβή <- bonus",
+            "αμοιβή <- Υπολόγισε_Αμοιβή(Στόλος)"
+        ],
+        correct: 0,
+        hint: "Αξιοποιήστε τον Πολυμορφισμό: η κλήση της μεθόδου εκτελεί αυτόματα τον σωστό αλγόριθμο ανάλογα με την κλάση του αντικειμένου.",
+        explanation: "Χάρη στον Πολυμορφισμό, η κλήση `αμοιβή <- Στόλος[i].Υπολόγισε_Αμοιβή()` εκτελεί αυτόματα τον υπολογισμό του Προγραμματιστή αν το i-οστό αντικείμενο είναι Προγραμματιστής ή του Διευθυντή αν είναι Διευθυντής!"
+    },
+    {
+        id: 9,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Δίνεται ο παρακάτω αλγόριθμος σειριακής αναζήτησης σε πίνακα αντικειμένων `Βιβλία[100]` για την εύρεση βιβλίου με συγκεκριμένο `αναζητούμενο_τίτλο`. Ποια συνθήκη πρέπει να τοποθετηθεί στην `ΑΝ`;",
+        code: "pos <- 0\ni <- 1\nΟΣΟ i <= 100 ΚΑΙ pos = 0 ΕΠΑΝΑΛΑΒΕ\n    ΑΝ (........................................) ΤΟΤΕ\n        pos <- i\n    ΑΛΛΙΩΣ\n        i <- i + 1\n    ΤΕΛΟΣ_ΑΝ\nΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+        options: [
+            "Βιβλία[i].τίτλος = αναζητούμενο_τίτλο",
+            "Βιβλία.τίτλος[i] = αναζητούμενο_τίτλο",
+            "τίτλος = αναζητούμενο_τίτλο",
+            "Βιβλία[i] = pos"
+        ],
+        correct: 0,
+        hint: "Συγκρίνουμε την ιδιότητα `τίτλος` του i-οστού αντικειμένου `Βιβλία[i]` με τη μεταβλητή αναζήτησης.",
+        explanation: "Η συνθήκη σύγκρισης είναι `Βιβλία[i].τίτλος = αναζητούμενο_τίτλο`. Προσπελαύνουμε την αλφαριθμητική ιδιότητα `τίτλος` του i-οστού αντικειμένου του πίνακα."
+    },
+    {
+        id: 10,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Δίνεται το παρακάτω τμήμα θέματος Β1 Πανελλαδικών Εξετάσεων (Διάγραμμα Ιεραρχίας Κλάσεων):\n- Υπερκλάση: `Όχημα` (κωδικός, μοντέλο, ημερήσιο_κόστος)\n- Υποκλάση: `ΗλεκτρικόΌχημα` (επιπλέον: χωρητικότητα_μπαταρίας, ποσοστό_έκπτωσης)\nΗ μέθοδος `υπολόγισε_κόστος(ημέρες)` της υπερκλάσης επιστρέφει `ημερήσιο_κόστος * ημέρες`. Η υποκλάση υπερκαλύπτει (overrides) τη μέθοδο εφαρμόζοντας έκπτωση 15% (0.15). Ποιο θα είναι το κόστος για 5 ημέρες ενός Ηλεκτρικού Οχήματος με ημερήσιο κόστος 80.0 €;",
+        code: "Υπερκλάση:  κόστος = ημερήσιο_κόστος * ημέρες\nΥποκλάση:   τελικό_κόστος = αρχικό_κόστος * (1 - ποσοστό_έκπτωσης)",
+        options: [
+            "400.0 €",
+            "340.0 €",
+            "60.0 €",
+            "80.0 €"
+        ],
+        correct: 1,
+        hint: "1) Αρχικό κόστος = 80 * 5 = 400. 2) Έκπτωση 15% -> Τελικό κόστος = 400 * (1 - 0.15) = 400 * 0.85.",
+        explanation: "1) Αρχικό κόστος = 80.0 € * 5 ημέρες = 400.0 €. 2) Η υπερκαλυμμένη μέθοδος της υποκλάσης εφαρμόζει την οικολογική έκπτωση 15%: Τελικό Κόστος = 400.0 * (1 - 0.15) = 400.0 * 0.85 = 340.0 €."
+    },
+    {
+        id: 11,
+        difficulty: "medium",
+        difficultyText: "Μεσαίο",
+        question: "Πώς υλοποιείται η ώθηση (Push) ενός αντικειμένου `νέο_δέμα` σε μια Στοίβα αντικειμένων `ST[50]` με δείκτη `top`;",
+        code: null,
+        options: [
+            "top <- top + 1; ST[top] <- νέο_δέμα",
+            "ST[top] <- νέο_δέμα; top <- top + 1",
+            "top <- top - 1; ST[top] <- νέο_δέμα",
+            "ST <- νέο_δέμα"
+        ],
+        correct: 0,
+        hint: "Πρώτα αυξάνεται ο δείκτης `top` κατά 1 και στη συνέχεια εκχωρείται το αντικείμενο στη νέα θέση `ST[top]`.",
+        explanation: "Η ορθή αλληλουχία για την ώθηση στη Στοίβα είναι: 1) `top <- top + 1` (αύξηση δείκτη), 2) `ST[top] <- νέο_δέμα` (εκχώρηση ολόκληρου του αντικειμένου στη νέα κορυφή)."
+    },
+    {
+        id: 12,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Δίνεται ο παρακάτω αλγόριθμος εύρεσης του εργαζομένου με τη μεγαλύτερη συνολική αμοιβή από έναν πίνακα αντικειμένων `Στόλος[10]`. Ποιο λογικό σφάλμα περιέχει;",
+        code: "max_αμοιβή <- -1.0
+ΓΙΑ i ΑΠΟ 1 ΜΕΧΡΙ 10
+    αμοιβή <- Στόλος[i].Υπολόγισε_Αμοιβή()
+    ΑΝ αμοιβή > max_αμοιβή ΤΟΤΕ
+        max_αμοιβή <- αμοιβή
+        max_όνομα <- Στόλος.όνομα  ! <--- Σημείο ελέγχου
+    ΤΕΛΟΣ_ΑΝ
+ΤΕΛΟΣ_ΕΠΑΝΑΛΗΨΗΣ",
+        options: [
+            "Η αρχικοποίηση max_αμοιβή <- -1.0 είναι λανθασμένη.",
+            "Στην εκχώρηση `max_όνομα <- Στόλος.όνομα` λείπει ο δείκτης `[i]` του πίνακα αντικειμένων (έπρεπε `Στόλος[i].όνομα`).",
+            "Η μέθοδος `Υπολόγισε_Αμοιβή()` δεν μπορεί να καλεστεί μέσα σε βρόχο.",
+            "Η συνθήκη της ΑΝ έπρεπε να είναι `αμοιβή < max_αμοιβή`."
+        ],
+        correct: 1,
+        hint: "Εξετάστε τη γραμμή `max_όνομα <- Στόλος.όνομα`. Πώς παίρνουμε το όνομα του i-οστού εργαζομένου;",
+        explanation: "Το λογικό σφάλμα βρίσκεται στην εντολή `max_όνομα <- Στόλος.όνομα`. Επειδή η μεταβλητή `Στόλος` είναι πίνακας αντικειμένων, απαιτείται ο δείκτης `[i]`: `max_όνομα <- Στόλος[i].όνομα`."
+    },
+    {
+        id: 13,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Δίνεται ορισμός κλάσης `ΗλεκτρικόΌχημα` που επεκτείνει την κλάση `Όχημα`. Πώς καλείται ο κατασκευαστής (Constructor) της υπερκλάσης μέσα στον κατασκευαστή της υποκλάσης;",
+        code: "Κλάση ΗλεκτρικόΌχημα Επεκτείνει Όχημα
+    Δημόσιες Μέθοδοι:
+        Κατασκευαστής(kod, mod, kostos, bat, ekpt)
+            (........................................) ! <--- Κλήση υπερκλάσης
+            χωρητικότητα_μπαταρίας <- bat
+            ποσοστό_έκπτωσης <- ekpt
+        Τέλος_Κατασκευαστή
+Τέλος_Κλάσης",
+        options: [
+            "Super(kod, mod, kostos)",
+            "Όχημα(kod, mod, kostos)",
+            "Parent(kod, mod, kostos)",
+            "Call_Superclass(kod, mod, kostos)"
+        ],
+        correct: 0,
+        hint: "Στην αντικειμενοστραφή ψευδογλώσσα, η κλήση του κατασκευαστή της υπερκλάσης γίνεται με τη δεσμευμένη λέξη Super.",
+        explanation: "Στον αντικειμενοστραφή ψευδοκώδικα, ο κατασκευαστής της υποκλάσης καλεί τον κατασκευαστή της υπερκλάσης χρησιμοποιώντας τη λέξη `Super(kod, mod, kostos)` για την αρχικοποίηση των κληρονομούμενων ιδιοτήτων."
+    },
+    {
+        id: 14,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Δίνεται ο παρακάτω αλγόριθμος υπολογισμού του ποσοστού (%) των πωλήσεων των 3 πρώτων προϊόντων σε σχέση με τις συνολικές πωλήσεις της εταιρείας. Τι πρέπει να προηγηθεί του υπολογισμού για να αποφευχθεί σφάλμα διαιρέσεως με το μηδέν (Division by Zero);",
+        code: "! Σύνολο_Top3: άθροισμα πωλήσεων των 3 πρώτων προϊόντων
+! Σύνολο_Εταιρείας: άθροισμα πωλήσεων όλων των 20 προϊόντων
+
+ΑΝ (........................................) ΤΟΤΕ
+    Ποσοστό_Top3 <- (Σύνολο_Top3 / Σύνολο_Εταιρείας) * 100
+    ΓΡΑΨΕ 'Ποσοστό Top 3: ', Ποσοστό_Top3, '%'
+ΑΛΛΙΩΣ
+    ΓΡΑΨΕ 'Δεν υπήρξαν πωλήσεις στην εταιρεία.'
+ΤΕΛΟΣ_ΑΝ",
+        options: [
+            "Σύνολο_Εταιρείας > 0",
+            "Σύνολο_Top3 > 0",
+            "Ποσοστό_Top3 <> 0",
+            "Σύνολο_Εταιρείας = 20"
+        ],
+        correct: 0,
+        hint: "Ποια μεταβλητή βρίσκεται στον παρονομαστή της διαιρέσεως `Σύνολο_Top3 / Σύνολο_Εταιρείας`;",
+        explanation: "Επειδή η μεταβλητή `Σύνολο_Εταιρείας` βρίσκεται στον παρονομαστή της διαιρέσεως, απαιτείται ο προληπτικός έλεγχος `ΑΝ Σύνολο_Εταιρείας > 0 ΤΟΤΕ` ώστε αν δεν υπήρξαν πωλήσεις (0) να μην προκληθεί σφάλμα εκτέλεσης."
+    },
+    {
+        id: 15,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Σε ένα πρόγραμμα διαχείρισης στόλου οχημάτων, έχουμε πίνακα 3 αντικειμένων: `στόλος[1] = Όχημα("V101", 40.0)`, `στόλος[2] = ΗλεκτρικόΌχημα("EV201", 80.0, 0.15)` (15% έκπτωση), `στόλος[3] = ΗλεκτρικόΌχημα("EV202", 55.0, 0.10)` (10% έκπτωση). Ποιο είναι το συνολικό έσοδο του στόλου για 5 ημέρες ενοικίασης;",
+        code: "Υπολογισμός κόστους ανά όχημα για 5 ημέρες:\n- στόλος[1] (Συμβατικό) : 40.0 * 5 = 200.0 €\n- στόλος[2] (Ηλεκτρικό)  : (80.0 * 5) * (1 - 0.15) = 400.0 * 0.85 = 340.0 €\n- στόλος[3] (Ηλεκτρικό)  : (55.0 * 5) * (1 - 0.10) = 275.0 * 0.90 = 247.5 €",
+        options: [
+            "787.5 €",
+            "875.0 €",
+            "600.0 €",
+            "750.0 €"
+        ],
+        correct: 0,
+        hint: "Αθροίστε τα επιμέρους κόσθη ενοικίασης: 200.0 € + 340.0 € + 247.5 €.",
+        explanation: "1) στόλος[1]: 40 * 5 = 200.0 €\n2) στόλος[2]: 80 * 5 * 0.85 = 340.0 €\n3) στόλος[3]: 55 * 5 * 0.90 = 247.5 €\nΣυνολικό Έσοδο Στόλου = 200.0 + 340.0 + 247.5 = 787.5 €."
+    },
+    {
+        id: 16,
+        difficulty: "advanced",
+        difficultyText: "Προχωρημένο",
+        question: "Ποια είναι η διαφορά μεταξύ της σχέσης Κληρονομικότητας (IS-A) και της Σύνθεσης (Composition / HAS-A) κατά τη σχεδίαση συνθετικών συστημάτων λογισμικού (Θέμα Γ & Δ);",
+        code: null,
+        options: [
+            "Η Κληρονομικότητα (IS-A) εκφράζει εξειδίκευση όπου μια υποκλάση ΕΙΝΑΙ τύπος της υπερκλάσης. Η Σύνθεση (HAS-A) εκφράζει περιεκτικότητα όπου μια κλάση/δομή ΕΧΕΙ/ΠΕΡΙΕΧΕΙ αντικείμενα άλλης κλάσης (π.χ. ένας Πίνακας ή Στοίβα ΕΧΕΙ Αντικείμενα).",
+            "Η Σύνθεση επιτρέπεται μόνο σε μονοδιάστατους πίνακες, ενώ η Κληρονομικότητα μόνο σε δισδιάστατους.",
+            "Δεν υπάρχει καμία διαφορά, οι δύο όροι είναι ταυτόσημοι.",
+            "Η Κληρονομικότητα καταργεί τη χρήση μεθόδων στις υποκλάσεις."
+        ],
+        correct: 0,
+        hint: "Σκεφτείτε: «Ο Προγραμματιστής ΕΙΝΑΙ Εργαζόμενος» (IS-A) vs «Ο Στόλος ΕΧΕΙ Εργαζόμενους» (HAS-A).",
+        explanation: "Η Κληρονομικότητα (IS-A) συνδέει κλάσεις σε ιεραρχία εξειδίκευσης. Η Σύνθεση/Σύνδεση (HAS-A) περιγράφει δομές όπου μια οντότητα περιέχει/διαχειρίζεται αντικείμενα άλλης κλάσης (π.χ. ένας Πίνακας/Στοίβα που περιέχει Αντικείμενα)."
+    }
+];
+
+// --- STATE VARIABLES ---
+let currentMode = 'practice';
+let studentName = '';
+let currentQuestionIndex = 0;
+let userAnswers = {};
+
+// --- LOGIC FUNCTIONS ---
+function selectMode(mode, element) {
+    currentMode = mode;
+    document.querySelectorAll('.mode-btn-card').forEach(card => card.classList.remove('selected'));
+    element.classList.add('selected');
+}
+
+function startQuiz() {
+    const nameInput = document.getElementById('student-name').value.trim();
+    studentName = nameInput !== '' ? nameInput : 'Ανώνυμος/η Μαθητής/τρια';
+
+    document.getElementById('start-screen').style.display = 'none';
+    document.getElementById('quiz-screen').style.display = 'block';
+
+    currentQuestionIndex = 0;
+    userAnswers = {};
+
+    renderQuizScreen();
+}
+
+function renderQuizScreen() {
+    const wrapper = document.getElementById('questions-wrapper');
+    wrapper.innerHTML = '';
+
+    if (currentMode === 'practice') {
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('next-btn').style.display = 'inline-block';
+        updateProgressBar();
+        
+        const q = questionsData[currentQuestionIndex];
+        wrapper.appendChild(createQuestionCard(q, currentQuestionIndex + 1, questionsData.length, true));
+    } else {
+        // Exam Mode: Show all questions
+        document.getElementById('next-btn').style.display = 'none';
+        document.getElementById('submit-btn').style.display = 'inline-block';
+        document.getElementById('progress-bar').style.width = '100%';
+
+        questionsData.forEach((q, idx) => {
+            wrapper.appendChild(createQuestionCard(q, idx + 1, questionsData.length, false));
+        });
+    }
+}
+
+function createQuestionCard(q, num, total, isPractice) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = `q-card-${q.id}`;
+
+    let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+    
+    let optionsHTML = '';
+    q.options.forEach((opt, idx) => {
+        if (!opt) return;
+        const isChecked = userAnswers[q.id] === idx ? 'checked' : '';
+        optionsHTML += `
+            <label class="option-item" onclick="handleOptionSelect(${q.id}, ${idx}, ${isPractice})">
+                <input type="radio" name="q_${q.id}" value="${idx}" ${isChecked}>
+                <span>${opt}</span>
+            </label>
+        `;
+    });
+
+    // Determine difficulty badge class
+    let diffClass = "diff-basic";
+    if (q.difficulty === "medium") diffClass = "diff-medium";
+    if (q.difficulty === "advanced") diffClass = "diff-advanced";
+
+    card.innerHTML = `
+        <div class="question-header">
+            <span class="question-number">Ερώτηση ${num} από ${total}</span>
+            <span class="diff-badge ${diffClass}">${q.difficultyText}</span>
+        </div>
+        <div class="question-text">${q.question}</div>
+        ${codeHTML}
+        <div class="options-group">${optionsHTML}</div>
+        <button class="btn btn-hint" onclick="toggleHint(${q.id})">💡 Υπόδειξη</button>
+        <div id="hint-${q.id}" class="hint-box">${q.hint}</div>
+        <div id="justification-${q.id}" class="justification-box"></div>
+    `;
+
+    return card;
+}
+
+function handleOptionSelect(qId, selectedIdx, isPractice) {
+    userAnswers[qId] = selectedIdx;
+    document.getElementById('warning-msg').style.display = 'none';
+
+    if (isPractice) {
+        const q = questionsData.find(item => item.id === qId);
+        const justBox = document.getElementById(`justification-${qId}`);
+        justBox.style.display = 'block';
+
+        if (selectedIdx === q.correct) {
+            justBox.className = 'justification-box correct';
+            justBox.innerHTML = `<strong>✅ Σωστό!</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        } else {
+            justBox.className = 'justification-box incorrect';
+            justBox.innerHTML = `<strong>❌ Λάθος.</strong> Η σωστή απάντηση είναι: <em>${q.options[q.correct]}</em>.<br><br><strong>Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}`;
+        }
+    }
+}
+
+function toggleHint(qId) {
+    const hintBox = document.getElementById(`hint-${qId}`);
+    hintBox.style.display = (hintBox.style.display === 'block') ? 'none' : 'block';
+}
+
+function updateProgressBar() {
+    const progress = ((currentQuestionIndex + 1) / questionsData.length) * 100;
+    document.getElementById('progress-bar').style.width = `${progress}%`;
+}
+
+function nextQuestion() {
+    if (userAnswers[questionsData[currentQuestionIndex].id] === undefined) {
+        alert('Παρακαλώ επιλέξτε μια απάντηση πριν προχωρήσετε!');
+        return;
+    }
+
+    if (currentQuestionIndex < questionsData.length - 1) {
+        currentQuestionIndex++;
+        renderQuizScreen();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        showReport();
+    }
+}
+
+function submitExam() {
+    const unanswered = questionsData.filter(q => userAnswers[q.id] === undefined);
+    if (unanswered.length > 0) {
+        const warning = document.getElementById('warning-msg');
+        warning.innerText = `⚠️ Παρακαλώ απαντήστε σε όλες τις ερωτήσεις πριν την υποβολή! Απομένουν ${unanswered.length} αναπάντητες ερωτήσεις.`;
+        warning.style.display = 'block';
+
+        const firstUnansweredId = unanswered[0].id;
+        document.getElementById(`q-card-${firstUnansweredId}`).scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    showReport();
+}
+
+function showReport() {
+    document.getElementById('quiz-screen').style.display = 'none';
+    document.getElementById('report-screen').style.display = 'block';
+
+    let score = 0;
+    const reportList = document.getElementById('report-list');
+    reportList.innerHTML = '';
+
+    questionsData.forEach((q, idx) => {
+        const userChoice = userAnswers[q.id];
+        const isCorrect = userChoice === q.correct;
+        if (isCorrect) score++;
+
+        const item = document.createElement('div');
+        item.className = `report-item ${isCorrect ? 'is-correct' : 'is-incorrect'}`;
+
+        let codeHTML = q.code ? `<pre><code>${escapeHTML(q.code)}</code></pre>` : '';
+        let userChoiceText = userChoice !== undefined ? q.options[userChoice] : 'Δεν απαντήθηκε';
+        let correctChoiceText = q.options[q.correct];
+
+        let diffClass = "diff-basic";
+        if (q.difficulty === "medium") diffClass = "diff-medium";
+        if (q.difficulty === "advanced") diffClass = "diff-advanced";
+
+        item.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div>
+                    <span class="badge ${isCorrect ? 'badge-success' : 'badge-danger'}">
+                        ${isCorrect ? '✅ ΣΩΣΤΟ' : '❌ ΛΑΘΟΣ'}
+                    </span>
+                    <strong>Ερώτηση ${idx + 1}:</strong> ${q.question}
+                </div>
+                <span class="diff-badge ${diffClass}">${q.difficultyText}</span>
+            </div>
+            ${codeHTML}
+            <div style="margin: 8px 0; font-size: 0.95rem;">
+                <strong>Η απάντησή σας:</strong> <span style="color: ${isCorrect ? 'var(--olive)' : 'var(--wrong-border)'}; font-weight: 600;">${userChoiceText}</span><br>
+                ${!isCorrect ? `<strong>Σωστή απάντηση:</strong> <span style="color: var(--olive); font-weight: 600;">${correctChoiceText}</span><br>` : ''}
+            </div>
+            <div style="font-size: 0.9rem; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 6px; margin-top: 6px;">
+                <strong>Τεκμηρίωση / Αιτιολογία:</strong><br>${q.explanation.replace(/\n/g, '<br>')}
+            </div>
+        `;
+
+        reportList.appendChild(item);
+    });
+
+    const percentage = Math.round((score / questionsData.length) * 100);
+
+    document.getElementById('report-student-name').innerText = `Μαθητής/τρια: ${studentName}`;
+    document.getElementById('report-date').innerText = `Ημερομηνία & Ώρα: ${new Date().toLocaleString('el-GR')}`;
+    document.getElementById('report-score').innerText = `${score} / ${questionsData.length}`;
+    document.getElementById('report-percentage').innerText = `Ποσοστό Επιτυχίας: ${percentage}%`;
+
+    // Pedagogical Comment
+    let comment = '';
+    if (percentage >= 90) {
+        comment = '🌟 Εξαιρετική επίδοση! Έχετε κατανοήσει πλήρως τη σύνθεση Αντικειμενοστραφούς Προγραμματισμού (OOP) με Δομές Δεδομένων & Αλγόριθμους, την επεξεργασία Πινάκων Αντικειμένων, τις πολυμορφικές κλήσεις σε βρόχους και την επίλυση συνθετικών θεμάτων Πανελλαδικών Εξετάσεων (Θέματα Β, Γ & Δ).';
+    } else if (percentage >= 75) {
+        comment = '👏 Πολύ καλή προσπάθεια! Έχετε γερές βάσεις στη σύνθεση OOP και Δομών Δεδομένων. Κάντε μια μικρή επανεξέταση στις συνθήκες ταξινόμησης πινάκων αντικειμένων και στα διαγράμματα Θέματος Β1.';
+    } else if (percentage >= 50) {
+        comment = '👍 Ικανοποιητική παρουσία. Χρειάζεται περισσότερη εξάσκηση στις ερωτήσεις προχωρημένου επιπέδου (σύνθετοι αλγόριθμοι Θέματος Δ με αντικείμενα και υπολογισμός πολυμορφικού κόστους).';
+    } else {
+        comment = '📚 Χρειάζεται συστηματική επανάληψη στη θεωρία της 22ης εβδομάδας, μελέτη των λυμένων παραδειγμάτων των Φύλλων Εργασίας και επιπλέον λύσεις συνδυαστικών ασκήσεων OOP με Πίνακες/Στοίβες.';
+    }
+    document.getElementById('report-comment').innerText = comment;
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function restartQuiz() {
+    document.getElementById('report-screen').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+</script>
+
+</body>
+</html>

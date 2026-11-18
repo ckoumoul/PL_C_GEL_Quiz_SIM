@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Διαδραστική Διδασκαλία: Ταξινόμηση & Δυαδική Αναζήτηση</title>
+    <style>
+        :root {
+            --bg-color: #f4f1ea;
+            --card-bg: #ffffff;
+            --primary: #2c3e50;
+            --accent: #c87965;
+            --secondary: #8ba88e;
+            --highlight: #f39c12;
+            --success: #27ae60;
+            --text: #3a3532;
+            --code-bg: #1e1e1e;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+        }
+
+        .controls-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            background: #eae6df;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        select, input, button {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.95em;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+
+        button:hover {
+            background-color: #34495e;
+        }
+
+        button:disabled {
+            background-color: #bdc3c7;
+            cursor: not-allowed;
+        }
+
+        .btn-accent {
+            background-color: var(--accent);
+        }
+
+        .btn-accent:hover {
+            background-color: #a86250;
+        }
+
+        .array-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            height: 220px;
+            gap: 10px;
+            margin: 30px 0;
+            padding: 10px;
+            border-bottom: 3px solid var(--primary);
+            background: #faf8f5;
+            border-radius: 8px;
+        }
+
+        .array-bar-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 45px;
+        }
+
+        .array-bar {
+            width: 100%;
+            background-color: var(--secondary);
+            border-radius: 5px 5px 0 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            color: white;
+            font-weight: bold;
+            padding-top: 5px;
+            transition: height 0.3s, background-color 0.3s;
+        }
+
+        .array-index {
+            margin-top: 8px;
+            font-size: 0.85em;
+            color: #7f8c8d;
+            font-weight: bold;
+        }
+
+        .bar-active { background-color: var(--highlight) !important; }
+        .bar-compare { background-color: var(--accent) !important; }
+        .bar-sorted { background-color: var(--success) !important; }
+        .bar-disabled { opacity: 0.3; }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .explanation-box {
+            background: #f8f9fa;
+            border-left: 5px solid var(--primary);
+            padding: 15px;
+            border-radius: 4px;
+            font-size: 0.95em;
+            line-height: 1.5;
+            min-height: 120px;
+        }
+
+        .code-box {
+            background: var(--code-bg);
+            color: #dcdcdc;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.88em;
+            white-space: pre-wrap;
+            overflow-x: auto;
+            max-height: 200px;
+        }
+
+        .code-line-active {
+            background-color: #3a3d41;
+            color: #569cd6;
+            font-weight: bold;
+            display: block;
+            margin: 0 -15px;
+            padding: 0 15px;
+        }
+
+        @media (max-width: 768px) {
+            .info-panel { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Διαδραστικός Προσομοιωτής Αλγορίθμων</h1>
+    <div class="subtitle">Εκπαιδευτικό Εργαλείο για τη Δυαδική Αναζήτηση & την Ταξινόμηση Πινάκων</div>
+
+    <div class="controls-panel">
+        <div class="control-group">
+            <label for="algoSelect">Αλγόριθμος:</label>
+            <select id="algoSelect">
+                <option value="binarySearch">Δυαδική Αναζήτηση (Binary Search)</option>
+                <option value="bubbleSort">Ταξινόμηση Ευθείας Ανταλλαγής (Bubble Sort)</option>
+                <option value="selectionSort">Ταξινόμηση με Επιλογή (Selection Sort)</option>
+            </select>
+        </div>
+
+        <div class="control-group" id="searchValueGroup">
+            <label for="searchValue">Στόχος:</label>
+            <input type="number" id="searchValue" value="42" style="width: 60px;">
+        </div>
+
+        <div class="control-group">
+            <button id="btnGenerate" class="btn-accent">Νέος Πίνακας</button>
+        </div>
+    </div>
+
+    <div class="controls-panel">
+        <button id="btnPrev">◄ Βήμα Πίσω</button>
+        <button id="btnPlayPause">Έναρξη ►</button>
+        <button id="btnNext">Βήμα Εμπρός ►</button>
+        <button id="btnReset">Επαναφορά</button>
+
+        <div class="control-group">
+            <label for="speedSlider">Ταχύτητα:</label>
+            <input type="range" id="speedSlider" min="200" max="2000" step="100" value="800">
+        </div>
+    </div>
+
+    <div class="array-container" id="arrayContainer"></div>
+
+    <div class="info-panel">
+        <div class="explanation-box">
+            <strong style="color: var(--primary);">Επεξήγηση Βήματος:</strong>
+            <p id="stepExplanation">Επιλέξτε αλγόριθμο και πιέστε 'Έναρξη' ή 'Βήμα Εμπρός' για να ξεκινήσει η προσομοίωση.</p>
+        </div>
+        <div class="code-box" id="codeDisplay"></div>
+    </div>
+</div>
+
+<script>
+    const algorithms = {
+        binarySearch: {
+            name: "Δυαδική Αναζήτηση",
+            code: [
+                "Αλγόριθμος Δυαδική_Αναζήτηση",
+                "low <- 1, high <- N, found <- ΨΕΥΔΗΣ",
+                "Όσο low <= high ΚΑΙ found = ΨΕΥΔΗΣ επανάλαβε",
+                "   mid <- (low + high) DIV 2",
+                "   Αν A[mid] = key τότε found <- ΑΛΗΘΗΣ",
+                "   Αλλιώς αν A[mid] < key τότε low <- mid + 1",
+                "   Αλλιώς high <- mid - 1",
+                "Τέλος_επανάληψης"
+            ]
+        },
+        bubbleSort: {
+            name: "Ταξινόμηση Ευθείας Ανταλλαγής",
+            code: [
+                "Για i από 1 μέχρι N-1",
+                "   Για j από N μέχρι i+1 με_βήμα -1",
+                "      Αν A[j-1] > A[j] τότε",
+                "         Αντιμετάθεσε A[j-1], A[j]",
+                "      Τέλος_αν",
+                "   Τέλος_επανάληψης",
+                "Τέλος_επανάληψης"
+            ]
+        },
+        selectionSort: {
+            name: "Ταξινόμηση με Επιλογή",
+            code: [
+                "Για i από 1 μέχρι N-1",
+                "   k <- i",
+                "   Για j από i+1 μέχρι N",
+                "      Αν A[j] < A[k] τότε k <- j",
+                "   Τέλος_επανάληψης",
+                "   Αντιμετάθεσε A[i], A[k]",
+                "Τέλος_επανάληψης"
+            ]
+        }
+    };
+
+    let array = [];
+    let steps = [];
+    let currentStep = 0;
+    let isPlaying = false;
+    let timer = null;
+
+    const arrayContainer = document.getElementById('arrayContainer');
+    const algoSelect = document.getElementById('algoSelect');
+    const searchValueInput = document.getElementById('searchValue');
+    const searchValueGroup = document.getElementById('searchValueGroup');
+    const stepExplanation = document.getElementById('stepExplanation');
+    const codeDisplay = document.getElementById('codeDisplay');
+
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const btnNext = document.getElementById('btnNext');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnReset = document.getElementById('btnReset');
+    const btnGenerate = document.getElementById('btnGenerate');
+
+    function initArray() {
+        const isBinary = algoSelect.value === 'binarySearch';
+        array = [];
+        const size = 10;
+        for (let i = 0; i < size; i++) {
+            array.push(Math.floor(Math.random() * 85) + 10);
+        }
+        if (isBinary) {
+            array.sort((a, b) => a - b);
+            if (!array.includes(parseInt(searchValueInput.value))) {
+                array[Math.floor(Math.random() * size)] = parseInt(searchValueInput.value);
+                array.sort((a, b) => a - b);
+            }
+        }
+        resetState();
+    }
+
+    function renderCode() {
+        const algo = algorithms[algoSelect.value];
+        codeDisplay.innerHTML = algo.code.map((line, idx) => `<span id="line-${idx}">${line}</span>`).join('\n');
+    }
+
+    function renderArray(activeIndices = {}, disabledIndices = []) {
+        arrayContainer.innerHTML = '';
+        const maxVal = Math.max(...array, 100);
+
+        array.forEach((val, idx) => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'array-bar-wrapper';
+
+            const bar = document.createElement('div');
+            bar.className = 'array-bar';
+            bar.style.height = `${(val / maxVal) * 160 + 20}px`;
+            bar.textContent = val;
+
+            if (activeIndices.active && activeIndices.active.includes(idx)) bar.classList.add('bar-active');
+            if (activeIndices.compare && activeIndices.compare.includes(idx)) bar.classList.add('bar-compare');
+            if (activeIndices.sorted && activeIndices.sorted.includes(idx)) bar.classList.add('bar-sorted');
+            if (disabledIndices.includes(idx)) bar.classList.add('bar-disabled');
+
+            const indexLabel = document.createElement('div');
+            indexLabel.className = 'array-index';
+            indexLabel.textContent = `[${idx + 1}]`;
+
+            wrapper.appendChild(bar);
+            wrapper.appendChild(indexLabel);
+            arrayContainer.appendChild(wrapper);
+        });
+    }
+
+    function generateSteps() {
+        steps = [];
+        const algo = algoSelect.value;
+        const arrCopy = [...array];
+
+        if (algo === 'binarySearch') {
+            const target = parseInt(searchValueInput.value);
+            let low = 0, high = arrCopy.length - 1, found = false;
+
+            steps.push({
+                arr: [...arrCopy],
+                highlights: { active: [] },
+                disabled: [],
+                line: 1,
+                text: `Έναρξη Δυαδικής Αναζήτησης για το στοιχείο ${target}. Αρχικοποίηση: low = 1, high = ${arrCopy.length}.`
+            });
+
+            while (low <= high && !found) {
+                let mid = Math.floor((low + high) / 2);
+                let disabled = [];
+                for (let i = 0; i < arrCopy.length; i++) {
+                    if (i < low || i > high) disabled.push(i);
+                }
+
+                steps.push({
+                    arr: [...arrCopy],
+                    highlights: { active: [mid], compare: [low, high] },
+                    disabled: disabled,
+                    line: 3,
+                    text: `Υπολογισμός μεσαίου δείκτη: mid = [${mid + 1}] (Τιμή = ${arrCopy[mid]}). Ενεργό διάστημα: [${low + 1} .. ${high + 1}].`
+                });
+
+                if (arrCopy[mid] === target) {
+                    found = true;
+                    steps.push({
+                        arr: [...arrCopy],
+                        highlights: { sorted: [mid] },
+                        disabled: disabled,
+                        line: 4,
+                        text: `Το στοιχείο ${target} βρέθηκε στη θέση [${mid + 1}]!`
+                    });
+                } else if (arrCopy[mid] < target) {
+                    steps.push({
+                        arr: [...arrCopy],
+                        highlights: { compare: [mid] },
+                        disabled: disabled,
+                        line: 5,
+                        text: `Επειδή A[${mid + 1}] = ${arrCopy[mid]} < ${target}, το στοιχεία αναζητείται στο δεξί μισό. Νέο low = ${mid + 2}.`
+                    });
+                    low = mid + 1;
+                } else {
+                    steps.push({
+                        arr: [...arrCopy],
+                        highlights: { compare: [mid] },
+                        disabled: disabled,
+                        line: 6,
+                        text: `Επειδή A[${mid + 1}] = ${arrCopy[mid]} > ${target}, το στοιχεία αναζητείται στο αριστερό μισό. Νέο high = ${mid}.`
+                    });
+                    high = mid - 1;
+                }
+            }
+
+            if (!found) {
+                steps.push({
+                    arr: [...arrCopy],
+                    highlights: {},
+                    disabled: Array.from({length: arrCopy.length}, (_, i) => i),
+                    line: 7,
+                    text: `Ο δείκτης low ξεπέρασε τον high. Το στοιχείο ${target} ΔΕΝ υπάρχει στον πίνακα.`
+                });
+            }
+        } else if (algo === 'bubbleSort') {
+            let n = arrCopy.length;
+            for (let i = 0; i < n - 1; i++) {
+                for (let j = n - 1; j > i; j--) {
+                    steps.push({
+                        arr: [...arrCopy],
+                        highlights: { compare: [j - 1, j] },
+                        line: 2,
+                        text: `Σύγκριση στοιχείων A[${j}] (${arrCopy[j - 1]}) και A[${j + 1}] (${arrCopy[j]}).`
+                    });
+
+                    if (arrCopy[j - 1] > arrCopy[j]) {
+                        let temp = arrCopy[j - 1];
+                        arrCopy[j - 1] = arrCopy[j];
+                        arrCopy[j] = temp;
+
+                        steps.push({
+                            arr: [...arrCopy],
+                            highlights: { active: [j - 1, j] },
+                            line: 3,
+                            text: `Αντιμετάθεση: Το ${arrCopy[j]} είναι μικρότερο από το ${arrCopy[j - 1]}, οπότε αλλάζουν θέσεις.`
+                        });
+                    }
+                }
+            }
+            steps.push({
+                arr: [...arrCopy],
+                highlights: { sorted: Array.from({length: n}, (_, i) => i) },
+                line: 6,
+                text: "Η ταξινόμηση ολοκληρώθηκε επιτυχώς!"
+            });
+        } else if (algo === 'selectionSort') {
+            let n = arrCopy.length;
+            for (let i = 0; i < n - 1; i++) {
+                let minIdx = i;
+                steps.push({
+                    arr: [...arrCopy],
+                    highlights: { active: [i] },
+                    line: 1,
+                    text: `Αναζήτηση ελάχιστου από τη θέση [${i + 1}] έως [${n}]. Αρχικό ελάχιστο A[${i + 1}] = ${arrCopy[i]}.`
+                });
+
+                for (let j = i + 1; j < n; j++) {
+                    steps.push({
+                        arr: [...arrCopy],
+                        highlights: { active: [minIdx], compare: [j] },
+                        line: 3,
+                        text: `Σύγκριση τρέχοντος ελάχιστου A[${minIdx + 1}] (${arrCopy[minIdx]}) με A[${j + 1}] (${arrCopy[j]}).`
+                    });
+
+                    if (arrCopy[j] < arrCopy[minIdx]) {
+                        minIdx = j;
+                        steps.push({
+                            arr: [...arrCopy],
+                            highlights: { active: [minIdx] },
+                            line: 3,
+                            text: `Νέο ελάχιστο βρέθηκε στη θέση [${minIdx + 1}] με τιμή ${arrCopy[minIdx]}.`
+                        });
+                    }
+                }
+
+                if (minIdx !== i) {
+                    let temp = arrCopy[i];
+                    arrCopy[i] = arrCopy[minIdx];
+                    arrCopy[minIdx] = temp;
+                }
+
+                steps.push({
+                    arr: [...arrCopy],
+                    highlights: { sorted: Array.from({length: i + 1}, (_, idx) => idx) },
+                    line: 5,
+                    text: `Τοποθέτηση του ελάχιστου στη θέση [${i + 1}].`
+                });
+            }
+            steps.push({
+                arr: [...arrCopy],
+                highlights: { sorted: Array.from({length: n}, (_, i) => i) },
+                line: 6,
+                text: "Η ταξινόμηση ολοκληρώθηκε επιτυχώς!"
+            });
+        }
+    }
+
+    function updateStep(index) {
+        if (index < 0 || index >= steps.length) return;
+        const step = steps[index];
+        array = step.arr;
+        renderArray(step.highlights, step.disabled || []);
+        stepExplanation.textContent = step.text;
+
+        document.querySelectorAll('.code-box span').forEach(el => el.classList.remove('code-line-active'));
+        if (step.line !== undefined) {
+            const lineEl = document.getElementById(`line-${step.line}`);
+            if (lineEl) lineEl.classList.add('code-line-active');
+        }
+
+        btnPrev.disabled = index === 0;
+        btnNext.disabled = index === steps.length - 1;
+    }
+
+    function resetState() {
+        pause();
+        currentStep = 0;
+        renderCode();
+        generateSteps();
+        updateStep(0);
+    }
+
+    function play() {
+        isPlaying = true;
+        btnPlayPause.textContent = 'Παύση ❚❚';
+        const speed = 2200 - parseInt(document.getElementById('speedSlider').value);
+        timer = setInterval(() => {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                updateStep(currentStep);
+            } else {
+                pause();
+            }
+        }, speed);
+    }
+
+    function pause() {
+        isPlaying = false;
+        btnPlayPause.textContent = 'Έναρξη ►';
+        if (timer) clearInterval(timer);
+    }
+
+    btnPlayPause.addEventListener('click', () => isPlaying ? pause() : play());
+    btnNext.addEventListener('click', () => { pause(); if (currentStep < steps.length - 1) { currentStep++; updateStep(currentStep); } });
+    btnPrev.addEventListener('click', () => { pause(); if (currentStep > 0) { currentStep--; updateStep(currentStep); } });
+    btnReset.addEventListener('click', resetState);
+    btnGenerate.addEventListener('click', initArray);
+
+    algoSelect.addEventListener('change', () => {
+        searchValueGroup.style.display = algoSelect.value === 'binarySearch' ? 'flex' : 'none';
+        initArray();
+    });
+
+    initArray();
+</script>
+</body>
+</html>

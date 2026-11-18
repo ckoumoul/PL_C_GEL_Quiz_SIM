@@ -282,6 +282,7 @@
     };
 
     let array = [];
+    let initialArray = [];
     let steps = [];
     let currentStep = 0;
     let isPlaying = false;
@@ -309,11 +310,13 @@
         }
         if (isBinary) {
             array.sort((a, b) => a - b);
-            if (!array.includes(parseInt(searchValueInput.value))) {
-                array[Math.floor(Math.random() * size)] = parseInt(searchValueInput.value);
+            const targetVal = parseInt(searchValueInput.value) || 42;
+            if (!array.includes(targetVal)) {
+                array[Math.floor(Math.random() * size)] = targetVal;
                 array.sort((a, b) => a - b);
             }
         }
+        initialArray = [...array];
         resetState();
     }
 
@@ -322,11 +325,11 @@
         codeDisplay.innerHTML = algo.code.map((line, idx) => `<span id="line-${idx}">${line}</span>`).join('\n');
     }
 
-    function renderArray(activeIndices = {}, disabledIndices = []) {
+    function renderArray(currentArr, activeIndices = {}, disabledIndices = []) {
         arrayContainer.innerHTML = '';
-        const maxVal = Math.max(...array, 100);
+        const maxVal = Math.max(...currentArr, 100);
 
-        array.forEach((val, idx) => {
+        currentArr.forEach((val, idx) => {
             const wrapper = document.createElement('div');
             wrapper.className = 'array-bar-wrapper';
 
@@ -353,10 +356,10 @@
     function generateSteps() {
         steps = [];
         const algo = algoSelect.value;
-        const arrCopy = [...array];
+        const arrCopy = [...initialArray];
 
         if (algo === 'binarySearch') {
-            const target = parseInt(searchValueInput.value);
+            const target = parseInt(searchValueInput.value) || 0;
             let low = 0, high = arrCopy.length - 1, found = false;
 
             steps.push({
@@ -397,7 +400,7 @@
                         highlights: { compare: [mid] },
                         disabled: disabled,
                         line: 5,
-                        text: `Επειδή A[${mid + 1}] = ${arrCopy[mid]} < ${target}, το στοιχεία αναζητείται στο δεξί μισό. Νέο low = ${mid + 2}.`
+                        text: `Επειδή A[${mid + 1}] = ${arrCopy[mid]} < ${target}, το στοιχείο αναζητείται στο δεξί μισό. Νέο low = ${mid + 2}.`
                     });
                     low = mid + 1;
                 } else {
@@ -406,7 +409,7 @@
                         highlights: { compare: [mid] },
                         disabled: disabled,
                         line: 6,
-                        text: `Επειδή A[${mid + 1}] = ${arrCopy[mid]} > ${target}, το στοιχεία αναζητείται στο αριστερό μισό. Νέο high = ${mid}.`
+                        text: `Επειδή A[${mid + 1}] = ${arrCopy[mid]} > ${target}, το στοιχείο αναζητείται στο αριστερό μισό. Νέο high = ${mid}.`
                     });
                     high = mid - 1;
                 }
@@ -507,8 +510,7 @@
     function updateStep(index) {
         if (index < 0 || index >= steps.length) return;
         const step = steps[index];
-        array = step.arr;
-        renderArray(step.highlights, step.disabled || []);
+        renderArray(step.arr, step.highlights, step.disabled || []);
         stepExplanation.textContent = step.text;
 
         document.querySelectorAll('.code-box span').forEach(el => el.classList.remove('code-line-active'));
@@ -555,6 +557,12 @@
     btnReset.addEventListener('click', resetState);
     btnGenerate.addEventListener('click', initArray);
 
+    searchValueInput.addEventListener('input', () => {
+        if (algoSelect.value === 'binarySearch') {
+            resetState();
+        }
+    });
+
     algoSelect.addEventListener('change', () => {
         searchValueGroup.style.display = algoSelect.value === 'binarySearch' ? 'flex' : 'none';
         initArray();
@@ -563,4 +571,5 @@
     initArray();
 </script>
 </body>
+</html>
 </html>
